@@ -20,7 +20,7 @@ function Education() {
       alt: 'Ivorian Associate Degree In Law',
       title: 'Undergraduate Degree',
       institution: 'UA — 2010',
-      description: 'Undergaduate Degree in Law',
+      description: 'Undergaduate Degree In Law',
     },
   ];
 
