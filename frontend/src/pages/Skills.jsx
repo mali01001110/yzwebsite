@@ -7,11 +7,11 @@ function Skills() {
     },
     {
       category: 'Web Technologies',
-      items: ['React', 'Django Web Framework','Django Rest Framework', 'HTML', 'CSS', 'Node.js', 'PostgreSQL', 'Claude Code', 'Codex', 'PyCharm'],
+      items: ['React', 'Django Web Framework','Django Rest Framework', 'HTML', 'CSS', 'Node.js', 'PostgreSQL'],
     },
     {
       category: 'Tools & Platforms',
-      items: ['Git', 'GitHub', 'Linux'],
+      items: ['Git', 'GitHub', 'Linux', 'Claude Code', 'Codex', 'PyCharm'],
     },
     {
       category: 'IT Support Skills',
@@ -19,7 +19,7 @@ function Skills() {
     },
     {
       category: 'Soft Skills',
-      items: ['Teamwork', 'Communication', 'Problem-solving'],
+      items: ['Resilience', 'Critical thinking', 'Problem-solving'],
     },
   ];
 

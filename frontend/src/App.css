@@ -1,15 +1,16 @@
 /* src/App.css
-   Thème : texte principal blanc, variables centralisées, corrections de couleurs
+   Thème : texte principal blanc, variables centralisées, une seule nuance de bleu
 */
 
 :root {
-  --bg-page: #0b0f14;           /* fond sombre pour contraste avec texte blanc */
-  --text-primary: #ffffff;      /* texte principal */
-  --text-muted: rgba(255,255,255,0.85); /* paragraphes légèrement atténués */
-  --header-bg: #1f2937;         /* header existant */
-  --accent: #2563eb;            /* couleur accent / boutons */
-  --card-bg: #2563eb;           /* fond des cartes */
-  --footer-text: #e5e7eb;       /* texte du footer (clair) */
+  --bg-page: #0b0f14;                       /* fond sombre pour contraste avec texte blanc */
+  --text-primary: #ffffff;                  /* texte principal */
+  --text-muted: rgba(255,255,255,0.85);     /* paragraphes légèrement atténués */
+  --blue: #2563eb;                          /* unique couleur bleue */
+  --header-bg: var(--blue);                 /* header */
+  --accent: var(--blue);                    /* couleur accent / boutons */
+  --card-bg: var(--blue);                   /* fond des cartes */
+  --footer-text: #e5e7eb;                   /* texte du footer (clair) */
 }
 
 /* Reset */
@@ -62,7 +63,7 @@ body {
 .back-button {
   display: inline-block;
   margin-bottom: 1.5rem;
-  color: var(--text-primary); /* corrigé */
+  color: var(--text-primary);
   text-decoration: none;
   font-weight: 500;
 }
@@ -116,19 +117,19 @@ body {
   padding: 1rem;
   border-radius: 10px;
   font-weight: 600;
-  transition: transform 0.15s, background 0.15s;
+  transition: transform 0.15s, filter 0.15s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
 }
 
 .nav-button:hover {
-  background: #1d4ed8;
+  filter: brightness(1.06);
   transform: translateY(-2px);
 }
 
 /* ---------- Standard page ---------- */
 .page h1 {
   margin-bottom: 1.5rem;
-  color: var(--text-primary); /* remplacé #1f2937 */
+  color: var(--text-primary);
 }
 
 .page h2 {
@@ -171,7 +172,7 @@ body {
   border-radius: 10px;
   padding: 1.25rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-  color: white; /* texte des cartes en blanc */
+  color: white;
 }
 
 .card-image {
@@ -183,7 +184,7 @@ body {
 }
 
 .card h3 {
-  color: white; /* remplacé #555 */
+  color: white;
   font-weight: 500;
   margin-bottom: 0.5rem;
 }
@@ -249,13 +250,13 @@ body {
 .hero-no-image h1 {
   font-size: 2.6rem;
   margin-bottom: 1rem;
-  color: var(--text-primary); /* remplacé #1f2937 */
+  color: var(--text-primary);
 }
 
 .hero-no-image p {
   max-width: 700px;
   font-size: 1.05rem;
-  color: var(--text-muted); /* remplacé #444 */
+  color: var(--text-muted);
 }
 
 /* ---------- Responsive ---------- */
@@ -371,4 +372,33 @@ body {
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+/* ---------- Option B: force everything white (last-resort override) ---------- */
+/* This is intentionally aggressive: it forces all rendered text to white.
+   Keep this at the end of the file so it overrides earlier rules. */
+body * {
+  color: var(--text-primary) !important;
+  caret-color: var(--text-primary) !important;
+}
+
+/* Also force placeholders and form text to remain readable */
+::placeholder {
+  color: var(--text-muted) !important;
+  opacity: 1 !important;
+}
+
+/* Ensure visited/active links are white too */
+a,
+a:visited,
+a:active {
+  color: var(--text-primary) !important;
+}
+
+/* Keep elements that rely on currentColor (SVGs, icons) consistent */
+svg,
+svg * {
+  color: var(--text-primary) !important;
+  fill: currentColor !important;
+  stroke: currentColor !important;
 }

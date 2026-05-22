@@ -12,7 +12,7 @@ function Education() {
       image: edu1,
       alt: 'Ivorian Baccalaureate',
       title: 'Baccalaureate Diploma',
-      institution: '[CSM Cocody] — 2007',
+      institution: 'CSM Cocody — 2007',
       description: 'Baccalaureate In Litterature',
     },
     {
@@ -20,7 +20,7 @@ function Education() {
       alt: 'Ivorian Associate Degree In Law',
       title: 'Undergraduate Deegree',
       institution: 'University Of The Atlantic — 2010',
-      description: 'Degree in Law',
+      description: 'Undergaduate Degree in Law',
     },
   ];
 
