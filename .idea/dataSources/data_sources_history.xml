@@ -1,0 +1,44 @@
+<DataSourcesHistory>
+  <DataSourceFromHistory isRemovedFromProject="false">
+    <data-source source="LOCAL" name="Django default" uuid="5f3bd764-db91-4629-ba2f-81ab809f1547">
+      <database-info product="SQLite" version="3.51.1" jdbc-version="4.2" driver-name="SQLite JDBC" driver-version="3.51.1.0" dbms="SQLITE" exact-version="3.51.1" exact-driver-version="3.51">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <remarks>C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite::memory:</jdbc-url>
+      <auth-provider>no-auth</auth-provider>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="schema" qname="@" />
+        </introspection-scope>
+      </schema-mapping>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </DataSourceFromHistory>
+  <DataSourceFromHistory isRemovedFromProject="false">
+    <data-source source="LOCAL" name="Django default2" uuid="068f5d3d-59c9-46e1-b14f-35bd7b2084af">
+      <database-info product="SQLite" version="3.51.1" jdbc-version="4.2" driver-name="SQLite JDBC" driver-version="3.51.1.0" dbms="SQLITE" exact-version="3.51.1" exact-driver-version="3.51">
+        <identifier-quote-string>&quot;</identifier-quote-string>
+      </database-info>
+      <case-sensitivity plain-identifiers="mixed" quoted-identifiers="mixed" />
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <imported>true</imported>
+      <remarks>C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db.sqlite3</jdbc-url>
+      <auth-provider>no-auth</auth-provider>
+      <schema-mapping>
+        <introspection-scope>
+          <node kind="schema" qname="@" />
+        </introspection-scope>
+      </schema-mapping>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+  </DataSourceFromHistory>
+</DataSourcesHistory>
