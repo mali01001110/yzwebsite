@@ -13,7 +13,7 @@ function Certifications() {
       alt: 'Certificate Of Completion - Information Security Training Program',
       title: 'Information Security',
       issuer: 'CNFDI — 2024',
-      description: 'I Have Completed A Training Program In Information Security',
+      description: 'Certificate Of Completion - Information Security Training Program',
     },
     {
       image: cert2,
