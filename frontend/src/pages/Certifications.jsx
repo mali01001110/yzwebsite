@@ -17,10 +17,10 @@ function Certifications() {
     },
     {
       image: cert2,
-      alt: 'Certificate of completion for [CS50P]',
+      alt: 'Certificate of completion for CS50P',
       title: 'CS50’s Introduction to Programming with Python',
       issuer: 'Harvard Online — 2026',
-      description: 'Certificate of completion for [CS50P] - I Took CS50P',
+      description: 'Certificate Of Completion for CS50P - I Took CS50P',
     },
   ];
 
