@@ -19,7 +19,7 @@ function Skills() {
     },
     {
       category: 'Soft Skills',
-      items: ['Teamwork', 'Communication', 'Problem-solving'],
+      items: ['Resilience', 'Critical thinking', 'Problem-solving'],
     },
   ];
 
