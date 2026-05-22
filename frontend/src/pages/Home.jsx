@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 function Home() {
   // ️ Replace the text below with your own short bio
   const summary = `
-    Hello world ! I'm Yann Zakpa, and i am passionate about computing with a strong background in IT support and software development web/desktop apps.
+    Hello, world! I'm Yann Zakpa, and i am passionate about computing with a strong background in IT support and software development web/desktop apps.
   `;
 
   const buttons = [
