@@ -8,7 +8,7 @@ function SocialMediaProfiles() {
   const profiles = [
     {
       name: 'LinkedIn',
-      url: 'hhttps://www.linkedin.com/in/mali01001110/',
+      url: 'https://www.linkedin.com/in/mali01001110/',
       description: 'Connect with me professionally',
     },
     {
