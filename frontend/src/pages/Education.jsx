@@ -12,7 +12,7 @@ function Education() {
       image: edu1,
       alt: 'Ivorian Baccalaureate',
       title: 'Baccalaureate Diploma',
-      institution: '[CSM Cocody] — 2007',
+      institution: 'CSM Cocody — 2007',
       description: 'Baccalaureate In Litterature',
     },
     {
