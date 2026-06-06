@@ -31,6 +31,7 @@ body {
 /* Layout wrapper */
 .layout {
   min-height: 100vh;
+  width: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -53,9 +54,8 @@ body {
 /* ---------- Main ---------- */
 .main-content {
   flex: 1;
-  max-width: 1000px;
   width: 100%;
-  margin: 0 auto;
+  margin: 0;
   padding: 2rem 1.5rem;
   color: var(--text-primary);
 }

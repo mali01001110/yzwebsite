@@ -1,0 +1,26 @@
+{
+  "name": "yzwebsiteproject",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mali01001110/yzwebsite.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mali01001110/yzwebsite/issues"
+  },
+  "homepage": "https://github.com/mali01001110/yzwebsite#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

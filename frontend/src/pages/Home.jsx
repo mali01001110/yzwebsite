@@ -14,6 +14,7 @@ function Home() {
     { label: 'Certifications', path: '/certifications' },
     { label: 'Skills', path: '/skills' },
     { label: 'Social Media Profiles', path: '/social-media-profiles' },
+    { label: 'My Projects', path: '/my-projects' },
   ];
 
   return (

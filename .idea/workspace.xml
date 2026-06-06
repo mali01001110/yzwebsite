@@ -5,13 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0856dd6-743e-4207-89e0-158b9da720e6" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/frontend/src/pages/MyProjects.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Certifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Certifications.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Education.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Education.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Skills.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Skills.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/vite.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Home.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,7 +21,7 @@
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="61" />
+    <option name="cachedIndexableFilesCount" value="64" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -42,61 +41,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0000001756735113" />
-      <entry key="S10" value="1.0004191826847615" />
-      <entry key="S30" value="1.0838663650365161" />
-      <entry key="S60" value="1.5512818592438893" />
-      <entry key="M2" value="3.4046721615950806" />
-      <entry key="M5" value="15.299042312318912" />
-      <entry key="M10" value="44.446370323224265" />
-      <entry key="M15" value="73.27138158681663" />
-      <entry key="M30" value="164.39754516896602" />
-      <entry key="H1" value="344.40637822671255" />
-      <entry key="H2" value="583.6189154411574" />
-      <entry key="H4" value="796.7773769075372" />
-      <entry key="D1" value="1058.9590531823649" />
-      <entry key="W1" value="1114.4081828861722" />
+      <entry key="MS100" value="1.3039627655834984" />
+      <entry key="MS500" value="2.6891674978212547" />
+      <entry key="S2" value="7.296789830353618" />
+      <entry key="S5" value="15.032278904829566" />
+      <entry key="S10" value="25.545173388237057" />
+      <entry key="S30" value="44.37020212377744" />
+      <entry key="S60" value="55.37629481977337" />
+      <entry key="M2" value="70.52249580499758" />
+      <entry key="M5" value="114.552699752872" />
+      <entry key="M10" value="178.96850311247366" />
+      <entry key="M15" value="238.0464778396538" />
+      <entry key="M30" value="400.7018868252607" />
+      <entry key="H1" value="666.6937136226378" />
+      <entry key="H2" value="1020.8019115414501" />
+      <entry key="H4" value="1363.1694363148777" />
+      <entry key="D1" value="1823.3158918760685" />
+      <entry key="W1" value="1926.042877470634" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.3819889771782995E-233" />
-      <entry key="S5" value="7.181279525833168E-94" />
-      <entry key="S10" value="2.679790948158673E-47" />
-      <entry key="S30" value="2.992496413697789E-16" />
-      <entry key="S60" value="1.729885467687845E-8" />
-      <entry key="M2" value="1.3188068209077044E-4" />
-      <entry key="M5" value="0.03905850693110574" />
-      <entry key="M10" value="0.5495091401066166" />
-      <entry key="M15" value="1.564977842558236" />
-      <entry key="M30" value="4.751501558584365" />
-      <entry key="H1" value="8.50281334684895" />
-      <entry key="H2" value="11.539489827091977" />
-      <entry key="H4" value="13.538284928308967" />
-      <entry key="D1" value="15.550952266612429" />
-      <entry key="W1" value="15.934794521635531" />
+      <entry key="S2" value="1.1275574094149589E-178" />
+      <entry key="S5" value="6.619961523759571E-72" />
+      <entry key="S10" value="2.5729285889350842E-36" />
+      <entry key="S30" value="1.3702797640137482E-12" />
+      <entry key="S60" value="1.1705896408662472E-6" />
+      <entry key="M2" value="0.001082422267655313" />
+      <entry key="M5" value="0.06948235926355673" />
+      <entry key="M10" value="0.35055372266813023" />
+      <entry key="M15" value="0.7031320388000748" />
+      <entry key="M30" value="2.1374275190541403" />
+      <entry key="H1" value="5.450977379053649" />
+      <entry key="H2" value="9.797664210447566" />
+      <entry key="H4" value="13.514277526422193" />
+      <entry key="D1" value="17.92679336889708" />
+      <entry key="W1" value="18.842196462532307" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.8467453123625271" />
-      <entry key="MS500" value="0.9672763296139321" />
-      <entry key="S2" value="0.9917167307382933" />
-      <entry key="S5" value="0.9966785977706105" />
-      <entry key="S10" value="0.9987568671294693" />
-      <entry key="S30" value="1.08329984491258" />
-      <entry key="S60" value="1.5508939680705398" />
-      <entry key="M2" value="3.404069860900402" />
-      <entry key="M5" value="15.335363482075639" />
-      <entry key="M10" value="44.988781377702445" />
-      <entry key="M15" value="74.82499562946107" />
-      <entry key="M30" value="169.1327313486323" />
-      <entry key="H1" value="352.894326987602" />
-      <entry key="H2" value="595.1480925734201" />
-      <entry key="H4" value="810.3095239680479" />
-      <entry key="D1" value="1074.508814139411" />
-      <entry key="W1" value="1130.3428025846235" />
+      <entry key="MS100" value="1.25945040575009" />
+      <entry key="MS500" value="2.670395018796745" />
+      <entry key="S2" value="7.283913793773827" />
+      <entry key="S5" value="15.02177874796435" />
+      <entry key="S10" value="25.536297577702967" />
+      <entry key="S30" value="44.36506266615226" />
+      <entry key="S60" value="55.373102591856146" />
+      <entry key="M2" value="70.52152007120267" />
+      <entry key="M5" value="114.62024829359783" />
+      <entry key="M10" value="179.31649368798733" />
+      <entry key="M15" value="238.7464317606398" />
+      <entry key="M30" value="402.83376706618634" />
+      <entry key="H1" value="672.1365016018843" />
+      <entry key="H2" value="1030.5916606800765" />
+      <entry key="H4" value="1376.678061104858" />
+      <entry key="D1" value="1841.2413995758764" />
+      <entry key="W1" value="1944.8848799602388" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -108,30 +107,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.OpenDjangoStructureViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;database.query.execution&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "changes",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "database.query.execution",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager">
     <configuration name="yzwebsiteproject" type="Python.DjangoServer" factoryName="Django server">
       <module name="yzwebsiteproject" />

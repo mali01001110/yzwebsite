@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
+import { Link } from 'react-router-dom';
 import AboutMe from './pages/AboutMe';
 import Resume from './pages/Resume';
 import CoverLetter from './pages/CoverLetter';
@@ -8,13 +9,14 @@ import Education from './pages/Education';
 import Certifications from './pages/Certifications';
 import Skills from './pages/Skills';
 import SocialMediaProfiles from './pages/SocialMediaProfiles';
+import MyProjects from './pages/MyProjects';
 import './App.css';
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Home />} />
+            <Route index element={<Home />} />
         <Route path="about-me" element={<AboutMe />} />
         <Route path="resume" element={<Resume />} />
         <Route path="cover-letter" element={<CoverLetter />} />
@@ -22,6 +24,7 @@ function App() {
         <Route path="certifications" element={<Certifications />} />
         <Route path="skills" element={<Skills />} />
         <Route path="social-media-profiles" element={<SocialMediaProfiles />} />
+        <Route path="my-projects" element={<MyProjects />} />
       </Route>
     </Routes>
   );
