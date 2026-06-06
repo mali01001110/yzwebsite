@@ -34,7 +34,7 @@ function Layout() {
       <div className="layout-overlay" style={overlayStyle} aria-hidden="true" />
 
       <header className="header" style={foregroundStyle}>
-        <Link to="/" className="header-title">My Personal Website</Link>
+        <Link to="/" className="header-title">Yann Zakpa</Link>
       </header>
 
       <main className="main-content" style={foregroundStyle}>
