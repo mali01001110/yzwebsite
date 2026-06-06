@@ -18,9 +18,9 @@ function Education() {
     {
       image: edu2,
       alt: 'Ivorian Associate Degree In Law',
-      title: 'Undergraduate Deegree',
-      institution: 'University Of The Atlantic — 2010',
-      description: 'Undergaduate Degree in Law',
+      title: 'Undergraduate Degree',
+      institution: 'UA — 2010',
+      description: 'Undergaduate Degree In Law',
     },
   ];
 
