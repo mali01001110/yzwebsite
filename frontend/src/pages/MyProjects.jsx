@@ -20,6 +20,7 @@ function MyProjects() {
       name: 'My Personal Website',
       url: 'https://github.com/mali01001110/yzwebsite',
       description: 'Professional portfolio website',
+    },
   ];
 
   return (
