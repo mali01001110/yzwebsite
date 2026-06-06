@@ -7,20 +7,19 @@ function MyProjects() {
 
   const projects = [
     {
-      name: 'Project One',
-      url: 'https://github.com/your-username/project-one',
-      description: 'A short description of project one',
+      name: 'SmartOneText',
+      url: 'https://github.com/mali01001110/smartonetext',
+      description: 'An anonymous message web app',
     },
     {
-      name: 'Project Two',
-      url: 'https://github.com/your-username/project-two',
-      description: 'A short description of project two',
+      name: 'SmartOneNote',
+      url: 'https://github.com/mali01001110/SmartOneNote',
+      description: 'A standalone text editor',
     },
     {
-      name: 'Project Three',
-      url: 'https://github.com/your-username/project-three',
-      description: 'A short description of project three',
-    },
+      name: 'My Personal Website',
+      url: 'https://github.com/mali01001110/yzwebsite',
+      description: 'Professional portfolio website',
   ];
 
   return (
