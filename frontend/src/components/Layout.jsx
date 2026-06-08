@@ -51,7 +51,7 @@ function Layout() {
       </main>
 
       <footer className="footer" style={{ ...foregroundStyle, marginTop: '2rem' }}>
-        <p>© {new Date().getFullYear()} — Personal Website</p>
+        <p>© {new Date().getFullYear()} — Smartone Metaware</p>
       </footer>
     </div>
   );
