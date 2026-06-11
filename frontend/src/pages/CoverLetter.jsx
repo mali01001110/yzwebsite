@@ -18,7 +18,7 @@ To The Employer
 
 Subject: Job Application
 
-I have a year of experience in the field of commerce plus professional certifications in network administration and cybersecurity computer science and python programming. Therefore, I am hereby applying for a job in the field of software development.
+I have a year of experience in the field of commerce plus professional certifications in network administration, cybersecurity, computer science and python programming. Therefore, I am hereby applying for a job in the field of software development.
 
 I have received a fairly complete training and i am indeed a trained computer scientist and IT technician.
 
