@@ -5,12 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a0856dd6-743e-4207-89e0-158b9da720e6" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontend/src/pages/MyProjects.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/data_sources_history.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/index.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Home.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Home.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assets/cert1.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assets/cert1.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assets/cert2.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assets/cert2.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/assets/resume.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/assets/resume.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Layout.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Layout.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/AboutMe.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/AboutMe.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Certifications.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Certifications.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/CoverLetter.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/CoverLetter.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/MyProjects.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/MyProjects.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/pages/Skills.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/pages/Skills.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -21,7 +26,7 @@
     <option name="myCustomStartScript" value="import sys; print('Python %s on %s' % (sys.version, sys.platform))&#10;import django; print('Django %s' % django.get_version())&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;if 'setup' in dir(django): django.setup()&#10;import django_manage_shell; django_manage_shell.run(PROJECT_ROOT)" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="64" />
+    <option name="cachedIndexableFilesCount" value="67" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
@@ -41,61 +46,61 @@
   </component>
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
-      <entry key="MS100" value="1.3039627655834984" />
-      <entry key="MS500" value="2.6891674978212547" />
-      <entry key="S2" value="7.296789830353618" />
-      <entry key="S5" value="15.032278904829566" />
-      <entry key="S10" value="25.545173388237057" />
-      <entry key="S30" value="44.37020212377744" />
-      <entry key="S60" value="55.37629481977337" />
-      <entry key="M2" value="70.52249580499758" />
-      <entry key="M5" value="114.552699752872" />
-      <entry key="M10" value="178.96850311247366" />
-      <entry key="M15" value="238.0464778396538" />
-      <entry key="M30" value="400.7018868252607" />
-      <entry key="H1" value="666.6937136226378" />
-      <entry key="H2" value="1020.8019115414501" />
-      <entry key="H4" value="1363.1694363148777" />
-      <entry key="D1" value="1823.3158918760685" />
-      <entry key="W1" value="1926.042877470634" />
+      <entry key="MS100" value="1.0764150173557543" />
+      <entry key="MS500" value="1.5979098983880622" />
+      <entry key="S2" value="1.8793442656066603" />
+      <entry key="S5" value="1.949868693985691" />
+      <entry key="S10" value="1.9746120812548138" />
+      <entry key="S30" value="1.9944514045454653" />
+      <entry key="S60" value="2.0725170434393823" />
+      <entry key="M2" value="2.3891599683227254" />
+      <entry key="M5" value="3.2641702471557785" />
+      <entry key="M10" value="10.563241190730519" />
+      <entry key="M15" value="30.8179723373898" />
+      <entry key="M30" value="138.98221521262585" />
+      <entry key="H1" value="394.6781849403116" />
+      <entry key="H2" value="795.9031171854817" />
+      <entry key="H4" value="1223.558172375391" />
+      <entry key="D1" value="1844.6555742558876" />
+      <entry key="W1" value="1989.474193522227" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
       <entry key="MS500" value="0.0" />
-      <entry key="S2" value="1.1275574094149589E-178" />
-      <entry key="S5" value="6.619961523759571E-72" />
-      <entry key="S10" value="2.5729285889350842E-36" />
-      <entry key="S30" value="1.3702797640137482E-12" />
-      <entry key="S60" value="1.1705896408662472E-6" />
-      <entry key="M2" value="0.001082422267655313" />
-      <entry key="M5" value="0.06948235926355673" />
-      <entry key="M10" value="0.35055372266813023" />
-      <entry key="M15" value="0.7031320388000748" />
-      <entry key="M30" value="2.1374275190541403" />
-      <entry key="H1" value="5.450977379053649" />
-      <entry key="H2" value="9.797664210447566" />
-      <entry key="H4" value="13.514277526422193" />
-      <entry key="D1" value="17.92679336889708" />
-      <entry key="W1" value="18.842196462532307" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="2.83229179198472E-273" />
+      <entry key="S10" value="5.321928026556424E-137" />
+      <entry key="S30" value="3.761458999428455E-46" />
+      <entry key="S60" value="1.9394483601706807E-23" />
+      <entry key="M2" value="4.405888376117454E-12" />
+      <entry key="M5" value="3.060055231693029E-5" />
+      <entry key="M10" value="0.007356681224001105" />
+      <entry key="M15" value="0.053496059141050004" />
+      <entry key="M30" value="0.589567925007021" />
+      <entry key="H1" value="2.862830302522349" />
+      <entry key="H2" value="7.100405699355571" />
+      <entry key="H4" value="11.504642815962683" />
+      <entry key="D1" value="17.452165806568093" />
+      <entry key="W1" value="18.77010807175537" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="1.25945040575009" />
-      <entry key="MS500" value="2.670395018796745" />
-      <entry key="S2" value="7.283913793773827" />
-      <entry key="S5" value="15.02177874796435" />
-      <entry key="S10" value="25.536297577702967" />
-      <entry key="S30" value="44.36506266615226" />
-      <entry key="S60" value="55.373102591856146" />
-      <entry key="M2" value="70.52152007120267" />
-      <entry key="M5" value="114.62024829359783" />
-      <entry key="M10" value="179.31649368798733" />
-      <entry key="M15" value="238.7464317606398" />
-      <entry key="M30" value="402.83376706618634" />
-      <entry key="H1" value="672.1365016018843" />
-      <entry key="H2" value="1030.5916606800765" />
-      <entry key="H4" value="1376.678061104858" />
-      <entry key="D1" value="1841.2413995758764" />
-      <entry key="W1" value="1944.8848799602388" />
+      <entry key="MS100" value="1.0235212334912684" />
+      <entry key="MS500" value="1.5692596230150855" />
+      <entry key="S2" value="1.869680958536113" />
+      <entry key="S5" value="1.945750967170071" />
+      <entry key="S10" value="1.9725088678347285" />
+      <entry key="S30" value="1.9937393606513065" />
+      <entry key="S60" value="2.0721486643300424" />
+      <entry key="M2" value="2.3889517957273476" />
+      <entry key="M5" value="3.263986115547526" />
+      <entry key="M10" value="10.56949137353816" />
+      <entry key="M15" value="30.869447959810426" />
+      <entry key="M30" value="139.56795264187338" />
+      <entry key="H1" value="397.5348575040778" />
+      <entry key="H2" value="802.996606652287" />
+      <entry key="H4" value="1235.0573376678049" />
+      <entry key="D1" value="1862.1063658574208" />
+      <entry key="W1" value="2008.244090549187" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -119,15 +124,18 @@
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "changes",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "C:/Users/mali01001110/PyCharmProjects/yzwebsiteproject",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "database.query.execution",
+    "settings.editor.selected.configurable": "ml.llm.LLMThirdPartyAiProvidersConfigurable",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -180,6 +188,10 @@
       <workItem from="1779375513153" duration="383000" />
       <workItem from="1779375934042" duration="2559000" />
       <workItem from="1779378560947" duration="4759000" />
+      <workItem from="1780968889997" duration="18000" />
+      <workItem from="1780990173133" duration="965000" />
+      <workItem from="1780994472315" duration="276000" />
+      <workItem from="1781179432492" duration="3090000" />
     </task>
     <servers />
   </component>

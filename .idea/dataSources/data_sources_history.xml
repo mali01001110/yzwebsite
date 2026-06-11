@@ -8,7 +8,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
-      <remarks>C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
+      <remarks>C:/Users/mali01001110/PyCharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite::memory:</jdbc-url>
       <auth-provider>no-auth</auth-provider>
@@ -29,7 +29,7 @@
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <imported>true</imported>
-      <remarks>C:/Users/Yann_Z/PycharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
+      <remarks>C:/Users/mali01001110/PyCharmProjects/yzwebsiteproject/yzwebsiteproject/settings.py</remarks>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
       <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/db.sqlite3</jdbc-url>
       <auth-provider>no-auth</auth-provider>

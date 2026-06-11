@@ -10,10 +10,10 @@ function Certifications() {
   const certifications = [
     {
       image: cert1,
-      alt: 'Certificate Of Completion - Information Security Training Program',
-      title: 'Information Security',
-      issuer: 'CNFDI — 2024',
-      description: 'Certificate Of Completion - Information Security Training Program',
+      alt: 'Certificate Of Completion For CS50x',
+      title: 'CS50’s Introduction to Computer Science',
+      issuer: 'Harvard Online — 2026',
+      description: 'Certificate Of Completion For CS50x - I Took CS50x',
     },
     {
       image: cert2,

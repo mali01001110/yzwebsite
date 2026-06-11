@@ -3,7 +3,7 @@ function Skills() {
   const skillGroups = [
     {
       category: 'Programming Languages',
-      items: ['Python', 'JavaScript'],
+      items: ['Python', 'JavaScript', 'C'],
     },
     {
       category: 'Web Technologies',
@@ -11,7 +11,7 @@ function Skills() {
     },
     {
       category: 'Tools & Platforms',
-      items: ['Git', 'GitHub', 'Linux', 'Claude Code', 'Codex', 'PyCharm'],
+      items: ['Git', 'GitHub', 'Linux', 'Claude Code', 'Codex', 'GitHub Copilot', 'VS Code', 'PyCharm'],
     },
     {
       category: 'IT Support Skills',
