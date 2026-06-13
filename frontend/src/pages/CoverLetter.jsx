@@ -24,7 +24,7 @@ I have received a fairly complete training and i am indeed a trained computer sc
 
 I am skilled in computer programming and especially full-stack software development.
 
-In addition to my Baccalaureate +2 level in IT and proficiency computer science, i also hold an undergraduate degree In law with a good computer literacy in addition to being bilingual French/English.
+In addition to my Baccalaureate +2 level in IT and proficiency in computer science, i also hold an undergraduate degree In law with a good computer literacy in addition to being bilingual French/English.
 
 I am attaching my CV with a hyperlink to my LinkedIn profile for more details.
 I am able to help your company achieve its goals, so please consider my job application. Rest assured that I am competent, willing to work, and to help others.
