@@ -24,7 +24,7 @@ function SocialMediaProfiles() {
   ];
 
   return (
-    <section className="page">
+    <section id="social-media-profiles" className="page">
       <h1>Social Media Profiles</h1>
       <p>{intro}</p>
       <ul className="social-list">

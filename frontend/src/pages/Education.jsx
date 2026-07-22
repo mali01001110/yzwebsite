@@ -25,7 +25,7 @@ function Education() {
   ];
 
   return (
-    <section className="page">
+    <section id="education" className="page">
       <h1>Education</h1>
       <div className="card-list">
         {educationEntries.map((entry, idx) => (
@@ -36,7 +36,7 @@ function Education() {
               onClick={() => setActiveImage({ src: entry.image, alt: entry.alt })}
               aria-label={`View full image: ${entry.alt}`}
             >
-              <img src={entry.image} alt={entry.alt} className="card-image" />
+              <img src={entry.image} alt={entry.alt} className="card-image" loading="lazy" />
               <span className="image-hint">Click to view full image</span>
             </button>
             <h2>{entry.title}</h2>

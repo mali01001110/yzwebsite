@@ -24,7 +24,7 @@ function MyProjects() {
   ];
 
   return (
-    <section className="page">
+    <section id="my-projects" className="page">
       <h1>My Projects</h1>
       <p>{intro}</p>
       <ul className="social-list">

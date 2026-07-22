@@ -25,7 +25,7 @@ function Certifications() {
   ];
 
   return (
-    <section className="page">
+    <section id="certifications" className="page">
       <h1>Certifications</h1>
       <div className="card-list">
         {certifications.map((cert, idx) => (
@@ -36,7 +36,7 @@ function Certifications() {
               onClick={() => setActiveImage({ src: cert.image, alt: cert.alt })}
               aria-label={`View full image: ${cert.alt}`}
             >
-              <img src={cert.image} alt={cert.alt} className="card-image" />
+              <img src={cert.image} alt={cert.alt} className="card-image" loading="lazy" />
               <span className="image-hint">Click to view full image</span>
             </button>
             <h2>{cert.title}</h2>

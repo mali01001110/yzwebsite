@@ -1,4 +1,11 @@
-import { Link } from 'react-router-dom';
+import AboutMe from './AboutMe';
+import Resume from './Resume';
+import CoverLetter from './CoverLetter';
+import Education from './Education';
+import Certifications from './Certifications';
+import Skills from './Skills';
+import SocialMediaProfiles from './SocialMediaProfiles';
+import MyProjects from './MyProjects';
 
 function Home() {
   // ️ Replace the text below with your own short bio
@@ -6,31 +13,23 @@ function Home() {
     Hello, World! I'm Yann Zakpa, and i am passionate about computing with a strong background in IT support and software development web/desktop apps.
   `;
 
-  const buttons = [
-    { label: 'About Me', path: '/about-me' },
-    { label: 'Resume', path: '/resume' },
-    { label: 'Cover Letter', path: '/cover-letter' },
-    { label: 'Education', path: '/education' },
-    { label: 'Certifications', path: '/certifications' },
-    { label: 'Skills', path: '/skills' },
-    { label: 'Social Media Profiles', path: '/social-media-profiles' },
-    { label: 'My Projects', path: '/my-projects' },
-  ];
-
   return (
-    <section className="home">
+    <section id="home" className="home">
       <div className="hero hero-no-image">
         <h1>Welcome</h1>
         <p>{summary}</p>
       </div>
 
-      <nav className="button-grid">
-        {buttons.map(btn => (
-          <Link key={btn.path} to={btn.path} className="nav-button">
-            {btn.label}
-          </Link>
-        ))}
-      </nav>
+      <div className="spa-content">
+        <AboutMe />
+        <Resume />
+        <CoverLetter />
+        <Education />
+        <Certifications />
+        <Skills />
+        <SocialMediaProfiles />
+        <MyProjects />
+      </div>
     </section>
   );
 }

@@ -24,7 +24,7 @@ function Skills() {
   ];
 
   return (
-    <section className="page">
+    <section id="skills" className="page">
       <h1>Skills</h1>
       {skillGroups.map((group, idx) => (
         <div key={idx} className="skill-group">

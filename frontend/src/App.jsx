@@ -1,7 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
-import { Link } from 'react-router-dom';
 import AboutMe from './pages/AboutMe';
 import Resume from './pages/Resume';
 import CoverLetter from './pages/CoverLetter';

@@ -13,11 +13,17 @@
   --footer-text: #e5e7eb;                   /* texte du footer (clair) */
 }
 
+html { scroll-behavior: smooth; }
+
 /* Reset */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 /* Global body */
@@ -34,14 +40,34 @@ body {
   width: 100%;
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 /* ---------- Header ---------- */
 .header {
-  background: var(--header-bg);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  width: 100%;
+  background: rgba(37, 99, 235, 0.95);
   color: snow;
   padding: 1rem 2rem;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(12px);
+}
+
+.main-content {
+  flex: 1;
+  width: 100%;
+  margin: 0;
+  padding: 0 1.5rem 2rem;
+  color: var(--text-primary);
+}
+
+.page {
+  scroll-margin-top: 8rem;
 }
 
 .header-title {
@@ -51,15 +77,39 @@ body {
   font-weight: bold;
 }
 
-/* ---------- Main ---------- */
-.main-content {
-  flex: 1;
-  width: 100%;
-  margin: 0;
-  padding: 2rem 1.5rem;
-  color: var(--text-primary);
+/* Top navigation */
+.top-nav {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+  align-items: center;
 }
 
+.top-nav-link {
+  display: inline-block;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  background: transparent;
+  font-weight: 600;
+  transition: background 0.15s, transform 0.12s;
+}
+
+.top-nav-link:hover,
+.top-nav-link.active {
+  background: white !important;
+  color: var(--blue) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.top-nav-link:hover {
+  text-decoration: none;
+}
+
+/* ---------- Main ---------- */
 .back-button {
   display: inline-block;
   margin-bottom: 1.5rem;
@@ -73,6 +123,10 @@ body {
 }
 
 /* ---------- Home page ---------- */
+.home {
+  padding-top: 6rem;
+}
+
 .hero {
   display: flex;
   gap: 2rem;
@@ -127,6 +181,10 @@ body {
 }
 
 /* ---------- Standard page ---------- */
+.page {
+  scroll-margin-top: 6rem;
+}
+
 .page h1 {
   margin-bottom: 1.5rem;
   color: var(--text-primary);
@@ -192,6 +250,7 @@ body {
 /* ---------- Skills ---------- */
 .skill-group {
   margin-bottom: 1.5rem;
+  text-align: center;
 }
 
 .skill-list {
@@ -200,6 +259,7 @@ body {
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-top: 0.5rem;
+  justify-content: center;
 }
 
 .skill-item {

@@ -10,7 +10,7 @@ I am an IT person by vocation, and with that in mind, I am seeking a position th
   `;
 
   return (
-    <section className="page">
+    <section id="about-me" className="page">
       <h1>About Me</h1>
       <p>{aboutMeText}</p>
     </section>
