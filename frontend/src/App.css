@@ -13,17 +13,16 @@
   --footer-text: #e5e7eb;                   /* texte du footer (clair) */
 }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 7rem;
+}
 
 /* Reset */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-}
-
-html {
-  scroll-behavior: smooth;
 }
 
 /* Global body */
@@ -56,6 +55,16 @@ body {
   padding: 1rem 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-top {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 .main-content {
@@ -66,8 +75,8 @@ body {
   color: var(--text-primary);
 }
 
-.page {
-  scroll-margin-top: 8rem;
+.spa-content {
+  width: 100%;
 }
 
 .header-title {
@@ -84,6 +93,7 @@ body {
   margin-top: 0.75rem;
   flex-wrap: wrap;
   align-items: center;
+  justify-content: center;
 }
 
 .top-nav-link {
@@ -123,35 +133,66 @@ body {
 }
 
 /* ---------- Home page ---------- */
+.home,
+.page {
+  min-height: calc(100vh - 7rem);
+  padding: 6rem 1.5rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-margin-top: 7rem;
+  text-align: center;
+}
+
 .home {
-  padding-top: 6rem;
+  text-align: center;
+}
+
+/* Make all section (page) direct children constrained and centered like home */
+.page > * {
+  width: 100%;
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  text-align: center; /* center text inside each section child like the home section */
 }
 
 .hero {
   display: flex;
-  gap: 2rem;
+  flex-direction: column;
   align-items: center;
-  margin-bottom: 2.5rem;
-  flex-wrap: wrap;
+  justify-content: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
 }
 
-.profile-picture {
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid var(--accent);
+.hero.hero-no-image {
+  min-height: calc(100vh - 10rem);
 }
 
 .hero-text h1 {
   font-size: 2.2rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
   color: var(--text-primary);
 }
 
 .hero-text p {
-  max-width: 600px;
+  max-width: 800px;
+  font-size: 1.25rem;
+  line-height: 1.6;
   color: var(--text-muted);
+}
+
+.page h1 {
+  font-size: 2.2rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
 }
 
 /* Button grid */
@@ -196,7 +237,8 @@ body {
 }
 
 .page p {
-  margin-bottom: 1rem;
+  margin: 0 auto 1rem;
+  max-width: 800px;
   white-space: pre-line;
   color: var(--text-muted);
 }
@@ -209,6 +251,8 @@ body {
   font-family: 'Georgia', serif;
   white-space: pre-wrap;
   color: white;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
 .full-image {
@@ -223,6 +267,9 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
+  width: 100%;
+  max-width: 940px;
+  margin: 0 auto;
 }
 
 .card {
@@ -231,6 +278,25 @@ body {
   padding: 1.25rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   color: white;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Make the resume card match the card sizes used in the grid-based sections */
+#resume .card {
+  max-width: 320px; /* same approximate width as cards in education/certifications */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 1.25rem;
+}
+
+@media (max-width: 600px) {
+  #resume .card {
+    max-width: 220px;
+  }
 }
 
 .card-image {
@@ -239,6 +305,23 @@ body {
   object-fit: cover;
   border-radius: 6px;
   margin-bottom: 0.75rem;
+}
+
+/* Resume thumbnail: make it square and smaller to match other cards */
+#resume .card-image {
+  max-width: 240px; /* keep small */
+  width: 100%;
+  aspect-ratio: 1 / 1; /* force square */
+  height: auto; /* allow aspect-ratio to control height */
+  object-fit: cover;
+  border-radius: 6px;
+  margin: 0 auto 0.75rem; /* center inside card */
+}
+
+@media (max-width: 600px) {
+  #resume .card-image {
+    max-width: 180px;
+  }
 }
 
 .card h3 {
@@ -251,6 +334,8 @@ body {
 .skill-group {
   margin-bottom: 1.5rem;
   text-align: center;
+  width: 100%;
+  max-width: 900px;
 }
 
 .skill-list {
@@ -273,7 +358,9 @@ body {
 /* ---------- Social media profiles ---------- */
 .social-list {
   list-style: none;
-  margin-top: 1rem;
+  margin: 1rem auto 0;
+  max-width: 700px;
+  text-align: center;
 }
 
 .social-list li {
@@ -388,45 +475,72 @@ body {
 .lightbox-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.85);
+  background: rgba(0, 0, 0, 0.92);
   display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 2rem;
+  align-items: center; /* center vertically */
+  justify-content: center; /* center horizontally */
+  z-index: 1000000;
+  padding: 0; /* occupy the full viewport, no inner page padding */
   animation: fadeIn 0.2s ease-out;
+  overflow: auto; /* allow pinch/scroll on very tall images */
+  -webkit-overflow-scrolling: touch;
 }
 
 .lightbox-image {
-  max-width: 95vw;
-  max-height: 90vh;
+  max-width: 100vw;      /* allow full-bleed horizontally */
+  max-height: 100vh;     /* allow full-bleed vertically */
+  width: auto;
+  height: auto;
   object-fit: contain;
-  border-radius: 8px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  border-radius: 6px;    /* small radius if desired; change to 0 for true edge-to-edge */
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   cursor: default;
 }
+
+/* Larger variant used for the resume preview when requested */
+.lightbox-image--resume {
+  /* For resume images prefer edge-to-edge view but still constrain inside viewport for safety */
+  max-width: 100vw;
+  max-height: 100vh;
+  border-radius: 4px; /* optional */
+  margin: 0;
+}
+
 
 .lightbox-close {
   position: absolute;
   top: 1rem;
   right: 1.5rem;
-  background: rgba(255, 255, 255, 0.15);
+  /* darker translucent background for contrast against bright images */
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border: none;
-  font-size: 2.5rem;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
+  font-size: 1.6rem;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   line-height: 1;
-  transition: background 0.15s;
+  transition: background 0.12s, transform 0.12s;
+  z-index: 1000001; /* above the image */
 }
 
 .lightbox-close:hover {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.04);
+}
+
+.lightbox-close:focus-visible {
+  outline: 2px solid rgba(255,255,255,0.85);
+  outline-offset: 2px;
+}
+
+.lightbox-close:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.05);
 }
 
 @keyframes fadeIn {
