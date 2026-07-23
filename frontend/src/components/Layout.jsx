@@ -11,8 +11,8 @@ const navItems = [
   { label: 'Education', id: 'education' },
   { label: 'Certifications', id: 'certifications' },
   { label: 'Skills', id: 'skills' },
-  { label: 'Social Media Profiles', id: 'social-media-profiles' },
-  { label: 'My Projects', id: 'my-projects' },
+  { label: 'Social', id: 'social' },
+  { label: 'Projects', id: 'projects' },
 ];
 
 function Layout() {
@@ -120,8 +120,8 @@ function Layout() {
         'education',
         'certifications',
         'skills',
-        'social-media-profiles',
-        'my-projects',
+        'social',
+        'projects',
       ]);
       const bias = liftUpIds.has(id) ? 0.35 : 0.45; // smaller bias => content appears higher
 
