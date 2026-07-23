@@ -24,8 +24,8 @@ function SocialMediaProfiles() {
   ];
 
   return (
-    <section id="social-media-profiles" className="page">
-      <h1>Social Media Profiles</h1>
+    <section id="social" className="page">
+      <h1>Social</h1>
       <p>{intro}</p>
       <ul className="social-list">
         {profiles.map((profile, idx) => (

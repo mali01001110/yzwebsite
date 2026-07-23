@@ -24,8 +24,8 @@ function MyProjects() {
   ];
 
   return (
-    <section id="my-projects" className="page">
-      <h1>My Projects</h1>
+    <section id="projects" className="page">
+      <h1>Projects</h1>
       <p>{intro}</p>
       <ul className="social-list">
         {projects.map((project, idx) => (

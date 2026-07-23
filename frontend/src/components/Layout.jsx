@@ -11,8 +11,9 @@ const navItems = [
   { label: 'Education', id: 'education' },
   { label: 'Certifications', id: 'certifications' },
   { label: 'Skills', id: 'skills' },
-  { label: 'Social Media Profiles', id: 'social-media-profiles' },
-  { label: 'My Projects', id: 'my-projects' },
+  { label: 'Social', id: 'social' },
+  { label: 'Projects', id: 'projects' },
+  { label: 'Contact', id: 'contact' },
 ];
 
 function Layout() {
@@ -42,13 +43,6 @@ function Layout() {
 
   useEffect(() => {
     const sectionIds = navItems.map(item => item.id);
-    const sections = sectionIds
-      .map(id => document.getElementById(id))
-      .filter(Boolean);
-
-    if (!sections.length) {
-      return undefined;
-    }
 
     const observer = new IntersectionObserver(
       entries => {
@@ -67,10 +61,95 @@ function Layout() {
       }
     );
 
-    sections.forEach(section => observer.observe(section));
+    // Track observed IDs so we don't observe the same element multiple times
+    const observed = new Set();
 
-    return () => observer.disconnect();
+    function updateSections() {
+      const sections = sectionIds
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+      sections.forEach(section => {
+        if (!observed.has(section.id)) {
+          observer.observe(section);
+          observed.add(section.id);
+        }
+      });
+    }
+
+    // Initial attempt to observe any already-mounted sections
+    updateSections();
+
+    // Use a MutationObserver to detect when new section elements are mounted
+    // (React may mount child routes/elements after this effect runs).
+    const mo = new MutationObserver(() => {
+      updateSections();
+    });
+
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mo.disconnect();
+    };
   }, []);
+
+
+  // Navigation should not hide other sections. Keep all sections visible so the site behaves like a standard
+  // single-page site where content is reachable by normal scrolling (not by toggling visibility).
+  // The previous showOnlySection function was removed to allow natural scrolling between sections.
+
+  function handleNavClick(e, id) {
+    e.preventDefault();
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    // Do not hide other sections; just scroll to the requested section while keeping everything visible
+
+    const header = document.querySelector('.header');
+    const headerH = header ? header.getBoundingClientRect().height : 0;
+    const viewportH = window.innerHeight;
+    const availableH = Math.max(0, viewportH - headerH);
+
+    // If the whole section fits within the available area, center the whole section
+    const sectionH = section.offsetHeight;
+    if (sectionH <= availableH) {
+      // Apply a stronger upward bias for specific sections so the title/content sit higher
+      const liftUpIds = new Set([
+        'about-me',
+        'resume',
+        'cover-letter',
+        'education',
+        'certifications',
+        'skills',
+        'social',
+        'projects',
+      ]);
+      const bias = liftUpIds.has(id) ? 0.35 : 0.45; // smaller bias => content appears higher
+
+      const topOffset = Math.max(0, section.offsetTop - headerH - Math.round((availableH - sectionH) * bias));
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
+      setActiveSection(id);
+      return;
+    }
+
+    // Otherwise prefer the section's title when present so we can center the title visually
+    const title = section.querySelector('h1, h2, h3');
+    let titleTopDoc = section.offsetTop;
+    let titleH = 0;
+    if (title) {
+      const rect = title.getBoundingClientRect();
+      titleTopDoc = window.scrollY + rect.top;
+      titleH = rect.height || 0;
+    }
+
+    // Position the title a bit above strict center so it reads as visually centered (40% down)
+    const desiredTitleCenter = headerH + Math.round(availableH * 0.4);
+    const scrollTo = Math.max(0, titleTopDoc - desiredTitleCenter + Math.round(titleH / 2));
+
+    window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+    setActiveSection(id);
+  }
 
   return (
     <div className="layout" style={layoutStyle}>
@@ -86,6 +165,7 @@ function Layout() {
             <a
               key={item.id}
               href={`/#${item.id}`}
+              onClick={(e) => handleNavClick(e, item.id)}
               className={`top-nav-link ${activeSection === item.id ? 'active' : ''}`}
             >
               {item.label}
@@ -98,7 +178,7 @@ function Layout() {
         <Outlet />
       </main>
 
-      <footer className="footer" style={{ ...foregroundStyle, marginTop: '2rem' }}>
+      <footer className="footer" style={{ marginTop: '2rem' }}>
         <p>© {new Date().getFullYear()} — Smartone Metaware</p>
       </footer>
     </div>
