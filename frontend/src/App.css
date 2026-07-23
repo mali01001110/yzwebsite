@@ -135,8 +135,11 @@ body {
 /* ---------- Home page ---------- */
 .home,
 .page {
+  /* Make the page area the viewport height minus the fixed header so flex centering
+     can center content vertically. Remove the large top padding (which pushed
+     content down) and use a small internal padding so true centering works. */
   min-height: calc(100vh - 7rem);
-  padding: 6rem 1.5rem 3rem;
+  padding: 1rem 1.5rem; /* smaller padding so vertical centering is effective */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -144,6 +147,23 @@ body {
   width: 100%;
   scroll-snap-align: start;
   scroll-margin-top: 7rem;
+  text-align: center;
+}
+
+/* Ensure every section container vertically centers all of its content
+   (title, paragraphs, lists, etc), not just the heading. This targets the
+   actual <section> elements used across the site and does not change other
+   layout rules. */
+section.page,
+section.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 7rem);
+  padding: 1rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
   text-align: center;
 }
 
