@@ -13,6 +13,7 @@ const navItems = [
   { label: 'Skills', id: 'skills' },
   { label: 'Social', id: 'social' },
   { label: 'Projects', id: 'projects' },
+  { label: 'Contact', id: 'contact' },
 ];
 
 function Layout() {
@@ -92,6 +93,7 @@ function Layout() {
       mo.disconnect();
     };
   }, []);
+
 
   // Navigation should not hide other sections. Keep all sections visible so the site behaves like a standard
   // single-page site where content is reachable by normal scrolling (not by toggling visibility).
@@ -176,7 +178,7 @@ function Layout() {
         <Outlet />
       </main>
 
-      <footer className="footer" style={{ ...foregroundStyle, marginTop: '2rem' }}>
+      <footer className="footer" style={{ marginTop: '2rem' }}>
         <p>© {new Date().getFullYear()} — Smartone Metaware</p>
       </footer>
     </div>

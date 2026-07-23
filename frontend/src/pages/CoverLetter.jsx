@@ -2,22 +2,6 @@ function CoverLetter() {
   // ️ Replace this with your own cover letter text
   const coverLetterText = `Dear Hiring Manager,
 
-Abidjan, 06/11/2026
-YANN ZAKPA
-+225 0778704523
-yannzakpa@gmail.com ABIDJAN,CI
-
-
-
-
-
-To The Employer
-
-
-
-
-Subject: Job Application
-
 I have a year of experience in the field of commerce plus a professional certification in cybersecurity and also certified in computer science and python programming. 
 
 Therefore, i am hereby applying for a job in the field of software development.

@@ -11,11 +11,16 @@
   --accent: var(--blue);                    /* couleur accent / boutons */
   --card-bg: var(--blue);                   /* fond des cartes */
   --footer-text: #e5e7eb;                   /* texte du footer (clair) */
+ --footer-height: 3.5rem;                  /* reserved height for fixed footer */
 }
 
 html {
+  /* Enable smooth scrolling and snap behavior so clicking nav items brings a single
+     section into the viewport while preserving the site's single-page scrolling UX. */
+  --header-height: 7rem; /* matches the fixed header padding used elsewhere */
   scroll-behavior: smooth;
-  scroll-padding-top: 7rem;
+  scroll-padding-top: var(--header-height);
+  scroll-snap-type: y mandatory;
 }
 
 /* Reset */
@@ -71,7 +76,8 @@ body {
   flex: 1;
   width: 100%;
   margin: 0;
-  padding: 0 1.5rem 2rem;
+  /* leave space for the fixed footer so it doesn't cover page content */
+  padding: 0 1.5rem calc(var(--footer-height) + 1rem);
   color: var(--text-primary);
 }
 
@@ -167,6 +173,22 @@ section.home {
   text-align: center;
 }
 
+/* Ensure the About Me section specifically is perfectly centered within the viewport
+   (accounts for the fixed header height via the --header-height variable). This makes
+   horizontal and vertical centering explicit and robust across screen sizes. */
+#about-me {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - var(--header-height));
+  padding: 1rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+
 .home {
   text-align: center;
 }
@@ -180,6 +202,7 @@ section.home {
   box-sizing: border-box;
   text-align: center; /* center text inside each section child like the home section */
 }
+
 
 .hero {
   display: flex;
@@ -402,8 +425,18 @@ section.home {
   background: var(--header-bg);
   color: var(--footer-text);
   text-align: center;
-  padding: 1rem;
-  margin-top: 2rem;
+  /* make footer fixed so it stays visible at the bottom of the viewport */
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900; /* below header (1000) but above page content */
+  height: var(--footer-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
 }
 
 /* ---------- Home page without profile picture ---------- */
@@ -574,6 +607,11 @@ section.home {
 body * {
   color: var(--text-primary) !important;
   caret-color: var(--text-primary) !important;
+}
+
+/* Hide sections when a single section is being focused via the top navigation */
+.hidden-section {
+  display: none !important;
 }
 
 /* Also force placeholders and form text to remain readable */

@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
+﻿import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
-function ImageLightbox({ src, alt, onClose }) {
+function ImageLightbox({ src, alt, onClose, size = 'default' }) {
   // Close the lightbox when the user presses the Escape key
   useEffect(() => {
     const handleKey = (e) => {
@@ -8,15 +9,18 @@ function ImageLightbox({ src, alt, onClose }) {
     };
     document.addEventListener('keydown', handleKey);
     // Prevent the page behind from scrolling while the lightbox is open
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
 
     return () => {
       document.removeEventListener('keydown', handleKey);
-      document.body.style.overflow = '';
+      document.body.style.overflow = previousOverflow || '';
     };
   }, [onClose]);
 
-  return (
+  const imageClass = `lightbox-image${size === 'resume' ? ' lightbox-image--resume' : ''}`;
+
+  const lightbox = (
     <div
       className="lightbox-overlay"
       onClick={onClose}
@@ -35,11 +39,14 @@ function ImageLightbox({ src, alt, onClose }) {
       <img
         src={src}
         alt={alt}
-        className="lightbox-image"
+        className={imageClass}
         onClick={(e) => e.stopPropagation()}
       />
     </div>
   );
+
+  // Render the lightbox at the document body root so it sits above fixed headers and other stacking contexts
+  return createPortal(lightbox, document.body);
 }
 
 export default ImageLightbox;

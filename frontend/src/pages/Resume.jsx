@@ -31,6 +31,7 @@ function Resume() {
         <ImageLightbox
           src={activeImage.src}
           alt={activeImage.alt}
+          size="resume"
           onClose={() => setActiveImage(null)}
         />
       )}
