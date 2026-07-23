@@ -72,6 +72,62 @@ function Layout() {
     return () => observer.disconnect();
   }, []);
 
+  // Navigation should not hide other sections. Keep all sections visible so the site behaves like a standard
+  // single-page site where content is reachable by normal scrolling (not by toggling visibility).
+  // The previous showOnlySection function was removed to allow natural scrolling between sections.
+
+  function handleNavClick(e, id) {
+    e.preventDefault();
+    const section = document.getElementById(id);
+    if (!section) return;
+
+    // Do not hide other sections; just scroll to the requested section while keeping everything visible
+
+    const header = document.querySelector('.header');
+    const headerH = header ? header.getBoundingClientRect().height : 0;
+    const viewportH = window.innerHeight;
+    const availableH = Math.max(0, viewportH - headerH);
+
+    // If the whole section fits within the available area, center the whole section
+    const sectionH = section.offsetHeight;
+    if (sectionH <= availableH) {
+      // Apply a stronger upward bias for specific sections so the title/content sit higher
+      const liftUpIds = new Set([
+        'about-me',
+        'resume',
+        'cover-letter',
+        'education',
+        'certifications',
+        'skills',
+        'social-media-profiles',
+        'my-projects',
+      ]);
+      const bias = liftUpIds.has(id) ? 0.35 : 0.45; // smaller bias => content appears higher
+
+      const topOffset = Math.max(0, section.offsetTop - headerH - Math.round((availableH - sectionH) * bias));
+      window.scrollTo({ top: topOffset, behavior: 'smooth' });
+      setActiveSection(id);
+      return;
+    }
+
+    // Otherwise prefer the section's title when present so we can center the title visually
+    const title = section.querySelector('h1, h2, h3');
+    let titleTopDoc = section.offsetTop;
+    let titleH = 0;
+    if (title) {
+      const rect = title.getBoundingClientRect();
+      titleTopDoc = window.scrollY + rect.top;
+      titleH = rect.height || 0;
+    }
+
+    // Position the title a bit above strict center so it reads as visually centered (40% down)
+    const desiredTitleCenter = headerH + Math.round(availableH * 0.4);
+    const scrollTo = Math.max(0, titleTopDoc - desiredTitleCenter + Math.round(titleH / 2));
+
+    window.scrollTo({ top: scrollTo, behavior: 'smooth' });
+    setActiveSection(id);
+  }
+
   return (
     <div className="layout" style={layoutStyle}>
       <div className="layout-overlay" style={overlayStyle} aria-hidden="true" />
@@ -86,6 +142,7 @@ function Layout() {
             <a
               key={item.id}
               href={`/#${item.id}`}
+              onClick={(e) => handleNavClick(e, item.id)}
               className={`top-nav-link ${activeSection === item.id ? 'active' : ''}`}
             >
               {item.label}
