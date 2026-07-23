@@ -42,13 +42,6 @@ function Layout() {
 
   useEffect(() => {
     const sectionIds = navItems.map(item => item.id);
-    const sections = sectionIds
-      .map(id => document.getElementById(id))
-      .filter(Boolean);
-
-    if (!sections.length) {
-      return undefined;
-    }
 
     const observer = new IntersectionObserver(
       entries => {
@@ -67,9 +60,37 @@ function Layout() {
       }
     );
 
-    sections.forEach(section => observer.observe(section));
+    // Track observed IDs so we don't observe the same element multiple times
+    const observed = new Set();
 
-    return () => observer.disconnect();
+    function updateSections() {
+      const sections = sectionIds
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+      sections.forEach(section => {
+        if (!observed.has(section.id)) {
+          observer.observe(section);
+          observed.add(section.id);
+        }
+      });
+    }
+
+    // Initial attempt to observe any already-mounted sections
+    updateSections();
+
+    // Use a MutationObserver to detect when new section elements are mounted
+    // (React may mount child routes/elements after this effect runs).
+    const mo = new MutationObserver(() => {
+      updateSections();
+    });
+
+    mo.observe(document.body, { childList: true, subtree: true });
+
+    return () => {
+      observer.disconnect();
+      mo.disconnect();
+    };
   }, []);
 
   // Navigation should not hide other sections. Keep all sections visible so the site behaves like a standard
