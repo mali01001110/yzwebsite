@@ -15,7 +15,7 @@ function Contact() {
         </p>
 
         <p>
-          <strong>Gmail:</strong>{' '}
+          <strong>Gmail Address:</strong>{' '}
           <a href="mailto:yannzakpa@gmail.com">yannzakpa@gmail.com</a>
         </p>
       </div>
