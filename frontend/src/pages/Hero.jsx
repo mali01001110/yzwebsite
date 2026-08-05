@@ -8,7 +8,7 @@ const STATS = [
   { value: '03', label: 'Public repos' },
   { value: '02', label: 'Harvard CS50 certs' },
   { value: 'FR / EN', label: 'Bilingual' },
-  { value: 'Law Degree', label: 'Undergraduate (Bac +2)' },
+  { value: 'Law Degree', label: 'Bac +2' },
 ];
 
 const RISE = {
