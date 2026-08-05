@@ -1,0 +1,4 @@
+/* Application styling: shell layout, reusable HUD primitives, section themes. */
+@import './styles/layout.css';
+@import './styles/hud.css';
+@import './styles/sections.css';

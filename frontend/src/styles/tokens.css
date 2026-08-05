@@ -1,0 +1,75 @@
+/* ==========================================================================
+   Design tokens — Cyberpunk / Tech-Noir HUD
+   The structural palette is intentionally near-black. `--signal` is the only
+   derived hue: pure #001233 is invisible as a hairline on #000000, so a lifted
+   blue carries text, borders and focus states while the specified navies stay
+   responsible for fills and glows.
+   ========================================================================== */
+
+:root {
+  /* Core palette */
+  --color-void: #000000;
+  --color-navy: #001233;
+  --color-blue: #001d3d;
+  --color-text: #ffffff;
+  --color-text-muted: #a0a0a0;
+
+  /* Derived signal hue (legibility layer) */
+  --color-signal: #4d8dff;
+  --color-signal-dim: #2f5f9e;
+  --color-signal-soft: rgba(77, 141, 255, 0.14);
+
+  /* Surfaces */
+  --surface-panel: rgba(0, 18, 51, 0.28);
+  --surface-panel-solid: #00080f;
+  --surface-raised: rgba(0, 29, 61, 0.45);
+  --surface-glass: rgba(0, 4, 12, 0.72);
+
+  /* Hairlines — the spec border plus a lifted variant that survives on black */
+  --line: 1px solid rgba(0, 18, 51, 0.5);
+  --line-lit: 1px solid rgba(77, 141, 255, 0.22);
+  --line-strong: 1px solid rgba(77, 141, 255, 0.42);
+  --line-color-lit: rgba(77, 141, 255, 0.22);
+
+  /* Glows */
+  --glow-sm: 0 0 8px rgba(0, 18, 51, 0.9);
+  --glow-md: 0 0 15px #001233;
+  --glow-lg: 0 0 30px rgba(0, 29, 61, 0.85);
+  --glow-signal: 0 0 18px rgba(77, 141, 255, 0.28);
+  --glow-text: 0 0 12px rgba(77, 141, 255, 0.45);
+
+  /* Typography */
+  --font-display: 'Orbitron', 'Segoe UI', sans-serif;
+  --font-mono: 'Share Tech Mono', ui-monospace, Consolas, monospace;
+  --font-body: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+
+  --tracking-wide: 0.18em;
+  --tracking-mid: 0.08em;
+
+  /* Structure */
+  --header-height: 4.75rem;
+  --content-max: 1180px;
+  --radius-sharp: 0;
+
+  /* Motion */
+  --ease-hud: cubic-bezier(0.16, 1, 0.3, 1);
+  --speed-fast: 140ms;
+  --speed-mid: 280ms;
+  --speed-slow: 620ms;
+
+  /* Angular corner cut used by HUD panels and project cards */
+  --cut: 18px;
+
+  /* Layering */
+  --z-backdrop: 0;
+  --z-content: 1;
+  --z-header: 100;
+  --z-overlay: 1000;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --header-height: 4rem;
+    --cut: 12px;
+  }
+}

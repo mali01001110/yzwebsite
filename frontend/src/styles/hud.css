@@ -1,0 +1,303 @@
+/* ==========================================================================
+   HUD primitives — panels, brackets, buttons, meters, labels
+   Shared by every section so the interface reads as one instrument.
+   ========================================================================== */
+
+/* --- Panels ------------------------------------------------------------- */
+
+.hud-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: var(--surface-panel);
+  border: var(--line-lit);
+  padding: clamp(1.1rem, 3vw, 1.5rem);
+  backdrop-filter: blur(6px);
+  transition: border-color var(--speed-mid) var(--ease-hud),
+    box-shadow var(--speed-mid) var(--ease-hud),
+    transform var(--speed-mid) var(--ease-hud);
+}
+
+/* 45-degree corner cuts: top-right and bottom-left */
+.hud-panel--cut {
+  clip-path: polygon(
+    0 0,
+    calc(100% - var(--cut)) 0,
+    100% var(--cut),
+    100% 100%,
+    var(--cut) 100%,
+    0 calc(100% - var(--cut))
+  );
+}
+
+.hud-panel--glow {
+  box-shadow: var(--glow-md), inset 0 0 30px rgba(0, 18, 51, 0.55);
+}
+
+.hud-panel:hover {
+  border-color: rgba(77, 141, 255, 0.45);
+  box-shadow: var(--glow-md), var(--glow-signal);
+}
+
+/* Corner brackets drawn as two L-shaped pseudo elements */
+.hud-brackets::before,
+.hud-brackets::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--color-signal);
+  opacity: 0.55;
+  pointer-events: none;
+  transition: opacity var(--speed-mid) var(--ease-hud);
+}
+
+.hud-brackets::before {
+  top: -1px;
+  left: -1px;
+  border-top: 1px solid;
+  border-left: 1px solid;
+}
+
+.hud-brackets::after {
+  bottom: -1px;
+  right: -1px;
+  border-bottom: 1px solid;
+  border-right: 1px solid;
+}
+
+.hud-brackets:hover::before,
+.hud-brackets:hover::after {
+  opacity: 1;
+}
+
+/* --- Labels ------------------------------------------------------------- */
+
+.hud-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-signal);
+}
+
+.hud-label--muted {
+  color: var(--color-text-muted);
+}
+
+.hud-label::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+/* Blinking status dot for "live" indicators */
+.hud-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-signal);
+  box-shadow: 0 0 10px var(--color-signal);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.35;
+    transform: scale(0.8);
+  }
+}
+
+/* --- Buttons ------------------------------------------------------------ */
+
+.hud-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.85rem 1.9rem;
+  background: linear-gradient(180deg, rgba(0, 29, 61, 0.55), rgba(0, 18, 51, 0.35));
+  border: var(--line-strong);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  cursor: pointer;
+  overflow: hidden;
+  clip-path: polygon(
+    0 0,
+    calc(100% - 12px) 0,
+    100% 12px,
+    100% 100%,
+    12px 100%,
+    0 calc(100% - 12px)
+  );
+  transition: color var(--speed-fast) ease, box-shadow var(--speed-mid) var(--ease-hud),
+    background var(--speed-mid) var(--ease-hud), transform var(--speed-fast) var(--ease-hud);
+}
+
+/* Scanning light bar sweeping across the button surface */
+.hud-button::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 45%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(77, 141, 255, 0.28),
+    rgba(255, 255, 255, 0.12),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: scan-sweep 3.6s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.hud-button:hover {
+  background: linear-gradient(180deg, rgba(0, 29, 61, 0.9), rgba(0, 18, 51, 0.6));
+  box-shadow: var(--glow-md), var(--glow-signal);
+  transform: translateY(-2px);
+}
+
+.hud-button:active {
+  transform: translateY(0);
+}
+
+.hud-button--ghost {
+  background: transparent;
+  border: var(--line-lit);
+  color: var(--color-text-muted);
+}
+
+.hud-button--ghost:hover {
+  color: var(--color-text);
+}
+
+.hud-button--block {
+  width: 100%;
+}
+
+@keyframes scan-sweep {
+  0% {
+    left: -60%;
+  }
+  55%,
+  100% {
+    left: 130%;
+  }
+}
+
+/* --- Meters / loading bars --------------------------------------------- */
+
+.hud-meter {
+  position: relative;
+  height: 3px;
+  background: rgba(0, 29, 61, 0.9);
+  overflow: hidden;
+}
+
+.hud-meter__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: linear-gradient(90deg, var(--color-signal-dim), var(--color-signal));
+  box-shadow: 0 0 10px var(--color-signal);
+}
+
+/* Decorative indeterminate variant used on project cards */
+.hud-meter__fill--cycle {
+  width: 35%;
+  animation: meter-cycle 2.8s var(--ease-hud) infinite;
+}
+
+@keyframes meter-cycle {
+  0% {
+    left: -35%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* --- Tags --------------------------------------------------------------- */
+
+.hud-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.3rem 0.85rem;
+  background: var(--color-signal-soft);
+  border: var(--line-lit);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: var(--tracking-mid);
+  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+  transition: background var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+}
+
+.hud-tag:hover {
+  background: rgba(0, 29, 61, 0.9);
+  box-shadow: var(--glow-md);
+}
+
+/* --- Divider ------------------------------------------------------------ */
+
+.hud-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--line-color-lit) 20%,
+    rgba(77, 141, 255, 0.45) 50%,
+    var(--line-color-lit) 80%,
+    transparent
+  );
+}
+
+/* --- Fields ------------------------------------------------------------- */
+
+.hud-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  text-align: left;
+}
+
+.hud-field__input,
+.hud-field__textarea {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  background: rgba(0, 8, 20, 0.85);
+  border: var(--line-lit);
+  color: var(--color-text);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  transition: border-color var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+}
+
+.hud-field__textarea {
+  resize: vertical;
+  min-height: 8rem;
+}
+
+.hud-field__input:focus,
+.hud-field__textarea:focus {
+  outline: none;
+  border-color: var(--color-signal);
+  box-shadow: var(--glow-md), inset 0 0 12px rgba(0, 18, 51, 0.9);
+}

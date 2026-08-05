@@ -1,0 +1,3 @@
+/* Global foundation: design tokens and base element styling. */
+@import './styles/tokens.css';
+@import './styles/base.css';

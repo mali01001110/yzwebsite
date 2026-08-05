@@ -1,0 +1,218 @@
+/* ==========================================================================
+   Base — reset, typography, global background field
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--header-height) + 1.5rem);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  min-height: 100svh;
+  background: var(--color-void);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: var(--tracking-mid);
+  color: var(--color-text);
+  text-wrap: balance;
+}
+
+p {
+  color: var(--color-text-muted);
+}
+
+a {
+  color: var(--color-signal);
+  text-decoration: none;
+  transition: color var(--speed-fast) ease, text-shadow var(--speed-fast) ease;
+}
+
+a:hover {
+  color: var(--color-text);
+  text-shadow: var(--glow-text);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+::selection {
+  background: var(--color-signal);
+  color: var(--color-void);
+}
+
+::placeholder {
+  color: rgba(160, 160, 160, 0.55);
+  font-family: var(--font-mono);
+  letter-spacing: var(--tracking-mid);
+}
+
+:focus-visible {
+  outline: 1px solid var(--color-signal);
+  outline-offset: 3px;
+}
+
+/* Scrollbar rendered as a thin instrument rail */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-void);
+  border-left: var(--line);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-navy);
+  border: 1px solid rgba(77, 141, 255, 0.25);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-blue);
+}
+
+/* --------------------------------------------------------------------------
+   Global background field — grid, depth glow, scanlines, vignette
+   -------------------------------------------------------------------------- */
+
+.bg-fx {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.bg-fx__grid {
+  position: absolute;
+  inset: -50%;
+  background-image:
+    linear-gradient(rgba(0, 29, 61, 0.55) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 29, 61, 0.55) 1px, transparent 1px);
+  background-size: 64px 64px;
+  transform: perspective(600px) rotateX(0deg);
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, #000 0%, transparent 100%);
+  animation: grid-drift 24s linear infinite;
+}
+
+.bg-fx__glow {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(60rem 40rem at 50% 0%, rgba(0, 29, 61, 0.85), transparent 70%),
+    radial-gradient(40rem 40rem at 12% 65%, rgba(0, 18, 51, 0.75), transparent 72%),
+    radial-gradient(45rem 35rem at 88% 30%, rgba(0, 18, 51, 0.6), transparent 70%);
+}
+
+.bg-fx__scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(77, 141, 255, 0.035) 0px,
+    rgba(77, 141, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+}
+
+.bg-fx__sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22rem;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(77, 141, 255, 0.05) 45%,
+    rgba(77, 141, 255, 0.09) 50%,
+    transparent
+  );
+  animation: sweep-down 9s linear infinite;
+}
+
+.bg-fx__vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.85) 100%);
+}
+
+@keyframes grid-drift {
+  from {
+    background-position: 0 0, 0 0;
+  }
+  to {
+    background-position: 64px 64px, 64px 64px;
+  }
+}
+
+@keyframes sweep-down {
+  from {
+    top: -25rem;
+  }
+  to {
+    top: 105%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+
+  .bg-fx__sweep {
+    display: none;
+  }
+}
