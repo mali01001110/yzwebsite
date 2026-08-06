@@ -5,12 +5,12 @@ import process from 'node:process'
 const DJANGO_ORIGIN = 'http://127.0.0.1:8000'
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig(() => ({
   plugins: [react()],
 
-  // Django serves the compiled bundle out of /static/ via WhiteNoise, while the
-  // dev server serves it from the root.
-  base: mode === 'production' ? '/static/' : '/',
+  // Assets stay at the root so one build runs unchanged under the dev server,
+  // `vite preview`, and Django (which serves this directory via WHITENOISE_ROOT).
+  base: '/',
 
   server: {
     host: true, // equivalent to 0.0.0.0

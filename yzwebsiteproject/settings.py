@@ -174,9 +174,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# The Vite build lands here; collectstatic pulls its hashed assets into
-# STATIC_ROOT so WhiteNoise can serve them.
-STATICFILES_DIRS = [FRONTEND_DIST_DIR] if FRONTEND_DIST_DIR.is_dir() else []
+# The Vite build references its assets from the root ('/assets/...'), so the
+# bundle is served straight from its own directory rather than being collected
+# under STATIC_URL. That keeps the compiled output host-agnostic: the identical
+# files work behind Django, `vite preview`, or any plain static host.
+if FRONTEND_DIST_DIR.is_dir():
+    WHITENOISE_ROOT = FRONTEND_DIST_DIR
 
 STORAGES = {
     'default': {
