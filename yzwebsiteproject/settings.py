@@ -10,22 +10,65 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Compiled React bundle. Django serves it, so the site and the admin share one
+# origin and the API needs no CORS in production.
+FRONTEND_DIST_DIR = BASE_DIR / 'frontend' / 'dist'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-jd1_o4^l84!d!e=x9oep@*0joj%)&oct26w91%+$3&3g@iswv^'
+def get_env_flag(name, default):
+    return os.environ.get(name, default).strip().lower() in {'1', 'true', 'yes'}
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
+def get_env_list(name, default=''):
+    return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
+
+
+DEBUG = get_env_flag('DJANGO_DEBUG', 'True')
+
+# A missing secret must never silently fall back to a published value, so the
+# development key is only ever available while DEBUG is on.
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
+if not SECRET_KEY:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'DJANGO_SECRET_KEY must be set when DEBUG is disabled.'
+        )
+    SECRET_KEY = 'django-insecure-local-development-key-not-for-deployment'
+
+ALLOWED_HOSTS = get_env_list('DJANGO_ALLOWED_HOSTS')
+if DEBUG:
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1', '[::1]']
+
+# Render exposes the service's public hostname at runtime.
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+
+# Admin logins post across HTTPS, so the served origins must be trusted.
+CSRF_TRUSTED_ORIGINS = [f'https://{host}' for host in ALLOWED_HOSTS if '.' in host]
+
+if not DEBUG:
+    # Render terminates TLS upstream; without this Django believes it is on HTTP.
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    # Opt-out exists so a production-mode build can be smoke-tested over plain
+    # HTTP locally without every response turning into an HTTPS redirect.
+    SECURE_SSL_REDIRECT = get_env_flag('DJANGO_SECURE_SSL_REDIRECT', 'True')
+    SESSION_COOKIE_SECURE = SECURE_SSL_REDIRECT
+    CSRF_COOKIE_SECURE = SECURE_SSL_REDIRECT
+
+    # Deliberately one hour rather than a year: browsers honour HSTS for the
+    # full duration and refuse plain HTTP for the domain, so a short window
+    # keeps a misconfiguration recoverable. Raise it once HTTPS is proven.
+    SECURE_HSTS_SECONDS = int(os.environ.get('DJANGO_HSTS_SECONDS', '3600'))
 
 
 # Application definition
@@ -49,6 +92,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',  # Must be placed before CommonMiddleware
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Serves static files in production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -62,7 +106,9 @@ ROOT_URLCONF = 'yzwebsiteproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        # The built index.html is rendered as a template so the SPA can be
+        # returned from Django's own URL routing.
+        'DIRS': [BASE_DIR / 'templates', FRONTEND_DIST_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,11 +126,14 @@ WSGI_APPLICATION = 'yzwebsiteproject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+# Container filesystems are wiped on redeploy, so a deployed instance must be
+# pointed at a managed database via DATABASE_URL or it will lose every message.
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f'sqlite:///{BASE_DIR / "db.sqlite3"}',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 
@@ -122,7 +171,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# The Vite build lands here; collectstatic pulls its hashed assets into
+# STATIC_ROOT so WhiteNoise can serve them.
+STATICFILES_DIRS = [FRONTEND_DIST_DIR] if FRONTEND_DIST_DIR.is_dir() else []
+
+STORAGES = {
+    'default': {
+        'BACKEND': 'django.core.files.storage.FileSystemStorage',
+    },
+    'staticfiles': {
+        # Compressed, but deliberately not the manifest variant: manifest storage
+        # renames files, which would break the asset URLs already baked into the
+        # prebuilt index.html. Vite content-hashes its own filenames anyway.
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage',
+    },
+}
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field

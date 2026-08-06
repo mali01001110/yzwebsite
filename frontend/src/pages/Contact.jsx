@@ -5,7 +5,9 @@ import HudButton from '../components/HudButton';
 
 const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000';
+// Django serves this bundle, so the API is same-origin in production; the Vite
+// dev server proxies the same path to Django during development.
+const CONTACT_ENDPOINT = '/api/contact/';
 
 const CHANNELS = [
   {
@@ -77,7 +79,7 @@ function Contact() {
     setErrorMessage('');
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/contact/`, {
+      const response = await fetch(CONTACT_ENDPOINT, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

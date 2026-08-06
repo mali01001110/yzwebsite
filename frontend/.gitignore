@@ -8,7 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+# dist is intentionally tracked: Django serves the compiled bundle and Render's
+# Python build stage has no Node toolchain to produce it.
 dist-ssr
 *.local
 
