@@ -1,5 +1,8 @@
 import { BriefcaseBusiness, Users, Music2 } from 'lucide-react';
 import Section from '../components/Section';
+import HudWindow from '../components/HudWindow';
+import DataRow from '../components/DataRow';
+import StaggerGrid from '../components/StaggerGrid';
 
 const INTRO = `Find me online! Feel free to connect or follow me on any of the platforms listed below.`;
 
@@ -29,25 +32,25 @@ function SocialMediaProfiles() {
     <Section id="social" title="Social" subtitle="External channels // open links">
       <p className="prose">{INTRO}</p>
 
-      <div className="social-grid">
-        {PROFILES.map(({ name, url, description, Icon }) => (
-          <a
-            key={name}
-            href={url}
-            className="hud-panel hud-panel--cut hud-brackets social-card"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <span className="social-card__icon" aria-hidden="true">
-              <Icon size={18} strokeWidth={1.5} />
-            </span>
-            <span>
-              <span className="social-card__name">{name}</span>
-              <span className="social-card__description">{description}</span>
-            </span>
-          </a>
-        ))}
-      </div>
+      <HudWindow
+        title="CHANNELS.NET"
+        tag={`${String(PROFILES.length).padStart(2, '0')} LINKS`}
+      >
+        <StaggerGrid className="channels" threshold={0.05}>
+          {PROFILES.map(({ name, url, description, Icon }, index) => (
+            <DataRow
+              key={name}
+              index={String(index + 1).padStart(2, '0')}
+              Icon={Icon}
+              label={name}
+              meta={description}
+              actionLabel="OPEN"
+              glyph="↗"
+              href={url}
+            />
+          ))}
+        </StaggerGrid>
+      </HudWindow>
     </Section>
   );
 }

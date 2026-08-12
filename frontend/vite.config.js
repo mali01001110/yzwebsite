@@ -27,6 +27,9 @@ export default defineConfig(() => ({
     host: '0.0.0.0',
     // Use the PORT environment variable when available (Render sets $PORT)
     port: Number(process.env.PORT) || 4173,
-    proxy: { '/api': DJANGO_ORIGIN },
+    // Explicitly empty, not omitted: `preview.proxy` falls back to
+    // `server.proxy`, and a static host running `vite preview` in production
+    // cannot reach DJANGO_ORIGIN, so every proxied request would 502.
+    proxy: {},
   },
 }))

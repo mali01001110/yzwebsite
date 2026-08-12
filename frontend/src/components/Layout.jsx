@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Hexagon, Menu, X, BriefcaseBusiness, Users, GitBranch, Mail } from 'lucide-react';
+import { Menu, X, BriefcaseBusiness, Users, GitBranch, Mail } from 'lucide-react';
 import BackgroundFx from './BackgroundFx';
+import CursorReticle from './CursorReticle';
+import SystemRail from './SystemRail';
+import HudTicker from './HudTicker';
 import { NAV_ITEMS, SECTION_IDS } from '../data/navigation';
 import { useActiveSection } from '../hooks/useActiveSection';
 
@@ -20,9 +23,26 @@ const FOOTER_LINKS = [
   { href: 'mailto:yannzakpa@gmail.com', label: 'Email', Icon: Mail },
 ];
 
+const TICKER_ITEMS = [
+  'FULL-STACK DEVELOPER',
+  '///',
+  'IT TECHNICIAN',
+  '///',
+  'CS50X + CS50P CERTIFIED',
+  '///',
+  'PYTHON / JAVASCRIPT / C',
+  '///',
+  'DJANGO / REACT / POSTGRESQL',
+  '///',
+  'BLUE TEAM SPECIALIST',
+  '///',
+  'STATUS: OPEN TO OPPORTUNITIES',
+  '///',
+];
+
 function Layout() {
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const activeSection = useActiveSection(SECTION_IDS);
+  const [activeSection, setActiveSection] = useActiveSection(SECTION_IDS);
 
   useEffect(() => {
     if (!isNavOpen) return undefined;
@@ -38,13 +58,15 @@ function Layout() {
   return (
     <>
       <BackgroundFx />
+      <CursorReticle />
+      <SystemRail />
 
       <div className="layout">
         <header className="header">
           <div className="header__inner">
             <a href="#home" className="brand" onClick={() => setIsNavOpen(false)}>
               <span className="brand__mark" aria-hidden="true">
-                <Hexagon size={16} strokeWidth={1.5} />
+                YZ
               </span>
               <span className="brand__text">
                 <span className="brand__name">YANN ZAKPA</span>
@@ -74,7 +96,10 @@ function Layout() {
                   href={`#${item.id}`}
                   className={`nav__link ${activeSection === item.id ? 'is-active' : ''}`.trim()}
                   aria-current={activeSection === item.id ? 'true' : undefined}
-                  onClick={() => setIsNavOpen(false)}
+                  onClick={() => {
+                    setIsNavOpen(false);
+                    setActiveSection(item.id);
+                  }}
                 >
                   {item.label}
                 </a>
@@ -86,6 +111,10 @@ function Layout() {
         <main className="main-content">
           <Outlet />
         </main>
+
+        <div className="footer-ticker">
+          <HudTicker items={TICKER_ITEMS} />
+        </div>
 
         <footer className="footer">
           <div className="footer__inner">

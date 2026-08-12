@@ -1,12 +1,6 @@
-import { motion } from 'framer-motion';
+import Reveal from './Reveal';
+import ScrambleText from './ScrambleText';
 import { SECTION_IDS } from '../data/navigation';
-
-const REVEAL = {
-  initial: { opacity: 0, y: 28 },
-  whileInView: { opacity: 1, y: 0 },
-  viewport: { once: true, amount: 0.12 },
-  transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
-};
 
 /**
  * Standard section shell: scroll anchor, HUD heading block and a scroll-reveal
@@ -18,18 +12,21 @@ function Section({ id, title, subtitle, className = '', children }) {
   const index = String(position >= 0 ? position : 0).padStart(2, '0');
 
   return (
-    <motion.section id={id} className={`section ${className}`.trim()} {...REVEAL}>
+    <Reveal as="section" id={id} className={`section ${className}`.trim()}>
       <header className="section__head">
-        <span className="section__index">
-          sec.{index} // {title}
+        <span className="section__numeral" aria-hidden="true">
+          {index}
         </span>
-        <h2 className="section__title">{title}</h2>
+        <span className="section__index">
+          SEC.{index} :: {title}
+        </span>
+        <ScrambleText as="h2" className="section__title" text={title} />
         <div className="section__rule" />
         {subtitle && <p className="section__subtitle">{subtitle}</p>}
       </header>
 
       <div className="section__body">{children}</div>
-    </motion.section>
+    </Reveal>
   );
 }
 

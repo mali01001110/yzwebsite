@@ -1,14 +1,19 @@
 import { Code2, Globe, Wrench, ShieldCheck, Brain } from 'lucide-react';
 import Section from '../components/Section';
+import HudWindow from '../components/HudWindow';
+import DataRow from '../components/DataRow';
+import StaggerGrid from '../components/StaggerGrid';
 
 const SKILL_GROUPS = [
   {
     category: 'Programming Languages',
+    file: 'LANG.SYS',
     Icon: Code2,
     items: ['Python', 'JavaScript', 'C'],
   },
   {
     category: 'Web Technologies',
+    file: 'WEB.SYS',
     Icon: Globe,
     items: [
       'React',
@@ -22,6 +27,7 @@ const SKILL_GROUPS = [
   },
   {
     category: 'Tools & Platforms',
+    file: 'TOOLS.SYS',
     Icon: Wrench,
     items: [
       'Git',
@@ -36,6 +42,7 @@ const SKILL_GROUPS = [
   },
   {
     category: 'IT Support Skills',
+    file: 'SUPPORT.SYS',
     Icon: ShieldCheck,
     items: [
       'Computer Maintenance',
@@ -46,6 +53,7 @@ const SKILL_GROUPS = [
   },
   {
     category: 'Soft Skills',
+    file: 'HUMAN.SYS',
     Icon: Brain,
     items: ['Resilience', 'Critical thinking', 'Problem-solving', 'Solo work'],
   },
@@ -54,29 +62,33 @@ const SKILL_GROUPS = [
 function Skills() {
   return (
     <Section id="skills" title="Skills" subtitle="Capability matrix // modules loaded">
-      <div className="skills-grid">
-        {SKILL_GROUPS.map(({ category, Icon, items }) => (
-          <article key={category} className="hud-panel hud-panel--cut hud-brackets skill-card">
-            <header className="skill-card__head">
-              <span className="skill-card__hex" aria-hidden="true">
-                <Icon size={20} strokeWidth={1.5} />
+      <div className="skills">
+        {SKILL_GROUPS.map(({ category, file, Icon, items }) => (
+          <HudWindow
+            key={category}
+            title={file}
+            tag={`${String(items.length).padStart(2, '0')} MODULES`}
+            className="skills__unit"
+          >
+            <header className="skills__head">
+              <span className="skills__glyph" aria-hidden="true">
+                <Icon size={18} strokeWidth={1.5} />
               </span>
-              <div>
-                <h3 className="skill-card__title">{category}</h3>
-                <span className="skill-card__count">
-                  {String(items.length).padStart(2, '0')} entries
-                </span>
-              </div>
+              <h3 className="skills__title">{category}</h3>
             </header>
 
-            <ul className="skill-card__list">
-              {items.map((skill) => (
-                <li key={skill} className="hud-tag">
-                  {skill}
-                </li>
+            <StaggerGrid className="skills__rows" threshold={0.05}>
+              {items.map((skill, index) => (
+                <DataRow
+                  key={skill}
+                  index={String(index + 1).padStart(2, '0')}
+                  label={skill}
+                  actionLabel="LOADED"
+                  glyph="✓"
+                />
               ))}
-            </ul>
-          </article>
+            </StaggerGrid>
+          </HudWindow>
         ))}
       </div>
     </Section>

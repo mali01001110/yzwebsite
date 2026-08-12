@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Phone, MessageCircle, Mail, Send } from 'lucide-react';
 import Section from '../components/Section';
-import HudButton from '../components/HudButton';
+import HudWindow from '../components/HudWindow';
+import TickBar from '../components/TickBar';
 
 const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
 
@@ -107,83 +108,91 @@ function Contact() {
   return (
     <Section id="contact" title="Contact" subtitle="Open channel // transmit data packet">
       <div className="contact">
-        <div className="contact__channels">
-          {CHANNELS.map(({ label, value, href, Icon }) => (
-            <a
-              key={label}
-              href={href}
-              className="contact__channel"
-              {...(href.startsWith('http')
-                ? { target: '_blank', rel: 'noopener noreferrer' }
-                : {})}
-            >
-              <Icon size={20} strokeWidth={1.5} className="contact__channel-icon" />
-              <span>
-                <span className="contact__channel-label">{label}</span>
-                <span className="contact__channel-value">{value}</span>
-              </span>
-            </a>
-          ))}
-        </div>
-
-        <form className="hud-panel hud-panel--cut hud-brackets contact__form" onSubmit={handleSubmit}>
-          <span className="hud-label">New transmission</span>
-
-          <div className="contact__form-row">
-            <label className="hud-field">
-              <span className="hud-label hud-label--muted">Name</span>
-              <input
-                className="hud-field__input"
-                type="text"
-                required
-                maxLength={FIELD_LIMITS.name}
-                value={form.name}
-                onChange={updateField('name')}
-                disabled={isSending}
-                placeholder="Your name"
-              />
-            </label>
-
-            <label className="hud-field">
-              <span className="hud-label hud-label--muted">Email</span>
-              <input
-                className="hud-field__input"
-                type="email"
-                required
-                maxLength={FIELD_LIMITS.email}
-                value={form.email}
-                onChange={updateField('email')}
-                disabled={isSending}
-                placeholder="you@domain.com"
-              />
-            </label>
+        <HudWindow title="CHANNELS.SYS" tag="DIRECT" className="contact__channels-window">
+          <div className="channel-options">
+            {CHANNELS.map(({ label, value, href, Icon }) => (
+              <a
+                key={label}
+                className="channel-option"
+                href={href}
+                {...(href.startsWith('http')
+                  ? { target: '_blank', rel: 'noopener noreferrer' }
+                  : {})}
+              >
+                <span className="channel-option__body">
+                  <span className="channel-option__label">&gt; {label}</span>
+                  <span className="channel-option__value">{value}</span>
+                </span>
+                <span className="channel-option__box" aria-hidden="true">
+                  <Icon size={22} strokeWidth={1.5} />
+                </span>
+              </a>
+            ))}
           </div>
 
-          <label className="hud-field">
-            <span className="hud-label hud-label--muted">Message</span>
-            <textarea
-              className="hud-field__textarea"
-              required
-              maxLength={FIELD_LIMITS.message}
-              value={form.message}
-              onChange={updateField('message')}
-              disabled={isSending}
-              placeholder="Type your message…"
-            />
-          </label>
+          <TickBar value={100} label="Channels open" showValue={false} />
+        </HudWindow>
 
-          <HudButton type="submit" block disabled={isSending}>
-            <Send size={15} aria-hidden="true" />
-            {isSending ? 'Transmitting…' : 'Transmit data packet'}
-          </HudButton>
+        <HudWindow title="TRANSMIT.EXE" tag="SECURE" className="contact__form-window">
+          <form className="transmit" onSubmit={handleSubmit}>
+            <div className="transmit__row">
+              <label className="hud-field">
+                <span className="hud-label hud-label--muted">Name</span>
+                <input
+                  className="hud-field__input"
+                  type="text"
+                  required
+                  maxLength={FIELD_LIMITS.name}
+                  value={form.name}
+                  onChange={updateField('name')}
+                  disabled={isSending}
+                  placeholder="Your name"
+                />
+              </label>
 
-          <p className="contact__form-note" role="status" aria-live="polite">
-            {status === 'success' && 'Transmission received. I will get back to you shortly.'}
-            {status === 'error' && errorMessage}
-            {(status === 'idle' || isSending) &&
-              'Your message is delivered straight to my inbox.'}
-          </p>
-        </form>
+              <label className="hud-field">
+                <span className="hud-label hud-label--muted">Email</span>
+                <input
+                  className="hud-field__input"
+                  type="email"
+                  required
+                  maxLength={FIELD_LIMITS.email}
+                  value={form.email}
+                  onChange={updateField('email')}
+                  disabled={isSending}
+                  placeholder="you@domain.com"
+                />
+              </label>
+            </div>
+
+            <label className="hud-field">
+              <span className="hud-label hud-label--muted">Message</span>
+              <textarea
+                className="hud-field__textarea"
+                required
+                maxLength={FIELD_LIMITS.message}
+                value={form.message}
+                onChange={updateField('message')}
+                disabled={isSending}
+                placeholder="Type your message…"
+              />
+            </label>
+
+            <p className="transmit__prompt">Initiate transmission?</p>
+
+            <button type="submit" className="execute-button" disabled={isSending}>
+              <Send size={18} aria-hidden="true" />
+              {isSending ? '> TRANSMITTING…' : '> EXECUTE'}
+            </button>
+
+            <p className="transmit__note" role="status" aria-live="polite">
+              {status === 'success' && 'Transmission received. I will get back to you shortly.'}
+              {status === 'error' && errorMessage}
+              {(status === 'idle' || isSending) &&
+                'Your message is delivered straight to my inbox.'}
+            </p>
+          </form>
+        </HudWindow>
       </div>
     </Section>
   );

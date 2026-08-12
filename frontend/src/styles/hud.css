@@ -1,303 +1,765 @@
 /* ==========================================================================
-   HUD primitives — panels, brackets, buttons, meters, labels
-   Shared by every section so the interface reads as one instrument.
+   HUD kit — windows, records, readouts, controls, gauges, alerts
    ========================================================================== */
 
-/* --- Panels ------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Application window chrome
+   -------------------------------------------------------------------------- */
 
-.hud-panel {
+.hud-window {
   position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  background: var(--surface-panel);
-  border: var(--line-lit);
-  padding: clamp(1.1rem, 3vw, 1.5rem);
-  backdrop-filter: blur(6px);
-  transition: border-color var(--speed-mid) var(--ease-hud),
-    box-shadow var(--speed-mid) var(--ease-hud),
-    transform var(--speed-mid) var(--ease-hud);
+  border: 1px solid var(--color-blood);
+  background: rgba(2, 0, 0, 0.72);
+  box-shadow: inset 0 0 60px rgba(139, 0, 0, 0.16);
 }
 
-/* 45-degree corner cuts: top-right and bottom-left */
-.hud-panel--cut {
-  clip-path: polygon(
-    0 0,
-    calc(100% - var(--cut)) 0,
-    100% var(--cut),
-    100% 100%,
-    var(--cut) 100%,
-    0 calc(100% - var(--cut))
+.hud-window__bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem 0.875rem;
+  background: rgba(139, 0, 0, 0.32);
+  border-bottom: 1px solid var(--color-blood);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+}
+
+.hud-window__title {
+  flex: 1;
+  min-width: 0;
+  color: var(--color-white);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hud-window__tag {
+  color: var(--color-red);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.hud-window__glyphs {
+  display: flex;
+  gap: 0.75rem;
+  color: var(--color-red);
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.hud-window__body {
+  padding: 1.25rem 1.125rem;
+}
+
+@media (max-width: 520px) {
+  .hud-window__tag {
+    display: none;
+  }
+
+  .hud-window__body {
+    padding: 1rem 0.75rem;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Data row — the reference "LIMITS FOUND" record
+   -------------------------------------------------------------------------- */
+
+.data-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.75rem 0.875rem;
+  border: 1px solid rgba(139, 0, 0, 0.55);
+  background: rgba(139, 0, 0, 0.06);
+  transition: background-color var(--speed-fast) linear, border-color var(--speed-fast) linear;
+}
+
+.data-row--link:hover {
+  background: rgba(139, 0, 0, 0.3);
+  border-color: var(--color-red);
+  text-shadow: none;
+}
+
+.data-row__index {
+  flex-shrink: 0;
+  color: var(--text-dim);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-mid);
+}
+
+.data-row__icon {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  border: 1px solid var(--color-blood);
+  background: rgba(139, 0, 0, 0.18);
+  color: var(--color-red);
+}
+
+.data-row__main {
+  flex: 1;
+  min-width: 0;
+}
+
+.data-row__label {
+  display: block;
+  color: var(--color-white);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+.data-row__meta {
+  display: block;
+  margin-top: 0.125rem;
+  color: var(--text-muted);
+  font-size: 0.6875rem;
+}
+
+.data-row__action {
+  flex-shrink: 0;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+}
+
+.data-row__glyph {
+  flex-shrink: 0;
+  width: 1.25rem;
+  color: var(--color-red);
+  font-size: 1rem;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .data-row__action {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Log box
+   -------------------------------------------------------------------------- */
+
+.log-box__label {
+  display: block;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.875rem;
+  border-bottom: 1px dashed rgba(255, 43, 43, 0.4);
+  color: var(--text-log);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+}
+
+.log-box__lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.log-box__line {
+  display: flex;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+  line-height: 1.75;
+}
+
+.log-box__num {
+  flex-shrink: 0;
+  color: rgba(255, 43, 43, 0.45);
+  font-size: 0.6875rem;
+}
+
+.log-box__text::before {
+  content: '> ';
+  color: var(--color-red);
+}
+
+/* --------------------------------------------------------------------------
+   Information panel
+   -------------------------------------------------------------------------- */
+
+.info-panel {
+  border: 1px solid var(--color-blood);
+  background: rgba(2, 0, 0, 0.8);
+}
+
+.info-panel__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.375rem 0.625rem;
+  border-bottom: 1px solid var(--color-blood);
+  color: var(--color-white);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+}
+
+.info-panel__glyphs {
+  display: flex;
+  gap: 0.5rem;
+  color: var(--color-red);
+}
+
+.info-panel__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.875rem 0.75rem;
+}
+
+.info-panel__key {
+  color: var(--text-dim);
+  font-size: 0.5625rem;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+}
+
+.info-panel__value {
+  margin-top: 0.1875rem;
+  color: var(--color-white);
+  font-size: 0.8125rem;
+}
+
+.info-panel__hatch {
+  height: 18px;
+  margin: 0 0.75rem 0.75rem;
+  border: 1px solid rgba(139, 0, 0, 0.5);
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(139, 0, 0, 0.65) 0 4px,
+    transparent 4px 8px
   );
 }
 
-.hud-panel--glow {
-  box-shadow: var(--glow-md), inset 0 0 30px rgba(0, 18, 51, 0.55);
+/* --------------------------------------------------------------------------
+   Tick meter
+   -------------------------------------------------------------------------- */
+
+.tick-bar__label {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.375rem;
+  color: var(--text-dim);
+  font-size: 0.5625rem;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
 }
 
-.hud-panel:hover {
-  border-color: rgba(77, 141, 255, 0.45);
-  box-shadow: var(--glow-md), var(--glow-signal);
-}
-
-/* Corner brackets drawn as two L-shaped pseudo elements */
-.hud-brackets::before,
-.hud-brackets::after {
-  content: '';
-  position: absolute;
-  width: 14px;
+.tick-bar__track {
   height: 14px;
-  border-color: var(--color-signal);
-  opacity: 0.55;
-  pointer-events: none;
-  transition: opacity var(--speed-mid) var(--ease-hud);
+  border: 1px solid rgba(139, 0, 0, 0.5);
+  background-image: repeating-linear-gradient(
+    90deg,
+    rgba(139, 0, 0, 0.55) 0 2px,
+    transparent 2px 5px
+  );
+  overflow: hidden;
 }
 
-.hud-brackets::before {
-  top: -1px;
-  left: -1px;
-  border-top: 1px solid;
-  border-left: 1px solid;
+.tick-bar__fill {
+  height: 100%;
+  background-image: repeating-linear-gradient(90deg, var(--color-red) 0 2px, transparent 2px 5px);
+  box-shadow: var(--glow-red-sm);
+  transition: width 900ms var(--ease-hud);
 }
 
-.hud-brackets::after {
-  bottom: -1px;
-  right: -1px;
-  border-bottom: 1px solid;
-  border-right: 1px solid;
-}
-
-.hud-brackets:hover::before,
-.hud-brackets:hover::after {
-  opacity: 1;
-}
-
-/* --- Labels ------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Labels and status
+   -------------------------------------------------------------------------- */
 
 .hud-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
+  display: inline-block;
+  margin-bottom: 0.875rem;
+  color: var(--text-log);
+  font-size: 0.6875rem;
+  font-weight: 500;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
-  color: var(--color-signal);
-}
-
-.hud-label--muted {
-  color: var(--color-text-muted);
 }
 
 .hud-label::before {
-  content: '';
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  box-shadow: 0 0 8px currentColor;
-  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  content: '// ';
+  opacity: 0.6;
 }
 
-/* Blinking status dot for "live" indicators */
+.hud-label--muted {
+  color: var(--text-dim);
+  margin-bottom: 0.5rem;
+}
+
 .hud-status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--color-signal);
-  box-shadow: 0 0 10px var(--color-signal);
-  animation: pulse-dot 2s ease-in-out infinite;
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  background: var(--color-red);
+  box-shadow: var(--glow-red-sm);
+  animation: pulse-dot 1.6s steps(2) infinite;
 }
 
 @keyframes pulse-dot {
   0%,
-  100% {
+  60% {
     opacity: 1;
-    transform: scale(1);
   }
-  50% {
-    opacity: 0.35;
-    transform: scale(0.8);
+  61%,
+  100% {
+    opacity: 0.15;
   }
 }
 
-/* --- Buttons ------------------------------------------------------------ */
+.hazard-bar {
+  height: 10px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    var(--color-blood) 0 6px,
+    transparent 6px 12px
+  );
+  border-top: var(--line-faint);
+  border-bottom: var(--line-faint);
+}
+
+.hazard-bar--tight {
+  height: 6px;
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(255, 43, 43, 0.7) 0 4px,
+    transparent 4px 8px
+  );
+  border: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Controls
+   -------------------------------------------------------------------------- */
 
 .hud-button {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.65rem;
-  padding: 0.85rem 1.9rem;
-  background: linear-gradient(180deg, rgba(0, 29, 61, 0.55), rgba(0, 18, 51, 0.35));
-  border: var(--line-strong);
-  color: var(--color-text);
+  gap: 0.625rem;
+  padding: 0.8125rem 1.5rem;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid var(--color-blood);
+  color: var(--color-red);
   font-family: var(--font-mono);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
+  font-weight: 700;
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   cursor: pointer;
-  overflow: hidden;
-  clip-path: polygon(
-    0 0,
-    calc(100% - 12px) 0,
-    100% 12px,
-    100% 100%,
-    12px 100%,
-    0 calc(100% - 12px)
-  );
-  transition: color var(--speed-fast) ease, box-shadow var(--speed-mid) var(--ease-hud),
-    background var(--speed-mid) var(--ease-hud), transform var(--speed-fast) var(--ease-hud);
+  transition:
+    color var(--speed-fast) linear,
+    border-color var(--speed-fast) linear,
+    background-color var(--speed-fast) linear,
+    box-shadow var(--speed-mid) var(--ease-hud);
 }
 
-/* Scanning light bar sweeping across the button surface */
+.hud-button::before {
+  content: '>';
+  color: inherit;
+  opacity: 0.7;
+}
+
 .hud-button::after {
   content: '';
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 45%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(77, 141, 255, 0.28),
-    rgba(255, 255, 255, 0.12),
-    transparent
-  );
-  transform: skewX(-20deg);
-  animation: scan-sweep 3.6s ease-in-out infinite;
-  pointer-events: none;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 40%, rgba(255, 43, 43, 0.35) 50%, transparent 60%);
+  transform: translateX(-110%);
+  transition: transform var(--speed-slow) var(--ease-hud);
 }
 
 .hud-button:hover {
-  background: linear-gradient(180deg, rgba(0, 29, 61, 0.9), rgba(0, 18, 51, 0.6));
-  box-shadow: var(--glow-md), var(--glow-signal);
-  transform: translateY(-2px);
+  color: var(--color-white);
+  background-color: rgba(139, 0, 0, 0.32);
+  border-color: var(--color-red);
+  box-shadow: var(--glow-red-md), inset 0 0 20px rgba(139, 0, 0, 0.4);
 }
 
-.hud-button:active {
-  transform: translateY(0);
+.hud-button:hover::after {
+  transform: translateX(110%);
+}
+
+.hud-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  box-shadow: none;
 }
 
 .hud-button--ghost {
-  background: transparent;
-  border: var(--line-lit);
-  color: var(--color-text-muted);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: var(--color-white);
 }
 
 .hud-button--ghost:hover {
-  color: var(--color-text);
+  border-color: var(--color-white);
+  background-color: rgba(255, 255, 255, 0.06);
+  box-shadow: var(--glow-white);
 }
 
 .hud-button--block {
   width: 100%;
 }
 
-@keyframes scan-sweep {
-  0% {
-    left: -60%;
-  }
-  55%,
-  100% {
-    left: 130%;
-  }
-}
-
-/* --- Meters / loading bars --------------------------------------------- */
-
-.hud-meter {
-  position: relative;
-  height: 3px;
-  background: rgba(0, 29, 61, 0.9);
-  overflow: hidden;
-}
-
-.hud-meter__fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  background: linear-gradient(90deg, var(--color-signal-dim), var(--color-signal));
-  box-shadow: 0 0 10px var(--color-signal);
-}
-
-/* Decorative indeterminate variant used on project cards */
-.hud-meter__fill--cycle {
-  width: 35%;
-  animation: meter-cycle 2.8s var(--ease-hud) infinite;
-}
-
-@keyframes meter-cycle {
-  0% {
-    left: -35%;
-  }
-  100% {
-    left: 100%;
-  }
-}
-
-/* --- Tags --------------------------------------------------------------- */
-
-.hud-tag {
-  display: inline-flex;
+/* The poster's oversized primary action */
+.execute-button {
+  display: flex;
   align-items: center;
-  padding: 0.3rem 0.85rem;
-  background: var(--color-signal-soft);
-  border: var(--line-lit);
-  color: var(--color-text);
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 1rem;
+  background: transparent;
+  border: 1px solid var(--color-red);
+  color: var(--color-red);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 1rem;
+  font-weight: 700;
   letter-spacing: var(--tracking-mid);
-  clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
-  transition: background var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: inset 0 0 30px rgba(139, 0, 0, 0.3);
+  transition:
+    color var(--speed-fast) linear,
+    background-color var(--speed-fast) linear,
+    box-shadow var(--speed-mid) var(--ease-hud);
 }
 
-.hud-tag:hover {
-  background: rgba(0, 29, 61, 0.9);
-  box-shadow: var(--glow-md);
+.execute-button:hover:not(:disabled) {
+  background: rgba(139, 0, 0, 0.4);
+  color: var(--color-white);
+  box-shadow: var(--glow-red-md), inset 0 0 40px rgba(139, 0, 0, 0.5);
 }
 
-/* --- Divider ------------------------------------------------------------ */
-
-.hud-divider {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--line-color-lit) 20%,
-    rgba(77, 141, 255, 0.45) 50%,
-    var(--line-color-lit) 80%,
-    transparent
-  );
+.execute-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
-/* --- Fields ------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   Form fields
+   -------------------------------------------------------------------------- */
 
 .hud-field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  text-align: left;
+  display: block;
+  width: 100%;
 }
 
 .hud-field__input,
 .hud-field__textarea {
   width: 100%;
-  padding: 0.8rem 1rem;
-  background: rgba(0, 8, 20, 0.85);
-  border: var(--line-lit);
-  color: var(--color-text);
+  padding: 0.75rem 0.875rem;
+  background: rgba(139, 0, 0, 0.08);
+  border: var(--line-blood);
+  color: var(--color-white);
   font-family: var(--font-mono);
-  font-size: 0.9rem;
-  transition: border-color var(--speed-fast) ease, box-shadow var(--speed-fast) ease;
+  font-size: 0.875rem;
+  letter-spacing: var(--tracking-tight);
+  transition: border-color var(--speed-fast) linear, box-shadow var(--speed-mid) var(--ease-hud);
 }
 
 .hud-field__textarea {
+  min-height: 9.5rem;
   resize: vertical;
-  min-height: 8rem;
 }
 
 .hud-field__input:focus,
 .hud-field__textarea:focus {
   outline: none;
-  border-color: var(--color-signal);
-  box-shadow: var(--glow-md), inset 0 0 12px rgba(0, 18, 51, 0.9);
+  border-color: var(--color-red);
+  box-shadow: var(--glow-red-md), inset 0 0 18px rgba(139, 0, 0, 0.35);
+}
+
+.hud-field__input:disabled,
+.hud-field__textarea:disabled {
+  opacity: 0.5;
+}
+
+/* --------------------------------------------------------------------------
+   Meters and gauges
+   -------------------------------------------------------------------------- */
+
+.hud-meter {
+  position: relative;
+  height: 8px;
+  background: rgba(139, 0, 0, 0.18);
+  border: var(--line-faint);
+  overflow: hidden;
+}
+
+.hud-meter__fill {
+  height: 100%;
+  background-image: repeating-linear-gradient(90deg, var(--color-red) 0 3px, transparent 3px 5px);
+  box-shadow: var(--glow-red-sm);
+}
+
+.hud-gauge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hud-gauge__dial {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.hud-gauge__svg {
+  display: block;
+  transform: rotate(-90deg);
+  filter: drop-shadow(0 0 6px rgba(255, 43, 43, 0.45));
+}
+
+.hud-gauge__track {
+  fill: none;
+  stroke: rgba(139, 0, 0, 0.55);
+  stroke-width: 3;
+}
+
+.hud-gauge__arc {
+  fill: none;
+  stroke: var(--color-red);
+  stroke-width: 3;
+  stroke-linecap: butt;
+  transition: stroke-dashoffset 1.4s var(--ease-hud);
+}
+
+.hud-gauge__ticks {
+  fill: none;
+  stroke: rgba(255, 43, 43, 0.35);
+  stroke-width: 8;
+  stroke-dasharray: 1 7;
+}
+
+.hud-gauge__value {
+  position: absolute;
+  color: var(--color-white);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-tight);
+}
+
+.hud-gauge__label {
+  color: var(--text-dim);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* --------------------------------------------------------------------------
+   System alert
+   -------------------------------------------------------------------------- */
+
+.hud-alert {
+  border: 1px solid var(--color-red);
+  background: rgba(139, 0, 0, 0.14);
+  box-shadow: inset 0 0 40px rgba(139, 0, 0, 0.35);
+}
+
+.hud-alert__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.375rem 0.75rem;
+  background: var(--color-blood);
+  color: var(--color-white);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.hud-alert__glyphs {
+  display: flex;
+  gap: 0.625rem;
+  opacity: 0.8;
+  font-size: 0.75rem;
+  line-height: 1;
+}
+
+.hud-alert__body {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 0.875rem;
+}
+
+.hud-alert__icon {
+  flex-shrink: 0;
+  color: var(--color-red);
+  filter: drop-shadow(0 0 8px rgba(255, 43, 43, 0.6));
+  animation: alert-blink 2.2s steps(2) infinite;
+}
+
+@keyframes alert-blink {
+  0%,
+  70% {
+    opacity: 1;
+  }
+  71%,
+  100% {
+    opacity: 0.35;
+  }
+}
+
+.hud-alert__title {
+  color: var(--color-red);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+}
+
+.hud-alert__text {
+  margin-top: 0.25rem;
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+/* --------------------------------------------------------------------------
+   Countdown
+   -------------------------------------------------------------------------- */
+
+.hud-countdown__label {
+  color: var(--text-dim);
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.hud-countdown__value {
+  margin: 0.25rem 0 0.5rem;
+  color: var(--color-red);
+  font-size: clamp(1.75rem, 5vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  text-shadow: var(--glow-text);
+}
+
+/* --------------------------------------------------------------------------
+   Ticker strip
+   -------------------------------------------------------------------------- */
+
+.hud-ticker {
+  overflow: hidden;
+  border-top: var(--line-blood);
+  border-bottom: var(--line-blood);
+  background: rgba(139, 0, 0, 0.1);
+}
+
+.hud-ticker__track {
+  display: flex;
+  width: max-content;
+  gap: 3rem;
+  padding: 0.4375rem 0;
+  color: var(--text-log);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  white-space: nowrap;
+  animation: ticker-scroll 32s linear infinite;
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Glitch title
+   -------------------------------------------------------------------------- */
+
+.glitch {
+  position: relative;
+  color: var(--color-white);
+  text-shadow: var(--glow-white);
+}
+
+.glitch::before,
+.glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.glitch::before {
+  color: var(--color-red);
+  clip-path: inset(12% 0 58% 0);
+  animation: glitch-shift-a 3.4s steps(2) infinite;
+}
+
+.glitch::after {
+  color: var(--color-blood);
+  clip-path: inset(62% 0 8% 0);
+  animation: glitch-shift-b 2.6s steps(2) infinite;
+}
+
+@keyframes glitch-shift-a {
+  0%,
+  92% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  93% {
+    transform: translate(-4px, 1px);
+    opacity: 1;
+  }
+  96% {
+    transform: translate(3px, -1px);
+    opacity: 1;
+  }
+  97%,
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-shift-b {
+  0%,
+  90% {
+    transform: translate(0);
+    opacity: 0;
+  }
+  91% {
+    transform: translate(4px, -2px);
+    opacity: 1;
+  }
+  95% {
+    transform: translate(-3px, 2px);
+    opacity: 1;
+  }
+  96%,
+  100% {
+    transform: translate(0);
+    opacity: 0;
+  }
 }

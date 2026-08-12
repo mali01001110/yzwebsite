@@ -1,64 +1,80 @@
 /* ==========================================================================
-   Design tokens — Cyberpunk / Tech-Noir HUD
-   The structural palette is intentionally near-black. `--signal` is the only
-   derived hue: pure #001233 is invisible as a hairline on #000000, so a lifted
-   blue carries text, borders and focus states while the specified navies stay
-   responsible for fills and glows.
+   SYS.OVERRIDE_V.02 — Design tokens (Sanguine Protocol)
+   --------------------------------------------------------------------------
+   Palette contract: pure black canvas, blood red HUD, stark white headers.
+
+   `--color-blood` (#8B0000) is the *structural* tone — panel frames, fills,
+   glows and scanline tint. It measures ~1.6:1 against #000000, so it can never
+   carry text or a hairline that must stay readable. `--color-red` is the
+   derived signal hue used for logs, labels, active borders and gauges; it is
+   the same red the reference HUDs burn onto black. White is reserved for
+   headers, nav and critical alerts so titles pop against the void.
    ========================================================================== */
 
 :root {
   /* Core palette */
   --color-void: #000000;
-  --color-navy: #001233;
-  --color-blue: #001d3d;
-  --color-text: #ffffff;
-  --color-text-muted: #a0a0a0;
+  --color-blood: #8b0000;
+  --color-white: #ffffff;
 
-  /* Derived signal hue (legibility layer) */
-  --color-signal: #4d8dff;
-  --color-signal-dim: #2f5f9e;
-  --color-signal-soft: rgba(77, 141, 255, 0.14);
+  /* Derived signal reds (legibility layer) */
+  --color-red: #ff2b2b;
+  --color-red-hot: #ff5c5c;
+  --color-red-deep: #4a0000;
+
+  /* Text roles */
+  --text-primary: #ffffff;
+  --text-log: #ff2b2b;
+  --text-muted: rgba(255, 255, 255, 0.58);
+  --text-dim: rgba(255, 43, 43, 0.62);
 
   /* Surfaces */
-  --surface-panel: rgba(0, 18, 51, 0.28);
-  --surface-panel-solid: #00080f;
-  --surface-raised: rgba(0, 29, 61, 0.45);
-  --surface-glass: rgba(0, 4, 12, 0.72);
+  --surface-panel: rgba(139, 0, 0, 0.07);
+  --surface-raised: rgba(139, 0, 0, 0.14);
+  --surface-solid: #070000;
+  --surface-glass: rgba(3, 0, 0, 0.88);
+  --surface-alert: rgba(139, 0, 0, 0.22);
 
-  /* Hairlines — the spec border plus a lifted variant that survives on black */
-  --line: 1px solid rgba(0, 18, 51, 0.5);
-  --line-lit: 1px solid rgba(77, 141, 255, 0.22);
-  --line-strong: 1px solid rgba(77, 141, 255, 0.42);
-  --line-color-lit: rgba(77, 141, 255, 0.22);
+  /* Hairlines */
+  --line-blood: 1px solid rgba(139, 0, 0, 0.9);
+  --line-red: 1px solid rgba(255, 43, 43, 0.5);
+  --line-faint: 1px solid rgba(255, 43, 43, 0.16);
+  --line-white: 1px solid rgba(255, 255, 255, 0.22);
+  --line-color-red: rgba(255, 43, 43, 0.5);
+  --line-color-faint: rgba(255, 43, 43, 0.16);
 
   /* Glows */
-  --glow-sm: 0 0 8px rgba(0, 18, 51, 0.9);
-  --glow-md: 0 0 15px #001233;
-  --glow-lg: 0 0 30px rgba(0, 29, 61, 0.85);
-  --glow-signal: 0 0 18px rgba(77, 141, 255, 0.28);
-  --glow-text: 0 0 12px rgba(77, 141, 255, 0.45);
+  --glow-red-sm: 0 0 6px rgba(255, 43, 43, 0.5);
+  --glow-red-md: 0 0 18px rgba(255, 43, 43, 0.32);
+  --glow-blood: 0 0 34px rgba(139, 0, 0, 0.8);
+  --glow-text: 0 0 10px rgba(255, 43, 43, 0.55);
+  --glow-white: 0 0 20px rgba(255, 255, 255, 0.22);
 
-  /* Typography */
-  --font-display: 'Orbitron', 'Segoe UI', sans-serif;
-  --font-mono: 'Share Tech Mono', ui-monospace, Consolas, monospace;
-  --font-body: 'Rajdhani', 'Segoe UI', system-ui, sans-serif;
+  /* Typography — monospace only, terminal/IDE feel */
+  --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --font-display: var(--font-mono);
+  --font-body: var(--font-mono);
 
-  --tracking-wide: 0.18em;
-  --tracking-mid: 0.08em;
+  --tracking-wide: 0.26em;
+  --tracking-mid: 0.1em;
+  --tracking-tight: 0.02em;
 
-  /* Structure */
-  --header-height: 4.75rem;
-  --content-max: 1180px;
+  /* Ghost section numeral — shared by the hero and every section head so the
+     two can never drift out of step */
+  --numeral-size: clamp(3.5rem, 11vw, 8rem);
+
+  /* Structure — zero radius is a hard rule of the protocol */
   --radius-sharp: 0;
+  --rail-height: 1.75rem;
+  --header-height: 4.25rem;
+  --content-max: 1200px;
+  --notch: 14px;
 
   /* Motion */
   --ease-hud: cubic-bezier(0.16, 1, 0.3, 1);
-  --speed-fast: 140ms;
-  --speed-mid: 280ms;
-  --speed-slow: 620ms;
-
-  /* Angular corner cut used by HUD panels and project cards */
-  --cut: 18px;
+  --speed-fast: 120ms;
+  --speed-mid: 260ms;
+  --speed-slow: 600ms;
 
   /* Layering */
   --z-backdrop: 0;
@@ -69,7 +85,9 @@
 
 @media (max-width: 900px) {
   :root {
-    --header-height: 4rem;
-    --cut: 12px;
+    --header-height: 3.75rem;
+    --rail-height: 1.5rem;
+    --notch: 10px;
+    --tracking-wide: 0.18em;
   }
 }

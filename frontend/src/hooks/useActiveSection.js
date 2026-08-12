@@ -15,6 +15,10 @@ const BOTTOM_TOLERANCE_PX = 2;
  * which is independent of section height — comparing how much of each section
  * is visible would let a short section outscore a tall one such as the
  * full-viewport hero, and would skip sections shorter than the measuring band.
+ *
+ * Returns `[activeSection, setActiveSection]`. The setter lets a nav click
+ * claim the highlight immediately instead of waiting on a smooth scroll to
+ * finish; the next scroll measurement converges on the same section.
  */
 export function useActiveSection(sectionIds) {
   const [activeSection, setActiveSection] = useState(sectionIds[0]);
@@ -61,13 +65,17 @@ export function useActiveSection(sectionIds) {
     resolveActiveSection();
     window.addEventListener('scroll', scheduleResolve, { passive: true });
     window.addEventListener('resize', scheduleResolve);
+    // Late-arriving web fonts and images shift every section's offset. Without
+    // this the highlight stays wrong until the visitor happens to scroll again.
+    window.addEventListener('load', scheduleResolve);
 
     return () => {
       if (frameId !== null) window.cancelAnimationFrame(frameId);
       window.removeEventListener('scroll', scheduleResolve);
       window.removeEventListener('resize', scheduleResolve);
+      window.removeEventListener('load', scheduleResolve);
     };
   }, [sectionIds]);
 
-  return activeSection;
+  return [activeSection, setActiveSection];
 }
