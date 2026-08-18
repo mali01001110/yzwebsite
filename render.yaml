@@ -1,13 +1,18 @@
 databases:
+  # A free Postgres instance expires 30 days after creation and is deleted
+  # permanently 14 days later, taking every contact message and visitor record
+  # with it. `plan` is set explicitly so that fate is a decision rather than a
+  # default.
   - name: yzwebsite-db
     databaseName: yzwebsite
     user: yzwebsite
+    plan: basic-256mb
 
 services:
   - type: web
     name: yzwebsite
     runtime: python
-    plan: free
+    plan: starter
     buildCommand: "./build.sh"
     startCommand: "gunicorn yzwebsiteproject.wsgi:application"
     envVars:
@@ -21,5 +26,11 @@ services:
         fromDatabase:
           name: yzwebsite-db
           property: connectionString
+      # Cloudflare proxies the domain in front of Render's own load balancer,
+      # so two hops of X-Forwarded-For are written by trusted infrastructure.
+      # Lowering this records the proxy's address instead of the visitor's;
+      # raising it lets a visitor forge the address that gets logged.
+      - key: DJANGO_TRUSTED_PROXY_COUNT
+        value: "2"
       - key: PYTHON_VERSION
         value: "3.13.4"
