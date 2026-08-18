@@ -20,6 +20,10 @@ services:
     plan: starter
     region: oregon  # Must match the database's region above.
     buildCommand: "./build.sh"
+    # Runs after the build and before the new instance starts, unlike the build
+    # step it can reach the database. A failed migration then fails the deploy
+    # rather than the build, leaving the last good build intact.
+    preDeployCommand: "python manage.py migrate"
     startCommand: "gunicorn yzwebsiteproject.wsgi:application"
     envVars:
       - key: DJANGO_DEBUG
