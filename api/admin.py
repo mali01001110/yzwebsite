@@ -1,9 +1,50 @@
 from django.contrib import admin
 from django.utils.text import Truncator
 
-from .models import ContactMessage
+from .models import ContactMessage, Visitor
 
 MESSAGE_PREVIEW_LENGTH = 90
+USER_AGENT_PREVIEW_LENGTH = 60
+
+
+@admin.register(Visitor)
+class VisitorAdmin(admin.ModelAdmin):
+    """
+    Read-only list of the IP addresses that have loaded the site.
+
+    Rows are written by VisitorTrackingMiddleware, so nothing here is editable:
+    a hand-edited address would misrepresent the traffic record. Deletion stays
+    available because an IP address is personal data and may have to be erased
+    on request.
+    """
+
+    list_display = (
+        'ip_address',
+        'is_public',
+        'visit_count',
+        'last_seen',
+        'first_seen',
+        'last_path',
+        'user_agent_preview',
+    )
+    list_filter = ('is_public', 'last_seen')
+    search_fields = ('ip_address', 'last_path', 'last_user_agent')
+    date_hierarchy = 'last_seen'
+    ordering = ('-last_seen',)
+
+    @admin.display(description='User agent')
+    def user_agent_preview(self, visitor):
+        return Truncator(visitor.last_user_agent).chars(USER_AGENT_PREVIEW_LENGTH)
+
+    def get_readonly_fields(self, request, obj=None):
+        return [field.name for field in self.model._meta.fields]
+
+    def has_add_permission(self, request):
+        """Visitors are observed, never entered by hand."""
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
 
 
 @admin.register(ContactMessage)

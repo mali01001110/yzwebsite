@@ -99,7 +99,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Last so it only records requests that made it through every other layer.
+    'api.middleware.VisitorTrackingMiddleware',
 ]
+
+# How many reverse proxies sit in front of Django, which fixes how much of
+# X-Forwarded-For was written by our own infrastructure rather than by the
+# visitor. Render terminates TLS at one proxy hop; running the dev server
+# locally there is none, and REMOTE_ADDR is already the true peer. Setting this
+# higher than the real hop count lets a visitor forge their recorded address.
+TRUSTED_PROXY_COUNT = int(
+    os.environ.get('DJANGO_TRUSTED_PROXY_COUNT', '0' if DEBUG else '1')
+)
 
 ROOT_URLCONF = 'yzwebsiteproject.urls'
 
