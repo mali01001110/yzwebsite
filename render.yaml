@@ -7,12 +7,14 @@ databases:
     databaseName: yzwebsite
     user: yzwebsite
     plan: basic-256mb
-    # `region` is deliberately not set here. Render fixes a resource's region at
-    # creation and rejects any later change, so declaring it on an existing
-    # resource fails the blueprint sync outright. The database and the web
-    # service must still live in the same region — Render's internal hostname
-    # (dpg-...-a) only resolves within one — but that has to be arranged when
-    # the resource is created, not through this file.
+    # Must equal the web service's region. Render's private hostname
+    # (dpg-...-a) resolves only within a single region, so a mismatch fails
+    # `migrate` with an unresolvable host rather than a connection error.
+    #
+    # Region is fixed at creation and Render rejects any later change, so this
+    # line only takes effect while the database does not yet exist. If it ever
+    # needs to move again, the database has to be deleted first.
+    region: ohio
 
 services:
   - type: web
