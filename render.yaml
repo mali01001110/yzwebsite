@@ -7,12 +7,18 @@ databases:
     databaseName: yzwebsite
     user: yzwebsite
     plan: basic-256mb
+    # Must match the web service's region below. Render's internal database
+    # hostname (dpg-...-a) only resolves within a single region, so a mismatch
+    # fails the build at `migrate` with an unresolvable-host error rather than
+    # a connection error.
+    region: oregon
 
 services:
   - type: web
     name: yzwebsite
     runtime: python
     plan: starter
+    region: oregon  # Must match the database's region above.
     buildCommand: "./build.sh"
     startCommand: "gunicorn yzwebsiteproject.wsgi:application"
     envVars:
