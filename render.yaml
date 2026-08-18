@@ -7,18 +7,18 @@ databases:
     databaseName: yzwebsite
     user: yzwebsite
     plan: basic-256mb
-    # Must match the web service's region below. Render's internal database
-    # hostname (dpg-...-a) only resolves within a single region, so a mismatch
-    # fails the build at `migrate` with an unresolvable-host error rather than
-    # a connection error.
-    region: oregon
+    # `region` is deliberately not set here. Render fixes a resource's region at
+    # creation and rejects any later change, so declaring it on an existing
+    # resource fails the blueprint sync outright. The database and the web
+    # service must still live in the same region — Render's internal hostname
+    # (dpg-...-a) only resolves within one — but that has to be arranged when
+    # the resource is created, not through this file.
 
 services:
   - type: web
     name: yzwebsite
     runtime: python
     plan: starter
-    region: oregon  # Must match the database's region above.
     buildCommand: "./build.sh"
     # Runs after the build and before the new instance starts, unlike the build
     # step it can reach the database. A failed migration then fails the deploy
