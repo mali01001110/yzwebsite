@@ -1,0 +1,250 @@
+{% extends "admin/base_site.html" %}
+{% load i18n %}
+
+{#
+  Charts are hand-drawn as inline SVG rather than loaded from Chart.js.
+
+  A CDN <script> in the Django admin is a supply-chain path straight to the
+  session cookie of the only account on this site, and vendoring 200 KB of
+  charting library to draw one line and four bar lists is disproportionate.
+  The drawing code below is ~80 lines and has no dependencies.
+
+  The shell renders server-side with the headline numbers already filled in;
+  the charts fetch their data from the JSON view afterwards, so the page paints
+  before the heavier aggregate queries land.
+#}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .an-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 12px; margin-bottom: 20px; }
+  .an-card { background: var(--darkened-bg, #f8f8f8); border: 1px solid var(--hairline-color, #e0e0e0); border-radius: 6px; padding: 14px 16px; }
+  .an-card h3 { margin: 0 0 8px; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--body-quiet-color, #666); font-weight: 600; }
+  .an-metric { font-size: 26px; font-weight: 600; line-height: 1.1; color: var(--body-fg, #333); }
+  .an-sub { font-size: 12px; color: var(--body-quiet-color, #666); margin-top: 4px; }
+  .an-live .an-metric { color: #2e7d32; }
+  .an-panels { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 12px; }
+  .an-panel { background: var(--darkened-bg, #f8f8f8); border: 1px solid var(--hairline-color, #e0e0e0); border-radius: 6px; padding: 14px 16px; overflow-x: auto; }
+  .an-panel h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--body-quiet-color, #666); }
+  .an-panel table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .an-panel th, .an-panel td { text-align: left; padding: 5px 8px 5px 0; border-bottom: 1px solid var(--hairline-color, #eee); }
+  .an-panel td.num, .an-panel th.num { text-align: right; }
+  .an-bar { display: block; height: 3px; background: #79aec8; border-radius: 2px; margin-top: 3px; }
+  .an-empty { color: var(--body-quiet-color, #888); font-style: italic; font-size: 13px; padding: 6px 0; }
+  .an-ranges { margin-bottom: 16px; }
+  .an-ranges a { margin-right: 10px; font-size: 13px; }
+  .an-ranges a.active { font-weight: 700; text-decoration: none; }
+  .an-chart { width: 100%; height: 220px; display: block; }
+  .an-chart .grid { stroke: var(--hairline-color, #e0e0e0); stroke-width: 1; }
+  .an-chart .axis { fill: var(--body-quiet-color, #888); font-size: 10px; }
+  .an-wide { grid-column: 1 / -1; }
+</style>
+{% endblock %}
+
+{% block breadcrumbs %}
+<div class="breadcrumbs">
+  <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+  &rsaquo; <a href="{% url 'admin:app_list' app_label='analytics' %}">Analytics</a>
+  &rsaquo; Dashboard
+</div>
+{% endblock %}
+
+{% block content %}
+<h1>Visitor analytics</h1>
+
+<p class="an-ranges">
+  {% for option in range_options %}
+    <a href="?days={{ option }}" {% if option == days %}class="active"{% endif %}>Last {{ option }} days</a>
+  {% endfor %}
+  <span class="an-sub">{{ start }} to {{ end }}</span>
+</p>
+
+<div class="an-grid">
+  <div class="an-card an-live">
+    <h3>Active now</h3>
+    <div class="an-metric" id="an-live">{{ live_count }}</div>
+    <div class="an-sub">visitors in the last {{ live_window }} minutes</div>
+  </div>
+  <div class="an-card">
+    <h3>Pageviews</h3>
+    <div class="an-metric">{{ summary.pageviews }}</div>
+    <div class="an-sub">{{ summary.pages_per_session }} per session</div>
+  </div>
+  <div class="an-card">
+    <h3>Visitor-days</h3>
+    <div class="an-metric">{{ summary.visitor_days }}</div>
+    <div class="an-sub">daily uniques, summed across the period</div>
+  </div>
+  <div class="an-card">
+    <h3>Sessions</h3>
+    <div class="an-metric">{{ summary.sessions }}</div>
+    <div class="an-sub">{{ summary.bounce_rate }}% bounced</div>
+  </div>
+  <div class="an-card">
+    <h3>Avg engaged time</h3>
+    <div class="an-metric">{{ summary.avg_engaged_seconds }}s</div>
+    <div class="an-sub">visible and interacted-with, per session</div>
+  </div>
+</div>
+
+<div class="an-panels">
+  <div class="an-panel an-wide">
+    <h2>Traffic over time</h2>
+    <svg class="an-chart" id="an-series" role="img" aria-label="Pageviews, visitors and sessions over time"></svg>
+    <div class="an-sub" id="an-series-legend"></div>
+  </div>
+
+  <div class="an-panel"><h2>Top sections &amp; pages</h2><div id="an-paths"></div></div>
+  <div class="an-panel"><h2>Channels</h2><div id="an-channels"></div></div>
+  <div class="an-panel"><h2>Countries</h2><div id="an-countries"></div></div>
+  <div class="an-panel"><h2>Devices</h2><div id="an-devices"></div></div>
+  <div class="an-panel"><h2>Referrers</h2><div id="an-referrers"></div></div>
+  <div class="an-panel"><h2>Core Web Vitals (p75)</h2><div id="an-vitals"></div></div>
+  <div class="an-panel"><h2>Zero-result searches</h2><div id="an-searches"></div></div>
+  <div class="an-panel"><h2>Broken inbound links (404s)</h2><div id="an-notfound"></div></div>
+  <div class="an-panel"><h2>Security events</h2><div id="an-security"></div></div>
+  <div class="an-panel"><h2>Humans vs bots</h2><div id="an-bots"></div></div>
+</div>
+
+<script id="an-config" type="application/json">{"url": "{{ data_url|escapejs }}", "days": {{ days }}}</script>
+<script>
+(function () {
+  'use strict';
+
+  var config = JSON.parse(document.getElementById('an-config').textContent);
+
+  fetch(config.url + '?days=' + config.days, { credentials: 'same-origin' })
+    .then(function (response) { return response.json(); })
+    .then(render)
+    .catch(function () {
+      document.getElementById('an-series-legend').textContent = 'Could not load chart data.';
+    });
+
+  function render(data) {
+    document.getElementById('an-live').textContent = data.live;
+    drawSeries(data.series);
+
+    table('an-paths', data.top_paths, 'value', 'pageviews', 'Path', 'Views');
+    table('an-channels', data.channels, 'value', 'sessions', 'Channel', 'Sessions');
+    table('an-countries', data.countries, 'value', 'sessions', 'Country', 'Sessions');
+    table('an-devices', data.devices, 'value', 'sessions', 'Device', 'Sessions');
+    table('an-referrers', data.referrers, 'referrer_host', 'sessions', 'Host', 'Sessions');
+    table('an-vitals', data.web_vitals, 'metric', 'p75', 'Metric', 'p75');
+    table('an-searches', data.zero_result_searches, 'normalized_query', 'searches', 'Query', 'Times');
+    table('an-notfound', data.not_found, 'path', 'hits', 'Path', 'Hits');
+    table('an-security', data.security, 'kind', 'count', 'Kind', 'Count');
+    table('an-bots', [
+      { label: 'Humans', n: data.bots.humans },
+      { label: 'Bots', n: data.bots.bots }
+    ], 'label', 'n', 'Type', 'Sessions');
+  }
+
+  /** Renders a ranked list with a proportional bar under each label. */
+  function table(elementId, rows, labelKey, valueKey, labelHead, valueHead) {
+    var host = document.getElementById(elementId);
+    if (!host) return;
+
+    if (!rows || !rows.length) {
+      host.innerHTML = '<p class="an-empty">No data for this period.</p>';
+      return;
+    }
+
+    var max = rows.reduce(function (best, row) {
+      return Math.max(best, Number(row[valueKey]) || 0);
+    }, 0) || 1;
+
+    var html = '<table><thead><tr><th>' + escapeHtml(labelHead) +
+      '</th><th class="num">' + escapeHtml(valueHead) + '</th></tr></thead><tbody>';
+
+    rows.forEach(function (row) {
+      var value = Number(row[valueKey]) || 0;
+      var width = Math.max(1, Math.round((value / max) * 100));
+      html += '<tr><td>' + escapeHtml(String(row[labelKey] || '(none)')) +
+        '<span class="an-bar" style="width:' + width + '%"></span></td>' +
+        '<td class="num">' + escapeHtml(String(row[valueKey])) + '</td></tr>';
+    });
+
+    host.innerHTML = html + '</tbody></table>';
+  }
+
+  /** Draws three overlaid line series as inline SVG. */
+  function drawSeries(series) {
+    var svg = document.getElementById('an-series');
+    if (!series || !series.length) {
+      document.getElementById('an-series-legend').textContent = 'No data for this period.';
+      return;
+    }
+
+    var width = svg.clientWidth || 800;
+    var height = 220;
+    var pad = { top: 12, right: 12, bottom: 22, left: 40 };
+    var plotWidth = width - pad.left - pad.right;
+    var plotHeight = height - pad.top - pad.bottom;
+
+    var metrics = [
+      { key: 'pageviews', colour: '#417690', label: 'Pageviews' },
+      { key: 'visitors', colour: '#79aec8', label: 'Visitors' },
+      { key: 'sessions', colour: '#8bc34a', label: 'Sessions' }
+    ];
+
+    var max = 1;
+    series.forEach(function (point) {
+      metrics.forEach(function (metric) { max = Math.max(max, point[metric.key]); });
+    });
+    max = niceCeiling(max);
+
+    var parts = ['<g>'];
+
+    // Horizontal gridlines with value labels.
+    for (var i = 0; i <= 4; i++) {
+      var y = pad.top + (plotHeight / 4) * i;
+      var value = Math.round(max - (max / 4) * i);
+      parts.push('<line class="grid" x1="' + pad.left + '" y1="' + y +
+        '" x2="' + (width - pad.right) + '" y2="' + y + '"/>');
+      parts.push('<text class="axis" x="' + (pad.left - 6) + '" y="' + (y + 3) +
+        '" text-anchor="end">' + value + '</text>');
+    }
+
+    var step = series.length > 1 ? plotWidth / (series.length - 1) : 0;
+
+    metrics.forEach(function (metric) {
+      var points = series.map(function (point, index) {
+        var x = pad.left + step * index;
+        var y = pad.top + plotHeight - (point[metric.key] / max) * plotHeight;
+        return x.toFixed(1) + ',' + y.toFixed(1);
+      });
+      parts.push('<polyline fill="none" stroke="' + metric.colour +
+        '" stroke-width="2" points="' + points.join(' ') + '"/>');
+    });
+
+    // First and last date labels only: one per day would collide on a year view.
+    parts.push('<text class="axis" x="' + pad.left + '" y="' + (height - 6) + '">' +
+      escapeHtml(series[0].date) + '</text>');
+    parts.push('<text class="axis" x="' + (width - pad.right) + '" y="' + (height - 6) +
+      '" text-anchor="end">' + escapeHtml(series[series.length - 1].date) + '</text>');
+    parts.push('</g>');
+
+    svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+    svg.innerHTML = parts.join('');
+
+    document.getElementById('an-series-legend').innerHTML = metrics.map(function (metric) {
+      return '<span style="color:' + metric.colour + '">&#9632;</span> ' + metric.label;
+    }).join(' &nbsp; ');
+  }
+
+  /** Rounds an axis maximum up to a readable 1/2/5 x 10^n boundary. */
+  function niceCeiling(value) {
+    var magnitude = Math.pow(10, Math.floor(Math.log10(value)));
+    var normalised = value / magnitude;
+    var rounded = normalised <= 1 ? 1 : normalised <= 2 ? 2 : normalised <= 5 ? 5 : 10;
+    return rounded * magnitude;
+  }
+
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>"']/g, function (character) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character];
+    });
+  }
+})();
+</script>
+{% endblock %}

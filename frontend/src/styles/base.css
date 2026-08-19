@@ -87,7 +87,7 @@ ul {
 }
 
 ::placeholder {
-  color: rgba(255, 43, 43, 0.38);
+  color: rgba(var(--rgb-accent), 0.38);
   font-family: var(--font-mono);
   letter-spacing: var(--tracking-mid);
 }
@@ -110,7 +110,7 @@ ul {
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-blood);
-  border: 1px solid rgba(255, 43, 43, 0.4);
+  border: 1px solid rgba(var(--rgb-accent), 0.4);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -194,8 +194,8 @@ ul {
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255, 43, 43, 0.42) 0px,
-    rgba(255, 43, 43, 0.42) 1px,
+    rgba(var(--rgb-accent), 0.42) 0px,
+    rgba(var(--rgb-accent), 0.42) 1px,
     transparent 1px,
     transparent 4px
   );

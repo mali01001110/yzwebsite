@@ -1,54 +1,99 @@
 /* ==========================================================================
-   SYS.OVERRIDE_V.02 — Design tokens (Sanguine Protocol)
+   SYS.OVERRIDE_V.02 — Design tokens
    --------------------------------------------------------------------------
-   Palette contract: pure black canvas, blood red HUD, stark white headers.
+   Two protocols share one structure:
 
-   `--color-blood` (#8B0000) is the *structural* tone — panel frames, fills,
-   glows and scanline tint. It measures ~1.6:1 against #000000, so it can never
-   carry text or a hairline that must stay readable. `--color-red` is the
-   derived signal hue used for logs, labels, active borders and gauges; it is
-   the same red the reference HUDs burn onto black. White is reserved for
-   headers, nav and critical alerts so titles pop against the void.
+     NIGHT (default) — pure black canvas, blood red HUD, stark white headers.
+     DAY             — white canvas, deep blue HUD, near-black headers.
+
+   Only the four channel triplets at the top of each block are theme-specific.
+   Everything below them is derived, so a theme is defined by four colours plus
+   a handful of alpha corrections rather than by a second copy of the palette.
+
+   Why triplets rather than finished colours: most of this design is built from
+   translucent washes — `rgba(<hue>, 0.07)` panel fills, `rgba(<hue>, 0.55)`
+   hairlines, glows at a dozen opacities. A theme has to reach inside those
+   alphas, and it can only do that if the channels are a variable. Hence
+   `rgba(var(--rgb-structure), 0.55)` everywhere instead of literal channels.
+
+   Role of each channel:
+
+     --rgb-canvas     the page ground. Black at night, white by day.
+     --rgb-ink        headers, nav, critical alerts. Inverts with the canvas.
+     --rgb-structure  panel frames, fills, glows, scanline tint. Deliberately
+                      low contrast against the canvas — it is never allowed to
+                      carry text or a hairline that must stay readable.
+     --rgb-accent     the signal hue: logs, labels, active borders, gauges.
+                      This is the one that must stay legible, so it is checked
+                      against the canvas in both themes (see below).
+     --rgb-shadow     never themed. A shadow is dark on white too.
    ========================================================================== */
 
 :root {
-  /* Core palette */
-  --color-void: #000000;
-  --color-blood: #8b0000;
-  --color-white: #ffffff;
+  /* -- NIGHT protocol channels ------------------------------------------- */
+  --rgb-canvas: 0, 0, 0;
+  --rgb-ink: 255, 255, 255;
+  --rgb-structure: 139, 0, 0;
+  --rgb-accent: 255, 43, 43;
+  --rgb-accent-hot: 255, 92, 92;
+  --rgb-accent-deep: 74, 0, 0;
 
-  /* Derived signal reds (legibility layer) */
-  --color-red: #ff2b2b;
-  --color-red-hot: #ff5c5c;
-  --color-red-deep: #4a0000;
+  /* Shadows read as shadows in both protocols, so they are not themed. */
+  --rgb-shadow: 0, 0, 0;
+
+  /* Thumbnail tint. sepia() puts the image near 35deg, so the rotation is what
+     carries it to the protocol's signal hue — see .thumb__img. Night also
+     darkens the image so it sits into the black ground; day leaves it brighter
+     so it does not punch a hole in the white one. */
+  --image-hue-rotate: -30deg;
+  --image-brightness: 0.72;
+  --image-contrast: 1.15;
+  --image-saturate: 3.5;
+
+  /* Alpha corrections. White-on-black and black-on-white do not read at the
+     same opacity — the day block lowers these where the inverted value would
+     be too faint. */
+  --alpha-muted: 0.58;
+  --alpha-dim: 0.62;
+  --alpha-line-ink: 0.22;
+
+  /* -- Derived palette ---------------------------------------------------- */
+  --color-void: rgb(var(--rgb-canvas));
+  --color-blood: rgb(var(--rgb-structure));
+  --color-white: rgb(var(--rgb-ink));
+  --color-red: rgb(var(--rgb-accent));
+  --color-red-hot: rgb(var(--rgb-accent-hot));
+  --color-red-deep: rgb(var(--rgb-accent-deep));
 
   /* Text roles */
-  --text-primary: #ffffff;
-  --text-log: #ff2b2b;
-  --text-muted: rgba(255, 255, 255, 0.58);
-  --text-dim: rgba(255, 43, 43, 0.62);
+  --text-primary: rgb(var(--rgb-ink));
+  --text-log: rgb(var(--rgb-accent));
+  --text-muted: rgba(var(--rgb-ink), var(--alpha-muted));
+  --text-dim: rgba(var(--rgb-accent), var(--alpha-dim));
 
   /* Surfaces */
-  --surface-panel: rgba(139, 0, 0, 0.07);
-  --surface-raised: rgba(139, 0, 0, 0.14);
+  --surface-panel: rgba(var(--rgb-structure), 0.07);
+  --surface-raised: rgba(var(--rgb-structure), 0.14);
+  /* Opaque on purpose: this is the one surface that must fully occlude what
+     is behind it, so it is stated per theme rather than derived as a wash. */
   --surface-solid: #070000;
-  --surface-glass: rgba(3, 0, 0, 0.88);
-  --surface-alert: rgba(139, 0, 0, 0.22);
+  --surface-glass: rgba(var(--rgb-canvas), 0.88);
+  --surface-alert: rgba(var(--rgb-structure), 0.22);
 
   /* Hairlines */
-  --line-blood: 1px solid rgba(139, 0, 0, 0.9);
-  --line-red: 1px solid rgba(255, 43, 43, 0.5);
-  --line-faint: 1px solid rgba(255, 43, 43, 0.16);
-  --line-white: 1px solid rgba(255, 255, 255, 0.22);
-  --line-color-red: rgba(255, 43, 43, 0.5);
-  --line-color-faint: rgba(255, 43, 43, 0.16);
+  --line-blood: 1px solid rgba(var(--rgb-structure), 0.9);
+  --line-red: 1px solid rgba(var(--rgb-accent), 0.5);
+  --line-faint: 1px solid rgba(var(--rgb-accent), 0.16);
+  --line-white: 1px solid rgba(var(--rgb-ink), var(--alpha-line-ink));
+  --line-color-red: rgba(var(--rgb-accent), 0.5);
+  --line-color-faint: rgba(var(--rgb-accent), 0.16);
 
   /* Glows */
-  --glow-red-sm: 0 0 6px rgba(255, 43, 43, 0.5);
-  --glow-red-md: 0 0 18px rgba(255, 43, 43, 0.32);
-  --glow-blood: 0 0 34px rgba(139, 0, 0, 0.8);
-  --glow-text: 0 0 10px rgba(255, 43, 43, 0.55);
-  --glow-white: 0 0 20px rgba(255, 255, 255, 0.22);
+  --glow-red-sm: 0 0 6px rgba(var(--rgb-accent), 0.5);
+  --glow-red-md: 0 0 18px rgba(var(--rgb-accent), 0.32);
+  --glow-blood: 0 0 34px rgba(var(--rgb-structure), 0.8);
+  --glow-text: 0 0 10px rgba(var(--rgb-accent), 0.55);
+  --glow-white: 0 0 20px rgba(var(--rgb-ink), 0.22);
 
   /* Typography — monospace only, terminal/IDE feel */
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
@@ -76,11 +121,82 @@
   --speed-mid: 260ms;
   --speed-slow: 600ms;
 
+  /* Protocol switch sequence — the reboot bar shown while themes swap. */
+  --speed-switch: 900ms;
+
   /* Layering */
   --z-backdrop: 0;
   --z-content: 1;
   --z-header: 100;
   --z-overlay: 1000;
+  --z-switch: 1100;
+}
+
+/* ==========================================================================
+   DAY protocol
+   --------------------------------------------------------------------------
+   Same structure, inverted ground, blue signal.
+
+   The accent is #0a4fe0 rather than a brighter electric blue because it has to
+   carry body-sized log text on white. It measures ~5.9:1 against the canvas,
+   comfortably past AA; the obvious vivid blues (#0080ff and lighter) fall to
+   ~3:1 and would make every log line in the HUD borderline unreadable.
+
+   `--alpha-muted` and `--alpha-dim` are raised here: dark ink on white at 0.58
+   reads noticeably fainter than white ink on black at the same opacity,
+   because the eye is comparing against a bright surround rather than a dark
+   one.
+   ========================================================================== */
+
+[data-theme='day'] {
+  --rgb-canvas: 255, 255, 255;
+  /* Pure black, mirroring the night protocol's pure white. Ink carries
+     headers, nav and alerts — display weights, where flat black gives the
+     starkest read against the canvas at 21:1.
+
+     Body copy never uses it neat: --text-muted runs it at 0.72 for a soft
+     grey, the same way the night protocol softens its white. */
+  --rgb-ink: 0, 0, 0;
+  --rgb-structure: 21, 58, 138;
+  --rgb-accent: 10, 79, 224;
+  --rgb-accent-hot: 0, 118, 255;
+  --rgb-accent-deep: 214, 227, 255;
+
+  --alpha-muted: 0.72;
+  /* 0.86 rather than the night protocol's 0.62: the accent has to survive
+     being washed out against white, and anything below ~0.82 drops the dim
+     label style under AA (4.5:1) on the canvas. */
+  --alpha-dim: 0.86;
+  --alpha-line-ink: 0.16;
+
+  /* The night theme lifts panels off black with a red wash. On white the same
+     wash has to sit slightly stronger to register at all. */
+  --surface-panel: rgba(var(--rgb-structure), 0.05);
+  --surface-raised: rgba(var(--rgb-structure), 0.1);
+  --surface-alert: rgba(var(--rgb-structure), 0.12);
+  --surface-solid: #f6f8fd;
+
+  /* +185deg carries the sepia base past red and green round to blue. Brightness
+     goes up rather than down: a 0.72-dimmed thumbnail reads as a dark blot on
+     a white page, where on black it reads as depth. */
+  --image-hue-rotate: 185deg;
+  --image-brightness: 1.02;
+  --image-contrast: 1.05;
+  --image-saturate: 2.6;
+
+  /* Glows keep their night-time geometry and simply change hue, so the blue
+     halo around a certificate or resume thumbnail reads as deliberately as the
+     red one does on black.
+
+     Opacities sit slightly below the night values because a saturated blue
+     carries further against white than red does against black — matching the
+     night numbers exactly makes the halo look heavier than its counterpart
+     rather than equivalent to it. */
+  --glow-red-sm: 0 0 6px rgba(var(--rgb-accent), 0.42);
+  --glow-red-md: 0 0 18px rgba(var(--rgb-accent), 0.3);
+  --glow-blood: 0 0 34px rgba(var(--rgb-structure), 0.45);
+  --glow-text: 0 0 8px rgba(var(--rgb-accent), 0.3);
+  --glow-white: 0 0 20px rgba(var(--rgb-structure), 0.2);
 }
 
 @media (max-width: 900px) {

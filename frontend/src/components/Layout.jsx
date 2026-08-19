@@ -5,8 +5,11 @@ import BackgroundFx from './BackgroundFx';
 import CursorReticle from './CursorReticle';
 import SystemRail from './SystemRail';
 import HudTicker from './HudTicker';
+import ProtocolSwitch from './ProtocolSwitch';
+import ProtocolLoader from './ProtocolLoader';
 import { NAV_ITEMS, SECTION_IDS } from '../data/navigation';
 import { useActiveSection } from '../hooks/useActiveSection';
+import { useTheme } from '../hooks/useTheme';
 
 const FOOTER_LINKS = [
   {
@@ -43,6 +46,7 @@ const TICKER_ITEMS = [
 function Layout() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useActiveSection(SECTION_IDS);
+  const { isDay, isSwitching, switchingTo, toggle } = useTheme();
 
   useEffect(() => {
     if (!isNavOpen) return undefined;
@@ -60,6 +64,7 @@ function Layout() {
       <BackgroundFx />
       <CursorReticle />
       <SystemRail />
+      <ProtocolLoader isSwitching={isSwitching} target={switchingTo} />
 
       <div className="layout">
         <header className="header">
@@ -73,6 +78,8 @@ function Layout() {
                 <span className="brand__role">Dev // IT Systems</span>
               </span>
             </a>
+
+            <ProtocolSwitch isDay={isDay} isSwitching={isSwitching} onToggle={toggle} />
 
             <button
               type="button"

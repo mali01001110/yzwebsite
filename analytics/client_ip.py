@@ -1,25 +1,46 @@
 """
 Resolution of a request's originating IP address.
 
-`X-Forwarded-For` is a request header, which makes it visitor-controlled input:
-anyone can send `X-Forwarded-For: 8.8.8.8` and, if the value were trusted
-blindly, poison the visitor log with an address of their choosing. The header is
-only meaningful to the extent that our own infrastructure wrote part of it.
+Moved here from ``api/client_ip.py`` unchanged in behaviour, with one addition:
+a configurable list of proxy-set headers that are consulted before falling back
+to ``X-Forwarded-For``. The original module's reasoning still holds and is
+reproduced below, because it is the whole point of the file.
+
+``X-Forwarded-For`` is a request header, which makes it visitor-controlled
+input: anyone can send ``X-Forwarded-For: 8.8.8.8`` and, if the value were
+trusted blindly, poison the visitor log with an address of their choosing. The
+header is only meaningful to the extent that our own infrastructure wrote part
+of it.
 
 Each proxy *appends* the address it received the connection from, so the
 rightmost entries are the trustworthy ones and anything further left is whatever
-the client chose to send. With `TRUSTED_PROXY_COUNT` hops in front of Django,
+the client chose to send. With ``TRUSTED_PROXY_COUNT`` hops in front of Django,
 the real peer is the entry that many places from the right.
+
+``CF-Connecting-IP`` is different in kind: Cloudflare *overwrites* it on every
+proxied request, so it cannot be forged by a visitor whose traffic actually
+passes through Cloudflare. It is only safe while every route to the origin goes
+through Cloudflare — if the Render URL is reachable directly, a request sent
+there can set the header freely. That is why the header list is a setting and
+not a hardcoded default assumption.
 """
+from __future__ import annotations
+
 import ipaddress
 
 from django.conf import settings
 
+from .defaults import get_setting
 
-def get_client_ip(request):
+
+def get_client_ip(request) -> str | None:
     """Return the visitor's IP address, or None if it cannot be determined."""
-    trusted_proxy_count = getattr(settings, 'TRUSTED_PROXY_COUNT', 0)
+    for header in get_setting('TRUSTED_IP_HEADERS'):
+        candidate = _normalize_ip(request.META.get(header))
+        if candidate:
+            return candidate
 
+    trusted_proxy_count = getattr(settings, 'TRUSTED_PROXY_COUNT', 0)
     if trusted_proxy_count > 0:
         forwarded_ip = _get_forwarded_ip(request, trusted_proxy_count)
         if forwarded_ip:
@@ -30,7 +51,7 @@ def get_client_ip(request):
     return _normalize_ip(request.META.get('REMOTE_ADDR'))
 
 
-def is_public_ip(ip_address):
+def is_public_ip(ip_address: str | None) -> bool:
     """
     True for globally routable addresses.
 
@@ -42,7 +63,7 @@ def is_public_ip(ip_address):
     return bool(parsed_ip and parsed_ip.is_global)
 
 
-def _get_forwarded_ip(request, trusted_proxy_count):
+def _get_forwarded_ip(request, trusted_proxy_count: int) -> str | None:
     forwarded_header = request.META.get('HTTP_X_FORWARDED_FOR', '')
     proxy_chain = [entry.strip() for entry in forwarded_header.split(',') if entry.strip()]
 
@@ -54,13 +75,13 @@ def _get_forwarded_ip(request, trusted_proxy_count):
     return _normalize_ip(proxy_chain[-trusted_proxy_count])
 
 
-def _normalize_ip(raw_ip):
+def _normalize_ip(raw_ip: str | None) -> str | None:
     """Validate and canonicalise an address so only real IPs reach the database."""
     parsed_ip = _parse_ip(raw_ip)
     return str(parsed_ip) if parsed_ip else None
 
 
-def _parse_ip(raw_ip):
+def _parse_ip(raw_ip: str | None) -> ipaddress.IPv4Address | ipaddress.IPv6Address | None:
     if not raw_ip:
         return None
     try:

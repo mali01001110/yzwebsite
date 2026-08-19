@@ -87,6 +87,7 @@ INSTALLED_APPS = [
 
     # Local apps
     'api',
+    'analytics',
 ]
 
 MIDDLEWARE = [
@@ -99,8 +100,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Resolves the visitor's consent state once, before anything reads it.
+    'analytics.middleware.ConsentMiddleware',
     # Last so it only records requests that made it through every other layer.
-    'api.middleware.VisitorTrackingMiddleware',
+    # Replaces api.middleware.VisitorTrackingMiddleware, which wrote to the
+    # database on the response; this one only appends to an in-process buffer.
+    'analytics.middleware.CollectorMiddleware',
 ]
 
 # How many reverse proxies sit in front of Django, which fixes how much of

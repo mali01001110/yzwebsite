@@ -4,6 +4,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.throttling import AnonRateThrottle
 
+from analytics.events import track_event
+
 from .serializers import ContactMessageSerializer
 
 
@@ -33,6 +35,12 @@ def submit_contact_message(request):
     serializer = ContactMessageSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
     serializer.save()
+
+    # The site's only conversion. Buffered, never written inline, and it
+    # deliberately carries no field values — the message itself is already
+    # stored above, and duplicating it into an event would put visitor-supplied
+    # text somewhere the privacy scrubber cannot help.
+    track_event(request, 'contact_submitted')
 
     return Response(
         {'detail': 'Message received. Thanks for reaching out.'},

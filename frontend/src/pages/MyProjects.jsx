@@ -1,4 +1,4 @@
-import { MessageSquareLock, NotebookPen, Globe2, ArrowUpRight } from 'lucide-react';
+import { DownloadCloud, NotebookPen, Globe2, ArrowUpRight } from 'lucide-react';
 import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import StaggerGrid from '../components/StaggerGrid';
@@ -8,11 +8,11 @@ const INTRO = `Here are some of the projects I've been working on. Check out the
 
 const PROJECTS = [
   {
-    name: 'SmartOneText',
-    url: 'https://github.com/mali01001110/smartonetext',
-    description: 'An anonymous message web app',
-    stack: 'Django // React',
-    Icon: MessageSquareLock,
+    name: 'SmartOneDL',
+    url: 'https://github.com/mali01001110/SmartOneDL',
+    description: 'A basic download manager',
+    stack: 'Python // Desktop',
+    Icon: DownloadCloud,
   },
   {
     name: 'SmartOneNote',

@@ -1,0 +1,313 @@
+/* ==========================================================================
+   Protocol switch — the day/night control and its reboot sequence
+   --------------------------------------------------------------------------
+   Built from the same vocabulary as the rest of the HUD: zero radius, notched
+   corner, hairline frame, scanning light bar, uppercase monospace readout. It
+   inherits the palette rather than hardcoding one, so the control turns blue
+   in day mode along with everything else — the red-alert *form* is what
+   carries across, not the red itself.
+   ========================================================================== */
+
+.protocol-switch {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.7rem 0.3rem 0.5rem;
+  background: rgba(var(--rgb-structure), 0.2);
+  border: 1px solid var(--color-blood);
+  color: var(--color-red);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  overflow: hidden;
+  /* Notched corner, matching .hud-window and .hud-button */
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%,
+    0 100%
+  );
+  transition:
+    background var(--speed-fast) linear,
+    color var(--speed-fast) linear,
+    box-shadow var(--speed-mid) var(--ease-hud);
+}
+
+.protocol-switch:hover:not(:disabled) {
+  background: rgba(var(--rgb-structure), 0.34);
+  color: var(--color-white);
+  box-shadow: var(--glow-red-md);
+}
+
+.protocol-switch:disabled {
+  cursor: progress;
+}
+
+.protocol-switch__glyph {
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: rgba(var(--rgb-accent), 0.14);
+  border: 1px solid rgba(var(--rgb-accent), 0.45);
+  flex: none;
+}
+
+.protocol-switch__readout {
+  display: grid;
+  gap: 1px;
+  text-align: left;
+  line-height: 1;
+}
+
+.protocol-switch__label {
+  font-size: 0.5rem;
+  letter-spacing: var(--tracking-wide);
+  color: var(--text-dim);
+}
+
+.protocol-switch__value {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+  color: currentColor;
+}
+
+/* Light bar that sweeps the control on hover and runs continuously while a
+   switch is in flight. */
+.protocol-switch__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    transparent 0%,
+    rgba(var(--rgb-accent), 0.28) 45%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+  transition: transform var(--speed-slow) var(--ease-hud);
+}
+
+.protocol-switch:hover:not(:disabled) .protocol-switch__scan {
+  transform: translateX(110%);
+}
+
+.protocol-switch.is-switching .protocol-switch__scan {
+  animation: protocol-sweep var(--speed-switch) linear infinite;
+  transition: none;
+}
+
+.protocol-switch.is-switching .protocol-switch__glyph {
+  animation: protocol-blink 220ms steps(1, end) infinite;
+}
+
+@keyframes protocol-sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(110%);
+  }
+}
+
+@keyframes protocol-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reboot sequence
+   -------------------------------------------------------------------------- */
+
+.protocol-loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-switch);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: var(--surface-glass);
+  backdrop-filter: blur(3px);
+  animation: protocol-veil var(--speed-switch) var(--ease-hud) both;
+  pointer-events: none;
+}
+
+/* Fades in fast and out slow, so the bar is fully covering the page during the
+   frame where the palette actually swaps. */
+@keyframes protocol-veil {
+  0% {
+    opacity: 0;
+  }
+  18% {
+    opacity: 1;
+  }
+  72% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.protocol-loader__frame {
+  width: min(28rem, 100%);
+  padding: 1rem 1.15rem 1.15rem;
+  background: var(--surface-solid);
+  border: 1px solid var(--color-blood);
+  box-shadow: var(--glow-blood);
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% calc(100% - var(--notch)),
+    calc(100% - var(--notch)) 100%,
+    0 100%
+  );
+}
+
+.protocol-loader__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.protocol-loader__code {
+  color: var(--color-red);
+}
+
+.protocol-loader__target {
+  color: var(--color-white);
+  font-weight: 700;
+}
+
+.protocol-loader__track {
+  position: relative;
+  height: 6px;
+  background: rgba(var(--rgb-structure), 0.25);
+  border: 1px solid rgba(var(--rgb-accent), 0.35);
+  overflow: hidden;
+}
+
+.protocol-loader__fill {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(var(--rgb-structure), 0.9),
+    var(--color-red)
+  );
+  box-shadow: var(--glow-red-sm);
+  animation: protocol-fill var(--speed-switch) var(--ease-hud) forwards;
+}
+
+@keyframes protocol-fill {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Segmented tick strip under the bar, echoing .tick-bar in the footer. */
+.protocol-loader__ticks {
+  display: flex;
+  gap: 2px;
+  margin-top: 0.4rem;
+}
+
+.protocol-loader__tick {
+  flex: 1;
+  height: 3px;
+  background: rgba(var(--rgb-accent), 0.18);
+  animation: protocol-tick var(--speed-switch) steps(1, end) forwards;
+}
+
+/* Each tick lights slightly after the one before it, so the strip fills left
+   to right in step with the bar above. */
+.protocol-loader__tick:nth-child(4n + 1) {
+  animation-delay: 0ms;
+}
+.protocol-loader__tick:nth-child(4n + 2) {
+  animation-delay: 60ms;
+}
+.protocol-loader__tick:nth-child(4n + 3) {
+  animation-delay: 120ms;
+}
+.protocol-loader__tick:nth-child(4n) {
+  animation-delay: 180ms;
+}
+
+@keyframes protocol-tick {
+  0% {
+    background: rgba(var(--rgb-accent), 0.18);
+  }
+  40% {
+    background: var(--color-red);
+    box-shadow: var(--glow-red-sm);
+  }
+  100% {
+    background: rgba(var(--rgb-accent), 0.55);
+  }
+}
+
+.protocol-loader__log {
+  margin-top: 0.7rem;
+  font-size: 0.625rem;
+  letter-spacing: var(--tracking-mid);
+  color: var(--text-log);
+  text-transform: uppercase;
+}
+
+.protocol-loader__caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.35em;
+  background: var(--color-red);
+  vertical-align: text-bottom;
+  animation: protocol-blink 400ms steps(1, end) infinite;
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion — the sequence still appears, it simply does not animate.
+   Removing it entirely would expose the raw repaint this exists to cover.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .protocol-switch.is-switching .protocol-switch__scan,
+  .protocol-switch.is-switching .protocol-switch__glyph,
+  .protocol-loader__caret,
+  .protocol-loader__tick {
+    animation: none;
+  }
+
+  .protocol-loader__fill {
+    animation: none;
+    width: 100%;
+  }
+}
+
+@media (max-width: 1080px) {
+  /* Sits beside the menu button on small screens; the readout is dropped so
+     the header does not wrap. */
+  .protocol-switch {
+    order: 1;
+    padding: 0.3rem 0.45rem;
+  }
+
+  .protocol-switch__readout {
+    display: none;
+  }
+}

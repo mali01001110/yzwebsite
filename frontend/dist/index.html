@@ -16,8 +16,29 @@
       rel="stylesheet"
     />
     <title>SYS.OVERRIDE_V.02 // YANN ZAKPA</title>
-    <script type="module" crossorigin src="/assets/index-CZYXCTRv.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index--RUKw3xQ.css">
+    <script>
+      // Applies the saved protocol before first paint. Deliberately inline and
+      // blocking: deferring this to the React bundle means the page renders
+      // once in the default (night) palette and then repaints, which is a
+      // white-to-black flash for every day-mode visitor on every load.
+      (function () {
+        try {
+          var saved = localStorage.getItem('yz.theme');
+          var theme =
+            saved ||
+            (window.matchMedia('(prefers-color-scheme: light)').matches
+              ? 'day'
+              : 'night');
+          document.documentElement.setAttribute('data-theme', theme);
+          document.documentElement.style.colorScheme =
+            theme === 'day' ? 'light' : 'dark';
+        } catch (error) {
+          document.documentElement.setAttribute('data-theme', 'night');
+        }
+      })();
+    </script>
+    <script type="module" crossorigin src="/assets/index-9lHO6Xgc.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BrUW2tr0.css">
   </head>
   <body>
     <div id="root"></div>
