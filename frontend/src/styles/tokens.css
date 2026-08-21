@@ -95,6 +95,16 @@
   --glow-text: 0 0 10px rgba(var(--rgb-accent), 0.55);
   --glow-white: 0 0 20px rgba(var(--rgb-ink), 0.22);
 
+  /* Cast shadows. Unlike glows these are themed: a black drop shadow is
+     invisible on black and a dirty grey smear on white, so the day protocol
+     restates them tinted with its own structure hue (see below). Keeping them
+     as tokens is what makes that possible — literal rgba(0,0,0,.9) in a rule
+     cannot be re-tinted. */
+  --shadow-panel: 0 18px 44px rgba(var(--rgb-shadow), 0.55);
+  --shadow-header: 0 1px 0 rgba(var(--rgb-accent), 0.16), 0 14px 40px rgba(var(--rgb-shadow), 0.9);
+  --shadow-drop: 0 20px 40px rgba(var(--rgb-shadow), 0.95);
+  --scrim-overlay: rgba(var(--rgb-shadow), 0.94);
+
   /* Typography — monospace only, terminal/IDE feel */
   --font-mono: 'JetBrains Mono', ui-monospace, 'Cascadia Mono', Consolas, monospace;
   --font-display: var(--font-mono);
@@ -103,6 +113,52 @@
   --tracking-wide: 0.26em;
   --tracking-mid: 0.1em;
   --tracking-tight: 0.02em;
+
+  /* Type scale. Monospace collapses a lot of the usual size cues — every
+     glyph is the same width, so weight and size are all that separate a
+     heading from a label. The steps below are deliberately fine-grained for
+     that reason, and every size in the interface must come from one of them.
+
+     Named by role rather than by number so a readout keeps its meaning when
+     the scale is retuned: --fs-key is the smallest legible caps label, not
+     "9px". */
+  --fs-tick: 0.5rem;
+  --fs-key: 0.5625rem;
+  --fs-micro: 0.625rem;
+  --fs-label: 0.6875rem;
+  --fs-caption: 0.75rem;
+  --fs-data: 0.8125rem;
+  --fs-body: 0.875rem;
+  --fs-lead: 0.9375rem;
+  --fs-strong: 1rem;
+  --fs-readout: 1.125rem;
+  --fs-title: clamp(2rem, 6vw, 3.25rem);
+  --fs-hero: clamp(2.5rem, 9.5vw, 6rem);
+
+  /* Spacing scale — 4px base, covering the steps the layout is actually built
+     on. Values off the scale still appear: they are optical corrections, where
+     a rule needs 3px of clearance rather than 4 to look level. Reach for a
+     token first, and only drop to a literal when the grid step is visibly
+     wrong. */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Page gutter and the vertical gap between sections, both fluid so the
+     rhythm scales with the viewport instead of stepping at a breakpoint. */
+  --gutter: clamp(1rem, 4vw, 1.5rem);
+  --section-gap: clamp(4.5rem, 9vw, 8rem);
+
+  /* Reading measure. Mono runs roughly 15% wider per character than a
+     proportional face, so the usual 65–75ch advice overshoots badly here. */
+  --measure: 62ch;
 
   /* Ghost section numeral — shared by the hero and every section head so the
      two can never drift out of step */
@@ -113,7 +169,22 @@
   --rail-height: 1.75rem;
   --header-height: 4.25rem;
   --content-max: 1200px;
+
+  /* Cut corner, used by the protocol controls. */
   --notch: 14px;
+
+  /* Corner brackets — the targeting ticks drawn just inside a framed panel.
+     Length and inset are tokens because they are what makes a small panel and
+     a full-width window read as the same object at different scales. */
+  --bracket-length: 10px;
+  --bracket-inset: 4px;
+  --bracket-color: rgba(var(--rgb-accent), 0.5);
+  --bracket-color-active: rgba(var(--rgb-accent), 0.95);
+
+  /* Focus ring. Stated once so every focusable element in the HUD is framed
+     identically, whatever else it does with box-shadow. */
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
 
   /* Motion */
   --ease-hud: cubic-bezier(0.16, 1, 0.3, 1);
@@ -127,9 +198,12 @@
   /* Layering */
   --z-backdrop: 0;
   --z-content: 1;
+  --z-texture: 2;
   --z-header: 100;
+  --z-reticle: 900;
   --z-overlay: 1000;
   --z-switch: 1100;
+  --z-skip-link: 1200;
 }
 
 /* ==========================================================================
@@ -197,6 +271,21 @@
   --glow-blood: 0 0 34px rgba(var(--rgb-structure), 0.45);
   --glow-text: 0 0 8px rgba(var(--rgb-accent), 0.3);
   --glow-white: 0 0 20px rgba(var(--rgb-structure), 0.2);
+
+  /* Cast shadows are re-tinted rather than re-used. A neutral black shadow
+     under the header reads as a grey smear on a white page — the same
+     geometry carrying the structure hue reads as depth, and keeps the day
+     protocol from looking like the night one with the lights turned on.
+     Opacities drop sharply because a shadow has far less room to hide against
+     white than against black. */
+  --shadow-panel: 0 18px 44px rgba(var(--rgb-structure), 0.12);
+  --shadow-header: 0 1px 0 rgba(var(--rgb-accent), 0.14), 0 10px 30px rgba(var(--rgb-structure), 0.1);
+  --shadow-drop: 0 20px 40px rgba(var(--rgb-structure), 0.16);
+  --scrim-overlay: rgba(var(--rgb-structure), 0.55);
+
+  /* Brackets sit on a bright ground here, so they need less alpha to read. */
+  --bracket-color: rgba(var(--rgb-accent), 0.42);
+  --bracket-color-active: rgba(var(--rgb-accent), 0.9);
 }
 
 @media (max-width: 900px) {

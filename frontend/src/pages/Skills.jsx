@@ -68,11 +68,10 @@ function Skills() {
             key={category}
             title={file}
             tag={`${String(items.length).padStart(2, '0')} MODULES`}
-            className="skills__unit"
           >
             <header className="skills__head">
               <span className="skills__glyph" aria-hidden="true">
-                <Icon size={18} strokeWidth={1.5} />
+                <Icon size={18} />
               </span>
               <h3 className="skills__title">{category}</h3>
             </header>

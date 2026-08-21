@@ -137,7 +137,7 @@ function Hero() {
                 <Countdown label="Next sync cycle" />
               </div>
 
-              <div className="hero__module">
+              <div className="hero__module hero__module--fill">
                 <span className="hud-label">Diagnostics</span>
                 <div className="hero__gauges">
                   {GAUGES.map((gauge) => (

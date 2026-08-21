@@ -8,16 +8,39 @@
    ========================================================================== */
 
 .section {
+  position: relative;
   max-width: var(--content-max);
   margin: 0 auto;
   /* Generous top padding is what separates one section from the previous
-     one's content; sections carry no bottom padding of their own. */
-  padding: 8rem 1.5rem 0;
+     one's content; sections carry no bottom padding of their own. Fluid
+     rather than stepped, so the page keeps the same proportions on a laptop
+     as on a phone instead of snapping at one breakpoint. */
+  padding: var(--section-gap) var(--gutter) 0;
+}
+
+/* Seam between sections, floated in the empty band above each heading. The
+   gap alone already separates them; this states the separation, which is what
+   turns a long scroll into a document with parts. Drawn as a gradient so it
+   fades out at both ends rather than butting into the page edge. */
+.section::before {
+  content: '';
+  position: absolute;
+  top: calc(var(--section-gap) * 0.44);
+  left: var(--gutter);
+  right: var(--gutter);
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(var(--rgb-structure), 0.9) 14%,
+    rgba(var(--rgb-structure), 0.9) 86%,
+    transparent
+  );
 }
 
 .section__head {
   position: relative;
-  margin-bottom: 2.5rem;
+  margin-bottom: var(--space-10);
 }
 
 /* Oversized ghost numeral, as the posters set behind their titles */
@@ -37,19 +60,19 @@
 .section__index {
   position: relative;
   display: inline-block;
-  margin-bottom: 0.75rem;
-  padding: 0.25rem 0.625rem;
+  margin-bottom: var(--space-3);
+  padding: var(--space-1) 0.625rem;
   border: var(--line-blood);
   background: rgba(var(--rgb-structure), 0.16);
   color: var(--text-log);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
 
 .section__title {
   position: relative;
-  font-size: clamp(2rem, 6vw, 3.25rem);
+  font-size: var(--fs-title);
   font-weight: 800;
   color: var(--color-white);
   letter-spacing: -0.01em;
@@ -72,19 +95,48 @@
   background-image: repeating-linear-gradient(45deg, var(--color-red) 0 4px, transparent 4px 8px);
 }
 
-.section__subtitle {
+/* Caption line under the rule: what the section is on the left, where it sits
+   in the sequence on the right. The right-hand readout is the reason this is a
+   row rather than a lone subtitle — it gives the rule two ends to terminate
+   against, and tells a visitor how much of the dossier is left. */
+.section__meta {
   position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.section__subtitle {
   color: var(--text-dim);
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
 
+.section__progress {
+  flex: none;
+  /* Holds the readout against the right edge even when a section head omits
+     its subtitle and space-between has nothing to push against. */
+  margin-left: auto;
+  color: rgba(var(--rgb-accent), 0.5);
+  font-size: var(--fs-micro);
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .section__progress {
+    display: none;
+  }
+}
+
 .prose {
-  max-width: 68ch;
-  margin-bottom: 2rem;
+  max-width: var(--measure);
+  margin-bottom: var(--space-8);
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
   line-height: 1.8;
 }
 
@@ -100,8 +152,9 @@
   max-width: var(--content-max);
   margin: 0 auto;
   /* Top padding must clear the full height of the ghost numeral sitting above
-     the window, plus its gap */
-  padding: 9rem 1.5rem 4rem;
+     the window, plus its gap. The numeral scales with 11vw, so the clearance
+     scales with it rather than stepping at a breakpoint. */
+  padding: clamp(7rem, 13vw, 9rem) var(--gutter) var(--space-16);
 }
 
 .hero__inner {
@@ -143,7 +196,7 @@
   background: rgba(var(--rgb-structure), 0.35);
   border-bottom: 1px solid var(--color-blood);
   color: var(--color-white);
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
@@ -167,7 +220,7 @@
   display: flex;
   gap: 0.875rem;
   color: var(--color-red);
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
   line-height: 1;
 }
 
@@ -197,13 +250,13 @@
   border: var(--line-blood);
   background: rgba(var(--rgb-structure), 0.18);
   color: var(--text-log);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
 
 .hero h1 {
-  font-size: clamp(2.5rem, 9.5vw, 6rem);
+  font-size: var(--fs-hero);
   font-weight: 800;
   letter-spacing: -0.035em;
   color: var(--color-white);
@@ -222,7 +275,7 @@
   max-width: 56ch;
   margin-top: 1.25rem;
   color: var(--text-muted);
-  font-size: 0.875rem;
+  font-size: var(--fs-body);
   line-height: 1.8;
 }
 
@@ -234,7 +287,7 @@
 
 .hero__log-line {
   color: var(--text-dim);
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
   letter-spacing: var(--tracking-tight);
 }
 
@@ -276,18 +329,38 @@
 }
 
 .hero__stat {
-  padding: 0.875rem 0.75rem;
+  position: relative;
+  padding: 0.875rem var(--space-3);
   background: var(--color-void);
   transition: background-color var(--speed-mid) var(--ease-hud);
+}
+
+/* Lit top edge on hover, so the four cells read as switchable readouts rather
+   than as a static table. */
+.hero__stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--color-red);
+  box-shadow: var(--glow-red-sm);
+  transform: scaleX(0);
+  transition: transform var(--speed-mid) var(--ease-hud);
 }
 
 .hero__stat:hover {
   background: rgba(var(--rgb-structure), 0.3);
 }
 
+.hero__stat:hover::before {
+  transform: scaleX(1);
+}
+
 .hero__stat-value {
   color: var(--color-white);
-  font-size: 1.125rem;
+  font-size: var(--fs-readout);
   font-weight: 800;
   letter-spacing: var(--tracking-tight);
 }
@@ -295,7 +368,7 @@
 .hero__stat-label {
   margin-top: 0.25rem;
   color: var(--text-dim);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
@@ -308,15 +381,35 @@
 }
 
 .hero__module {
-  padding: 1rem 0.875rem;
+  padding: var(--space-4) 0.875rem;
   border: var(--line-blood);
   background: rgba(var(--rgb-structure), 0.07);
+}
+
+/* The telemetry column is shorter than the column of copy beside it, and the
+   leftover height used to pool as dead space under the last panel. Handing it
+   to the diagnostics module instead squares the bottom of the two columns and
+   gives the dials room to sit on the centre of what they are measuring. */
+.hero__module--fill {
+  display: flex;
+  flex-direction: column;
 }
 
 .hero__gauges {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  align-content: center;
+  gap: var(--space-3);
+}
+
+@media (min-width: 901px) {
+  .hero__module--fill {
+    flex: 1;
+  }
+
+  .hero__module--fill .hero__gauges {
+    flex: 1;
+  }
 }
 
 .hero__scroll {
@@ -329,7 +422,7 @@
   align-items: center;
   gap: 0.25rem;
   color: var(--text-dim);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   animation: scroll-bob 2.4s var(--ease-hud) infinite;
@@ -351,11 +444,6 @@
 }
 
 @media (max-width: 900px) {
-  /* The numeral scales with 11vw here, so it needs less headroom */
-  .hero {
-    padding-top: 7rem;
-  }
-
   .hero__grid {
     grid-template-columns: minmax(0, 1fr);
     padding: 1.5rem 1.125rem;
@@ -425,7 +513,7 @@
 }
 
 .skills__title {
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   color: var(--color-white);
@@ -450,9 +538,9 @@
 .deploy {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 1.25rem;
+  gap: var(--space-5);
   align-items: center;
-  padding: 1rem;
+  padding: var(--space-4);
   border: 1px solid rgba(var(--rgb-structure), 0.65);
   background: rgba(var(--rgb-structure), 0.05);
   transition: background-color var(--speed-mid) var(--ease-hud);
@@ -472,23 +560,29 @@
   color: var(--color-red);
 }
 
+/* Without this the long project description refuses to wrap inside the grid
+   track and pushes the OPEN control off the row. */
+.deploy__body {
+  min-width: 0;
+}
+
 .deploy__id {
   color: var(--text-dim);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
 
 .deploy__name {
   margin: 0.3125rem 0;
-  font-size: 1rem;
+  font-size: var(--fs-strong);
   color: var(--color-white);
 }
 
 .deploy__description {
   margin-bottom: 0.75rem;
   color: var(--text-muted);
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
 }
 
 .deploy__action {
@@ -500,7 +594,7 @@
   height: 5.5rem;
   border: 1px solid var(--color-red);
   color: var(--color-red);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   box-shadow: inset 0 0 24px rgba(var(--rgb-structure), 0.35);
@@ -542,7 +636,7 @@
 .credential {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
   padding: 1.125rem;
   border: 1px solid var(--color-blood);
   background: rgba(var(--rgb-canvas), 0.7);
@@ -561,20 +655,28 @@
 
 .credential__code {
   color: var(--text-log);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-wide);
 }
 
+/* Titles run to one or two lines depending on the credential. Reserving two
+   lines for all of them keeps the verification dial, the scan below it and
+   every card's facts on the same baseline across the row — without it the
+   cards in a pair sit visibly out of step. */
 .credential__title {
   margin-top: 0.375rem;
-  font-size: 0.875rem;
+  min-height: 2.8em;
+  font-size: var(--fs-body);
   line-height: 1.4;
   color: var(--color-white);
 }
 
+/* Absorbs the leftover height so the facts and the integrity meter sit on the
+   floor of every card rather than wherever the description happens to end. */
 .credential__description {
+  flex: 1;
   color: var(--text-muted);
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
 }
 
 .credential__facts {
@@ -585,7 +687,7 @@
 
 .credential__fact dt {
   color: var(--text-dim);
-  font-size: 0.5625rem;
+  font-size: var(--fs-key);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
@@ -593,7 +695,7 @@
 .credential__fact dd {
   margin-top: 0.1875rem;
   color: var(--color-white);
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
 }
 
 /* ==========================================================================
@@ -607,15 +709,24 @@
   align-items: start;
 }
 
+/* Bezel around the scan. The thumbnail is a photograph of a document, and
+   without a holder around it, it reads as an image dropped into the panel
+   rather than as a record mounted in a viewer. */
+.dossier__viewport {
+  padding: var(--space-2);
+  border: 1px solid rgba(var(--rgb-structure), 0.6);
+  background: rgba(var(--rgb-structure), 0.06);
+}
+
 .dossier__side {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .dossier__note {
   color: var(--text-muted);
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
   line-height: 1.75;
 }
 
@@ -629,6 +740,25 @@
    07 — Cover letter: transmission log
    ========================================================================== */
 
+/* The letter is the one long-form read on the page, so its numbered log gets
+   a real editor gutter: fixed-width right-aligned line numbers behind a rule,
+   and a measure that keeps the paragraphs readable inside a full-width panel. */
+.log-box--letter .log-box__lines {
+  max-width: 82ch;
+}
+
+.log-box--letter .log-box__num {
+  width: 1.75rem;
+  padding-right: var(--space-2);
+  border-right: 1px solid rgba(var(--rgb-accent), 0.2);
+  text-align: right;
+}
+
+.log-box--letter .log-box__text {
+  flex: 1;
+  min-width: 0;
+}
+
 .transmission {
   display: flex;
   flex-direction: column;
@@ -640,7 +770,7 @@
 
 .transmission__status {
   color: var(--text-log);
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
@@ -659,18 +789,49 @@
    09 — Contact: choice panel + transmit
    ========================================================================== */
 
+/* Stretched rather than top-aligned: the two panels are a matched pair, and
+   the channels column now carries enough content to fill the height the form
+   sets. The meter is what takes up any slack (see below). */
 .contact {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.35fr);
-  gap: 1.25rem;
-  align-items: start;
+  gap: var(--space-5);
+  align-items: stretch;
 }
 
+/* Both panels run as column flex so a stretched frame keeps its hazard strip
+   on the floor of the window rather than stranded halfway up it. Each panel
+   then names what absorbs the slack: the meter for the channels, the message
+   box for the form. */
+.contact__channels-window,
+.contact__form-window,
+.contact__channels-window .hud-window__body,
+.contact__form-window .hud-window__body {
+  display: flex;
+  flex-direction: column;
+}
+
+.contact__channels-window .hud-window__body,
+.contact__form-window .hud-window__body {
+  flex: 1;
+}
+
+.transmit {
+  flex: 1;
+}
+
+/* `auto` rather than a fixed gap: it absorbs the height difference between the
+   two panels and parks the meter on the floor of the frame, which is where
+   every other meter in the HUD sits. */
 .channel-options {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  margin-bottom: 1rem;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.contact__availability {
+  margin-bottom: auto;
 }
 
 .channel-option {
@@ -693,7 +854,7 @@
 .channel-option__label {
   display: block;
   color: var(--color-red);
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
@@ -703,7 +864,7 @@
   display: block;
   margin-top: 0.25rem;
   color: var(--color-white);
-  font-size: 0.75rem;
+  font-size: var(--fs-caption);
 }
 
 .channel-option__box {
@@ -720,7 +881,20 @@
 .transmit {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--space-4);
+}
+
+/* Spare height goes into the message box. A taller textarea is the one place
+   on this form where extra room is worth something to the person filling it
+   in. */
+.hud-field--grow {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.hud-field--grow .hud-field__textarea {
+  flex: 1;
 }
 
 .transmit__row {
@@ -731,17 +905,54 @@
 
 .transmit__prompt {
   color: var(--color-red);
-  font-size: 0.8125rem;
+  font-size: var(--fs-data);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
 }
 
+/* Success and failure used to render as the same grey caption, which meant
+   the only way to know whether a message had actually been sent was to read
+   it. Each outcome now has its own frame and its own status code. */
 .transmit__note {
-  min-height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  min-height: 2.5rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid transparent;
   color: var(--text-dim);
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
+  line-height: 1.5;
   text-align: center;
+}
+
+.transmit__note::before {
+  flex: none;
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+}
+
+.transmit__note--ok {
+  border-color: rgba(var(--rgb-accent), 0.55);
+  background: rgba(var(--rgb-structure), 0.18);
+  color: var(--color-white);
+}
+
+.transmit__note--ok::before {
+  content: '[ OK ]';
+  color: var(--color-red);
+}
+
+.transmit__note--error {
+  border-color: var(--color-red-hot);
+  background: rgba(var(--rgb-accent), 0.1);
+  color: var(--color-red-hot);
+}
+
+.transmit__note--error::before {
+  content: '[ !! ]';
 }
 
 @media (max-width: 900px) {
@@ -819,7 +1030,7 @@
   padding: 0.4375rem;
   background: rgba(var(--rgb-structure), 0.85);
   color: var(--color-white);
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
   transform: translateY(100%);
@@ -841,9 +1052,10 @@
   z-index: var(--z-overlay);
   display: grid;
   place-items: center;
-  padding: 1.5rem;
-  background: rgba(var(--rgb-shadow), 0.94);
-  backdrop-filter: blur(4px);
+  padding: var(--space-6);
+  background: var(--scrim-overlay);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   animation: fade-in var(--speed-mid) var(--ease-hud);
 }
 
@@ -894,14 +1106,8 @@
 .lightbox__caption {
   margin-top: 0.75rem;
   color: var(--text-dim);
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
   letter-spacing: var(--tracking-mid);
   text-transform: uppercase;
   text-align: center;
-}
-
-@media (max-width: 520px) {
-  .section {
-    padding-top: 5rem;
-  }
 }

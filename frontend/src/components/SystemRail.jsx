@@ -18,12 +18,12 @@ function SystemRail() {
     <div className="system-rail" aria-hidden="true">
       <span className="system-rail__group">
         <span className="hud-status-dot" />
-        {BUILD_ID}
+        <span className="system-rail__build">{BUILD_ID}</span>
       </span>
 
       <span className="system-rail__group system-rail__group--secondary">
-        <span className="system-rail__alert">⚠ BREACH DETECTED</span>
-        <span className="system-rail__hide-sm">NODE // ABIDJAN.CI</span>
+        <span className="system-rail__alert">⚠ DATA BREACH DETECTED</span>
+        <span className="system-rail__hide-sm">COCODY // ABIDJAN.CI</span>
         <span className="system-rail__scan">
           {isComplete ? 'LOAD COMPLETE' : `LOAD ${String(Math.round(scrollProgress)).padStart(3, '0')}%`}
         </span>

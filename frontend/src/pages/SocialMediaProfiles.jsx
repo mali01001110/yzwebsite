@@ -1,29 +1,31 @@
-import { BriefcaseBusiness, Users, Music2 } from 'lucide-react';
 import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import DataRow from '../components/DataRow';
 import StaggerGrid from '../components/StaggerGrid';
+import { SOCIAL_URLS } from '../data/social';
 
 const INTRO = `Find me online! Feel free to connect or follow me on any of the platforms listed below.`;
 
+// Same marks the footer uses, so a visitor meets one logo per platform
+// wherever it appears on the page.
 const PROFILES = [
   {
     name: 'LinkedIn',
-    url: 'https://www.linkedin.com/in/mali01001110/',
+    url: SOCIAL_URLS.linkedin,
     description: 'Connect with me professionally',
-    Icon: BriefcaseBusiness,
+    brand: 'linkedin',
   },
   {
     name: 'Facebook',
-    url: 'https://www.facebook.com/profile.php?id=61586600751798',
+    url: SOCIAL_URLS.facebook,
     description: 'Follow my Facebook page',
-    Icon: Users,
+    brand: 'facebook',
   },
   {
     name: 'TikTok',
-    url: 'https://www.tiktok.com/@sometaware?is_from_webapp=1&sender_device=pc',
+    url: SOCIAL_URLS.tiktok,
     description: 'Check out my TikTok videos',
-    Icon: Music2,
+    brand: 'tiktok',
   },
 ];
 
@@ -37,11 +39,11 @@ function SocialMediaProfiles() {
         tag={`${String(PROFILES.length).padStart(2, '0')} LINKS`}
       >
         <StaggerGrid className="channels" threshold={0.05}>
-          {PROFILES.map(({ name, url, description, Icon }, index) => (
+          {PROFILES.map(({ name, url, description, brand }, index) => (
             <DataRow
               key={name}
               index={String(index + 1).padStart(2, '0')}
-              Icon={Icon}
+              brand={brand}
               label={name}
               meta={description}
               actionLabel="OPEN"

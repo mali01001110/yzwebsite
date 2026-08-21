@@ -22,7 +22,7 @@ body {
   background: var(--color-void);
   color: var(--text-primary);
   font-family: var(--font-mono);
-  font-size: 0.9375rem;
+  font-size: var(--fs-lead);
   font-weight: 400;
   line-height: 1.7;
   font-synthesis: none;
@@ -52,6 +52,9 @@ h3 {
 
 p {
   color: var(--text-muted);
+  /* Mono sets a hard ragged edge; `pretty` is what stops a five-character
+     orphan from being left alone on the last line of a log entry. */
+  text-wrap: pretty;
 }
 
 a {
@@ -93,8 +96,69 @@ ul {
 }
 
 :focus-visible {
-  outline: 1px solid var(--color-red);
-  outline-offset: 3px;
+  outline: var(--focus-ring-width) solid var(--color-red);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* --------------------------------------------------------------------------
+   Skip link — the first thing in the tab order, hidden until it is focused.
+   The site is a single scrolling page behind a ten-item menu, so a keyboard
+   visitor would otherwise tab the whole navigation on every load.
+   -------------------------------------------------------------------------- */
+
+.skip-link {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: var(--z-skip-link);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-blood);
+  color: var(--color-white);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  letter-spacing: var(--tracking-mid);
+  text-transform: uppercase;
+  transform: translateY(-120%);
+  transition: transform var(--speed-mid) var(--ease-hud);
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  color: var(--color-white);
+  text-shadow: none;
+}
+
+/* Screen-reader-only text, for labels the HUD states graphically. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Press feedback — every control in the HUD takes the same 1px push on press.
+   Stated once here rather than per component so a new control cannot ship
+   without it.
+   -------------------------------------------------------------------------- */
+
+.hud-button:active:not(:disabled),
+.execute-button:active:not(:disabled),
+.protocol-switch:active:not(:disabled),
+.nav-toggle:active,
+.nav__link:active,
+.footer__social:active,
+.data-row--link:active,
+.channel-option:active,
+.deploy__action:active,
+.thumb:active,
+.lightbox__close:active,
+.back-to-top:active {
+  transform: translateY(1px);
 }
 
 /* Scrollbar rendered as a hazard rail */
@@ -189,6 +253,27 @@ ul {
   overflow: hidden;
 }
 
+/* Film grain over the whole canvas. The backdrop is otherwise a single flat
+   colour, and a flat colour is what makes a dark interface read as a flat
+   vector rather than as a lit screen. The noise is monochrome and very low
+   alpha — it should register as texture, never as a pattern.
+
+   It is a sibling of the scanlines rather than a replacement: scanlines give
+   the CRT its horizontal structure, grain gives the phosphor its surface. */
+.bg-fx__grain {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+}
+
+/* Grain is darker than the ground it sits on, so it reads twice as strongly
+   against white as against black. Half the alpha lands it at the same
+   perceived strength in both protocols. */
+[data-theme='day'] .bg-fx__grain {
+  opacity: 0.025;
+}
+
 .bg-fx__scanlines {
   position: absolute;
   inset: 0;
@@ -213,5 +298,80 @@ ul {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Print — the page is a resume, so it has to survive Ctrl+P. Every piece of
+   HUD chrome is screen furniture: telemetry, glows, scanlines and the fixed
+   rail have no meaning on paper and cost ink. What is left is the content,
+   set black on white with the section structure intact.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  .bg-fx,
+  .reticle,
+  .system-rail,
+  .header,
+  .hud-ticker,
+  .protocol-loader,
+  .skip-link,
+  .back-to-top,
+  .hero__scroll,
+  .hazard-bar,
+  .thumb__veil,
+  .thumb__hint,
+  .info-panel__hatch,
+  .section__numeral,
+  .hero__numeral {
+    display: none !important;
+  }
+
+  html,
+  body {
+    background: #fff;
+    color: #000;
+  }
+
+  .layout {
+    padding-top: 0;
+  }
+
+  .section,
+  .hero {
+    min-height: 0;
+    padding: 0 0 var(--space-8);
+    break-inside: avoid;
+  }
+
+  .hud-window,
+  .hero__window,
+  .credential,
+  .info-panel,
+  .data-row {
+    border-color: #999;
+    background: transparent;
+    box-shadow: none;
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3,
+  .hud-window__title,
+  .data-row__label {
+    color: #000;
+  }
+
+  p,
+  .log-box__line {
+    color: #222;
+  }
+
+  /* Link targets are invisible on paper unless they are spelled out. */
+  a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: var(--fs-key);
+    word-break: break-all;
   }
 }

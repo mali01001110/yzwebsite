@@ -3,19 +3,107 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#000000" />
+
+    <!-- The site ships both protocols, and the browser chrome has to follow the
+         one in use — a black address bar over the day palette is the same
+         mismatch the inline script below exists to prevent inside the page. -->
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+
+    <title>YANN ZAKPA // FULL-STACK DEVELOPER &amp; IT TECHNICIAN</title>
     <meta
       name="description"
-      content="Yann Zakpa — IT professional and full-stack software developer. Portfolio, credentials, projects and contact."
+      content="Portfolio of Yann Zakpa, full-stack developer and IT technician in Abidjan, Côte d’Ivoire. Python, JavaScript, Django and React, with Harvard CS50x and CS50P certification."
     />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="author" content="Yann Zakpa" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://yannzakpa.space/" />
+
+    <!-- Open Graph / Twitter. The card image is the brand mark rather than a
+         composed 1200x630 banner: it is the only image in the project that
+         belongs to this design, and a square mark is the shape a `summary`
+         card is built around. It is served as SVG, which Facebook, LinkedIn
+         and X do not rasterise — those three fall back to the text-only card
+         until a PNG exists. Crawlers that do accept vector (Slack, Discord,
+         Signal, most feed readers) render it at full resolution. -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="SYS.OVERRIDE_V.02 // YANN ZAKPA" />
+    <meta property="og:title" content="Yann Zakpa — Full-Stack Developer &amp; IT Technician" />
+    <meta
+      property="og:description"
+      content="Portfolio, credentials, projects and contact. Python, JavaScript, Django and React, with Harvard CS50x and CS50P certification."
+    />
+    <meta property="og:url" content="https://yannzakpa.space/" />
+    <meta property="og:locale" content="en_GB" />
+    <meta property="og:locale:alternate" content="fr_FR" />
+    <meta property="og:image" content="https://yannzakpa.space/favicon.svg" />
+    <meta property="og:image:type" content="image/svg+xml" />
+    <meta property="og:image:width" content="256" />
+    <meta property="og:image:height" content="256" />
+    <meta
+      property="og:image:alt"
+      content="Smartone Metaware logo: a black quill on a red ground"
+    />
+    <!-- `summary`, not `summary_large_image`: the mark is square, and the wide
+         card would letterbox it into a thin strip of black. -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Yann Zakpa — Full-Stack Developer &amp; IT Technician" />
+    <meta
+      name="twitter:description"
+      content="Portfolio, credentials, projects and contact. Python, JavaScript, Django and React, with Harvard CS50x and CS50P certification."
+    />
+    <meta name="twitter:image" content="https://yannzakpa.space/favicon.svg" />
+    <meta
+      name="twitter:image:alt"
+      content="Smartone Metaware logo: a black quill on a red ground"
+    />
+
+    <!-- The `?v=` token is a cache-buster, not decoration. Browsers keep tab
+         icons in a store of their own that survives a hard reload and often a
+         cache clear, so replacing the file on disk is not enough to dislodge
+         the icon a visitor has already seen. Bump the number whenever the mark
+         itself changes; the query string is ignored by the server. -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700;800&display=swap"
       rel="stylesheet"
     />
-    <title>SYS.OVERRIDE_V.02 // YANN ZAKPA</title>
+
+    <!-- Structured data. The whole page is one person's dossier, and this is
+         what lets a search engine read it as one rather than as ten anchors. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Yann Zakpa",
+        "url": "https://yannzakpa.space/",
+        "jobTitle": "Full-Stack Developer & IT Technician",
+        "email": "mailto:yannzakpa@gmail.com",
+        "knowsLanguage": ["fr", "en"],
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Abidjan",
+          "addressCountry": "CI"
+        },
+        "knowsAbout": [
+          "Python",
+          "JavaScript",
+          "C",
+          "Django",
+          "React",
+          "PostgreSQL",
+          "IT support",
+          "Computer networking"
+        ],
+        "sameAs": [
+          "https://www.linkedin.com/in/mali01001110/",
+          "https://github.com/mali01001110"
+        ]
+      }
+    </script>
     <script>
       // Applies the saved protocol before first paint. Deliberately inline and
       // blocking: deferring this to the React bundle means the page renders

@@ -43,7 +43,7 @@ function MyProjects() {
           {PROJECTS.map(({ name, url, description, stack, Icon }, index) => (
             <article key={name} className="deploy">
               <span className="deploy__glyph" aria-hidden="true">
-                <Icon size={26} strokeWidth={1.2} />
+                <Icon size={26} />
               </span>
 
               <div className="deploy__body">

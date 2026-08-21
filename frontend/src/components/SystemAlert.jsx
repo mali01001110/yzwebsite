@@ -17,12 +17,7 @@ function SystemAlert({ code, title, children }) {
       </div>
 
       <div className="hud-alert__body">
-        <TriangleAlert
-          size={30}
-          strokeWidth={1.5}
-          className="hud-alert__icon"
-          aria-hidden="true"
-        />
+        <TriangleAlert size={30} className="hud-alert__icon" aria-hidden="true" />
         <div>
           <p className="hud-alert__title">{title}</p>
           <p className="hud-alert__text">{children}</p>

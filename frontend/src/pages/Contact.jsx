@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { Phone, MessageCircle, Mail, Send } from 'lucide-react';
+import { Send } from 'lucide-react';
 import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
+import InfoPanel from '../components/InfoPanel';
+import BrandLogo from '../components/BrandLogo';
 import TickBar from '../components/TickBar';
 
 const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
@@ -10,25 +12,38 @@ const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
 // dev server proxies the same path to Django during development.
 const CONTACT_ENDPOINT = '/api/contact/';
 
+// Each channel is identified by the provider that actually carries it, in
+// that provider's own logo: Orange for the +225 07 voice line, WhatsApp for
+// the messaging number, Gmail for the address.
 const CHANNELS = [
   {
     label: 'Phone',
     value: '+225 0709390845',
     href: 'tel:+2250709390845',
-    Icon: Phone,
+    brand: 'orange',
   },
   {
     label: 'WhatsApp',
     value: '+225 0778704523',
     href: 'https://wa.me/2250778704523',
-    Icon: MessageCircle,
+    brand: 'whatsapp',
   },
   {
     label: 'Email',
     value: EMAIL_ADDRESS,
     href: `mailto:${EMAIL_ADDRESS}`,
-    Icon: Mail,
+    brand: 'gmail',
   },
+];
+
+// Everything a recruiter needs to work out whether they can reach me and
+// when. Restated here rather than linked back to the About section: this is
+// the panel someone is looking at when the question comes up.
+const AVAILABILITY_ROWS = [
+  { key: 'Based in', value: 'Abidjan, Côte d’Ivoire' },
+  { key: 'Timezone', value: 'GMT (UTC+00)' },
+  { key: 'Languages', value: 'French / English' },
+  { key: 'Status', value: 'Open to opportunities' },
 ];
 
 // Mirrors the max_length values on the ContactMessage model, so the browser
@@ -62,6 +77,16 @@ function Contact() {
   const [errorMessage, setErrorMessage] = useState('');
 
   const isSending = status === 'sending';
+
+  // Success and failure read as the same grey caption otherwise, which leaves
+  // the outcome of a submission legible only by reading the sentence.
+  const noteClassName = [
+    'transmit__note',
+    status === 'success' ? 'transmit__note--ok' : '',
+    status === 'error' ? 'transmit__note--error' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   const updateField = (field) => (event) => {
     const { value } = event.target;
@@ -110,7 +135,7 @@ function Contact() {
       <div className="contact">
         <HudWindow title="CHANNELS.SYS" tag="DIRECT" className="contact__channels-window">
           <div className="channel-options">
-            {CHANNELS.map(({ label, value, href, Icon }) => (
+            {CHANNELS.map(({ label, value, href, brand }) => (
               <a
                 key={label}
                 className="channel-option"
@@ -124,10 +149,14 @@ function Contact() {
                   <span className="channel-option__value">{value}</span>
                 </span>
                 <span className="channel-option__box" aria-hidden="true">
-                  <Icon size={22} strokeWidth={1.5} />
+                  <BrandLogo name={brand} size={24} />
                 </span>
               </a>
             ))}
+          </div>
+
+          <div className="contact__availability">
+            <InfoPanel title="Availability" rows={AVAILABILITY_ROWS} />
           </div>
 
           <TickBar value={100} label="Channels open" showValue={false} />
@@ -165,7 +194,7 @@ function Contact() {
               </label>
             </div>
 
-            <label className="hud-field">
+            <label className="hud-field hud-field--grow">
               <span className="hud-label hud-label--muted">Message</span>
               <textarea
                 className="hud-field__textarea"
@@ -185,7 +214,7 @@ function Contact() {
               {isSending ? '> TRANSMITTING…' : '> EXECUTE'}
             </button>
 
-            <p className="transmit__note" role="status" aria-live="polite">
+            <p className={noteClassName} role="status" aria-live="polite">
               {status === 'success' && 'Transmission received. I will get back to you shortly.'}
               {status === 'error' && errorMessage}
               {(status === 'idle' || isSending) &&

@@ -26,7 +26,7 @@ function ProtocolSwitch({ isDay, isSwitching, onToggle }) {
       title={`Protocol: ${current}`}
     >
       <span className="protocol-switch__glyph" aria-hidden="true">
-        <Icon size={14} strokeWidth={2} />
+        <Icon size={14} />
       </span>
 
       <span className="protocol-switch__readout">

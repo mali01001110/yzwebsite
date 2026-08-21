@@ -1,29 +1,26 @@
 import { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import { Menu, X, BriefcaseBusiness, Users, GitBranch, Mail } from 'lucide-react';
+import { Menu, X, ArrowUp } from 'lucide-react';
 import BackgroundFx from './BackgroundFx';
 import CursorReticle from './CursorReticle';
 import SystemRail from './SystemRail';
 import HudTicker from './HudTicker';
 import ProtocolSwitch from './ProtocolSwitch';
 import ProtocolLoader from './ProtocolLoader';
+import BrandIcon from './BrandIcon';
 import { NAV_ITEMS, SECTION_IDS } from '../data/navigation';
+import { SOCIAL_URLS } from '../data/social';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { useTheme } from '../hooks/useTheme';
 
+// Platform profiles only. Email is deliberately absent: it is a contact
+// channel rather than a profile, and the Contact section already gives it a
+// labelled row alongside phone and WhatsApp.
 const FOOTER_LINKS = [
-  {
-    href: 'https://www.linkedin.com/in/mali01001110/',
-    label: 'LinkedIn',
-    Icon: BriefcaseBusiness,
-  },
-  { href: 'https://github.com/mali01001110', label: 'GitHub', Icon: GitBranch },
-  {
-    href: 'https://www.facebook.com/profile.php?id=61586600751798',
-    label: 'Facebook',
-    Icon: Users,
-  },
-  { href: 'mailto:yannzakpa@gmail.com', label: 'Email', Icon: Mail },
+  { href: SOCIAL_URLS.linkedin, label: 'LinkedIn', brand: 'linkedin' },
+  { href: SOCIAL_URLS.github, label: 'GitHub', brand: 'github' },
+  { href: SOCIAL_URLS.facebook, label: 'Facebook', brand: 'facebook' },
+  { href: SOCIAL_URLS.tiktok, label: 'TikTok', brand: 'tiktok' },
 ];
 
 const TICKER_ITEMS = [
@@ -61,6 +58,13 @@ function Layout() {
 
   return (
     <>
+      {/* First element in the tab order. The site is a single scrolling page
+          behind a ten-item menu, so without this a keyboard visitor tabs the
+          whole navigation before reaching any content. */}
+      <a className="skip-link" href="#main-content">
+        Skip to content
+      </a>
+
       <BackgroundFx />
       <CursorReticle />
       <SystemRail />
@@ -70,9 +74,10 @@ function Layout() {
         <header className="header">
           <div className="header__inner">
             <a href="#home" className="brand" onClick={() => setIsNavOpen(false)}>
-              <span className="brand__mark" aria-hidden="true">
-                YZ
-              </span>
+              {/* The favicon file itself, so the mark in the header and the
+                  mark in the browser tab cannot drift apart. Decorative: the
+                  operator's name sits right beside it. */}
+              <img className="brand__mark" src="/favicon.svg" alt="" width="32" height="32" />
               <span className="brand__text">
                 <span className="brand__name">YANN ZAKPA</span>
                 <span className="brand__role">Dev // IT Systems</span>
@@ -115,7 +120,7 @@ function Layout() {
           </div>
         </header>
 
-        <main className="main-content">
+        <main className="main-content" id="main-content" tabIndex={-1}>
           <Outlet />
         </main>
 
@@ -130,24 +135,30 @@ function Layout() {
             </span>
 
             <div className="footer__socials">
-              {FOOTER_LINKS.map(({ href, label, Icon }) => (
+              {FOOTER_LINKS.map(({ href, label, brand }) => (
                 <a
                   key={label}
                   href={href}
                   className="footer__social"
                   aria-label={label}
-                  {...(href.startsWith('http')
-                    ? { target: '_blank', rel: 'noopener noreferrer' }
-                    : {})}
+                  target="_blank"
+                  rel="noopener noreferrer"
                 >
-                  <Icon size={16} />
+                  <BrandIcon name={brand} size={16} />
                 </a>
               ))}
             </div>
 
-            <span className="footer__note">
-              <span className="hud-status-dot" aria-hidden="true" /> System online
-            </span>
+            <div className="footer__end">
+              <span className="footer__note">
+                <span className="hud-status-dot" aria-hidden="true" /> System online
+              </span>
+
+              <a className="back-to-top" href="#home">
+                <ArrowUp size={13} aria-hidden="true" />
+                Top
+              </a>
+            </div>
           </div>
         </footer>
       </div>

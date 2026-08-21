@@ -27,7 +27,7 @@ function AboutMe() {
   return (
     <Section id="about-me" title="About" subtitle="Operator profile // background dump">
       <div className="about">
-        <HudWindow title="PROFILE.LOG" tag="READ-ONLY" className="about__log">
+        <HudWindow title="PROFILE.LOG" tag="READ-ONLY">
           <LogBox label="Dump" lines={ABOUT_LINES} />
         </HudWindow>
 

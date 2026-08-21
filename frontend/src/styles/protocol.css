@@ -62,13 +62,13 @@
 }
 
 .protocol-switch__label {
-  font-size: 0.5rem;
+  font-size: var(--fs-tick);
   letter-spacing: var(--tracking-wide);
   color: var(--text-dim);
 }
 
 .protocol-switch__value {
-  font-size: 0.6875rem;
+  font-size: var(--fs-label);
   font-weight: 700;
   letter-spacing: var(--tracking-mid);
   color: currentColor;
@@ -177,7 +177,7 @@
   justify-content: space-between;
   gap: 1rem;
   margin-bottom: 0.75rem;
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
 }
@@ -264,7 +264,7 @@
 
 .protocol-loader__log {
   margin-top: 0.7rem;
-  font-size: 0.625rem;
+  font-size: var(--fs-micro);
   letter-spacing: var(--tracking-mid);
   color: var(--text-log);
   text-transform: uppercase;
