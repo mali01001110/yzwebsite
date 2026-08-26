@@ -32,6 +32,13 @@ services:
         value: "false"
       - key: DJANGO_SECRET_KEY
         generateValue: true
+      # Where the Django admin is mounted. `sync: false` keeps the value out
+      # of this file and out of the public repository — Render prompts for it
+      # on first apply and remembers it. Required: with DEBUG off and this
+      # unset the service refuses to boot, rather than republishing the panel
+      # at '/admin/'.
+      - key: DJANGO_ADMIN_URL
+        sync: false
       - key: DJANGO_ALLOWED_HOSTS
         value: "yannzakpa.space,www.yannzakpa.space"
       - key: DATABASE_URL

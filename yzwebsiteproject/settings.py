@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import re
 from pathlib import Path
 
 import dj_database_url
@@ -43,6 +44,50 @@ if not SECRET_KEY:
             'DJANGO_SECRET_KEY must be set when DEBUG is disabled.'
         )
     SECRET_KEY = 'django-insecure-local-development-key-not-for-deployment'
+
+# The admin is the only authenticated surface on this site, so its location is
+# treated as part of the credential: sweeps of '/admin/' are constant and every
+# one of them is a login attempt a moved admin never has to answer. The real
+# path is read from the environment rather than written here for the same
+# reason SECRET_KEY is — the repository is public.
+#
+# Development gets a placeholder so a fresh checkout runs with no setup, but it
+# is deliberately not 'admin': there is no configuration of this project, in
+# any environment, that serves the panel from the one path every scanner
+# already knows.
+DEV_ADMIN_URL_SEGMENT = 'dev-admin'
+
+# A missing value must never fall back to a published path, so the development
+# segment is only ever available while DEBUG is on — the same rule SECRET_KEY
+# follows above, for the same reason.
+ADMIN_URL_SEGMENT = os.environ.get('DJANGO_ADMIN_URL', '').strip().strip('/')
+if not ADMIN_URL_SEGMENT:
+    if not DEBUG:
+        raise ImproperlyConfigured(
+            'DJANGO_ADMIN_URL must be set when DEBUG is disabled.'
+        )
+    ADMIN_URL_SEGMENT = DEV_ADMIN_URL_SEGMENT
+
+# Whitelisted rather than escaped at the point of use: the segment is
+# interpolated into a URL regex, and a value that cannot hold a metacharacter
+# cannot change what that pattern matches.
+if not re.fullmatch(r'[A-Za-z0-9_-]{1,64}', ADMIN_URL_SEGMENT):
+    raise ImproperlyConfigured(
+        'DJANGO_ADMIN_URL must be 1-64 characters drawn from letters, digits, '
+        'hyphens and underscores.'
+    )
+
+if ADMIN_URL_SEGMENT.lower() == 'admin':
+    raise ImproperlyConfigured(
+        "DJANGO_ADMIN_URL must not be 'admin'. Moving the panel off that path "
+        'is the whole purpose of the setting.'
+    )
+
+# Prefixes Django owns rather than the SPA. The root URLconf keeps them out of
+# its catch-all and the analytics collector drops requests under them. Nothing
+# is reserved for the admin's former location: once moved, '/admin/' is an
+# ordinary unknown path and the SPA answers it like any other.
+BACKEND_URL_PREFIXES = (ADMIN_URL_SEGMENT, 'api', 'static')
 
 ALLOWED_HOSTS = get_env_list('DJANGO_ALLOWED_HOSTS')
 if DEBUG:
@@ -226,6 +271,17 @@ CORS_ALLOWED_ORIGINS = [
     "https://yannzakpa.space",       # Production site
     "https://www.yannzakpa.space",
 ]
+
+
+# ---------------------------------------------------------------------------
+# Analytics
+# ---------------------------------------------------------------------------
+ANALYTICS = {
+    # Stated rather than left to the app's default, which hardcodes '/admin/'
+    # and would otherwise start collecting the moved admin's traffic.
+    'EXCLUDE_PATH_PREFIXES': [f'/{prefix}/' for prefix in BACKEND_URL_PREFIXES]
+    + ['/assets/', '/media/'],
+}
 
 
 # ---------------------------------------------------------------------------

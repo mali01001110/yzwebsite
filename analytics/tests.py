@@ -47,6 +47,10 @@ from .models import (
 from .pipeline import enforce_retention, flush, rebuild_stats, rollup, sessionize
 
 INGEST_URL = '/api/analytics/events/'
+# Reversed rather than spelled out: DJANGO_ADMIN_URL moves the admin, and a
+# hardcoded '/admin/' would quietly stop pointing at it.
+ADMIN_LOGIN_URL = reverse('admin:login')
+VISITOR_IP_CHANGELIST_URL = reverse('admin:analytics_visitorip_changelist')
 PUBLIC_IP = '93.184.216.34'
 FORGED_IP = '8.8.8.8'
 PROXY_IP = '10.0.0.1'
@@ -477,7 +481,7 @@ class CollectorMiddlewareTests(BufferIsolatedTestCase):
         self.assertEqual(len(buffer.drain()), 0)
 
     def test_admin_browsing_is_excluded(self):
-        self.client.get('/admin/login/', REMOTE_ADDR=PUBLIC_IP)
+        self.client.get(ADMIN_LOGIN_URL, REMOTE_ADDR=PUBLIC_IP)
         self.assertEqual(len(buffer.drain()), 0)
 
     def test_static_asset_is_excluded(self):
@@ -1051,22 +1055,22 @@ class SecurityDetectionTests(BufferIsolatedTestCase):
         self.assertEqual(len(buffer.drain()), 0)
 
     def test_failed_login_is_recorded(self):
-        security.record_failed_login(self.factory.post('/admin/login/'), 'admin')
+        security.record_failed_login(self.factory.post(ADMIN_LOGIN_URL), 'admin')
         self.assertEqual(len(buffer.drain()), 1)
 
     def test_failed_login_username_is_scrubbed(self):
-        security.record_failed_login(self.factory.post('/admin/login/'), 'ada@example.com')
+        security.record_failed_login(self.factory.post(ADMIN_LOGIN_URL), 'ada@example.com')
         self.assertNotIn('ada@example.com', buffer.drain()[0]['username_attempted'])
 
     def test_security_events_persist_through_flush(self):
-        security.record_failed_login(self.factory.post('/admin/login/'), 'root')
+        security.record_failed_login(self.factory.post(ADMIN_LOGIN_URL), 'root')
         flush()
         self.assertEqual(SecurityEvent.objects.count(), 1)
         self.assertEqual(SecurityEvent.objects.get().username_attempted, 'root')
 
     def test_no_raw_ip_in_a_security_event(self):
         security.record_failed_login(
-            self.factory.post('/admin/login/', REMOTE_ADDR=PUBLIC_IP), 'root'
+            self.factory.post(ADMIN_LOGIN_URL, REMOTE_ADDR=PUBLIC_IP), 'root'
         )
         flush()
         self.assertNotEqual(SecurityEvent.objects.get().ip_truncated, PUBLIC_IP)
@@ -1231,7 +1235,7 @@ class AdminTests(TestCase):
         self.client.logout()
         response = self.client.get(reverse('admin:analytics_dashboard'))
         self.assertEqual(response.status_code, 302)
-        self.assertIn('/admin/login/', response['Location'])
+        self.assertIn(ADMIN_LOGIN_URL, response['Location'])
 
     def test_days_parameter_is_clamped(self):
         response = self.client.get(reverse('admin:analytics_dashboard_data'), {'days': '99999'})
@@ -1571,16 +1575,16 @@ class VisitorIPAdminTests(TestCase):
         self.assertIn(VisitorIP, admin.site._registry)
 
     def test_listing_shows_public_addresses(self):
-        response = self.client.get('/admin/analytics/visitorip/')
+        response = self.client.get(VISITOR_IP_CHANGELIST_URL)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, PUBLIC_IP)
 
     def test_private_addresses_are_hidden_by_default(self):
-        response = self.client.get('/admin/analytics/visitorip/')
+        response = self.client.get(VISITOR_IP_CHANGELIST_URL)
         self.assertNotContains(response, '10.0.0.9')
 
     def test_private_addresses_are_reachable_through_the_filter(self):
-        response = self.client.get('/admin/analytics/visitorip/?is_public__exact=0')
+        response = self.client.get(f'{VISITOR_IP_CHANGELIST_URL}?is_public__exact=0')
         self.assertContains(response, '10.0.0.9')
 
     def test_rows_cannot_be_added_or_edited(self):

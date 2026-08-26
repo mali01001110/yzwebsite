@@ -34,7 +34,8 @@ python manage.py test analytics
 ### 2. Look at the dashboard
 
 Django admin → **Analytics** → **Daily stats** → the `dashboard/` URL, or go
-straight to `/admin/analytics/dailystat/dashboard/`.
+straight to `<admin>/analytics/dailystat/dashboard/`, where `<admin>` is the
+path set by `DJANGO_ADMIN_URL` (`/dev-admin/` in local development).
 
 ### 3. Optional: MaxMind GeoLite2
 
@@ -141,7 +142,7 @@ ANALYTICS = {
 | --- | --- | --- |
 | `ENABLED` | `True` | Master switch. Off makes the middleware a passthrough. |
 | `TRUSTED_IP_HEADERS` | `['HTTP_CF_CONNECTING_IP']` | Proxy-set headers tried before `X-Forwarded-For`. **Only safe while every route to the origin passes through that proxy.** |
-| `EXCLUDE_PATH_PREFIXES` | `/admin/ /api/ /static/ /assets/ /media/` | Derived from `BACKEND_PREFIXES` in the root URLconf. |
+| `EXCLUDE_PATH_PREFIXES` | `/admin/ /api/ /static/ /assets/ /media/` | Overridden in `settings.py`, which derives it from `BACKEND_URL_PREFIXES` so the path set by `DJANGO_ADMIN_URL` is excluded in place of `/admin/`. |
 | `EXCLUDE_PATHS` | favicon, icons, background, robots, sitemap | Root-level files WhiteNoise serves from `frontend/dist`. |
 
 `TRUSTED_PROXY_COUNT` is deliberately **not** in this dict. It is a root-level
