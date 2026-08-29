@@ -24,7 +24,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from . import channels, consent, events, privacy, reports, security, useragent
+from . import channels, consent, events, pipeline, privacy, reports, security, useragent
 from .admin import DailyStatAdmin, PageViewAdmin, VisitorAdmin, VisitorIPAdmin
 from .buffer import KIND_PAGEVIEW, RecordBuffer, buffer, record
 from .client_ip import get_client_ip, is_public_ip
@@ -1039,6 +1039,69 @@ class SchedulerConnectionTests(TestCase):
             _scheduler_tick(next_run)
 
         self.assertEqual(close.call_count, 2)
+
+
+class SchedulerForkTests(TestCase):
+    """
+    A forked worker must get its own pipeline thread.
+
+    Gunicorn preloads the application in the master and forks its workers, and
+    os.fork does not carry threads into the child. Guarding only on
+    ``is_alive`` would leave every worker -- the processes that actually serve
+    requests and fill the buffer -- without a pipeline, silently evicting
+    records once the buffer filled, while the master's thread ran against an
+    empty buffer of its own and reported healthy periodic jobs.
+    """
+
+    def setUp(self) -> None:
+        self._saved = (
+            pipeline._scheduler_thread,
+            pipeline._scheduler_pid,
+            pipeline._fork_handler_registered,
+        )
+        pipeline._scheduler_thread = None
+        pipeline._scheduler_pid = None
+        # Left registered so the tests never install a real os.fork handler.
+        pipeline._fork_handler_registered = True
+        self.addCleanup(self._restore)
+
+        # sys.argv[1] is 'test' under the runner, which start_scheduler
+        # otherwise refuses to schedule for.
+        blocked = patch(
+            'analytics.pipeline._is_management_command_that_should_not_schedule',
+            return_value=False,
+        )
+        blocked.start()
+        self.addCleanup(blocked.stop)
+
+    def _restore(self) -> None:
+        (
+            pipeline._scheduler_thread,
+            pipeline._scheduler_pid,
+            pipeline._fork_handler_registered,
+        ) = self._saved
+
+    def test_a_second_call_in_the_same_process_reuses_the_thread(self):
+        with patch('analytics.pipeline.threading.Thread') as thread_cls:
+            thread_cls.return_value.is_alive.return_value = True
+            pipeline.start_scheduler()
+            pipeline.start_scheduler()
+
+        self.assertEqual(thread_cls.call_count, 1)
+
+    def test_a_forked_child_starts_its_own_thread(self):
+        with patch('analytics.pipeline.threading.Thread') as thread_cls:
+            thread_cls.return_value.is_alive.return_value = True
+
+            with patch('analytics.pipeline.os.getpid', return_value=1000):
+                pipeline.start_scheduler()
+            # The child inherits a Thread object reporting is_alive(), so only
+            # the pid tells it the thread belongs to the process it forked from.
+            with patch('analytics.pipeline.os.getpid', return_value=1001):
+                pipeline.start_scheduler()
+
+        self.assertEqual(thread_cls.call_count, 2)
+        self.assertEqual(pipeline._scheduler_pid, 1001)
 
 
 # ---------------------------------------------------------------------------

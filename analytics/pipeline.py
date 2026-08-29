@@ -19,6 +19,7 @@ is periodic, so the next tick will pick it up.
 from __future__ import annotations
 
 import logging
+import os
 import sys
 import threading
 import time
@@ -63,6 +64,13 @@ ADVISORY_LOCK_KEY = 8_531_207
 
 _scheduler_thread: threading.Thread | None = None
 _scheduler_lock = threading.Lock()
+# The process the thread above belongs to. A forking server (gunicorn with
+# preloading, which is how this deploys) imports the application in the master
+# and only then forks its workers, and os.fork does not carry threads into the
+# child -- so the pid is what distinguishes "already running here" from
+# "running in the process we were forked from".
+_scheduler_pid: int | None = None
+_fork_handler_registered = False
 
 
 # ---------------------------------------------------------------------------
@@ -774,8 +782,19 @@ def start_scheduler() -> None:
 
     Called from ``AppConfig.ready()``, which Django may invoke more than once
     (the autoreloader runs it in both processes), so this must be idempotent.
+
+    Idempotent *per process*, which is the part that matters in production.
+    Under a preloading gunicorn the application is imported in the master and
+    the workers are forked from it, and a fork does not carry threads across:
+    the master keeps the pipeline thread while the workers, which are the
+    processes that actually serve requests and fill the buffer, get none. The
+    result is silent and total data loss -- each worker buffers records that
+    nothing ever drains, evicting them once the buffer is full, while the
+    master's thread runs happily against an empty buffer of its own and reports
+    healthy periodic jobs. Comparing the pid rather than only checking
+    ``is_alive`` is what makes the child start its own thread.
     """
-    global _scheduler_thread
+    global _scheduler_thread, _scheduler_pid
 
     # Logged rather than returned silently: a pipeline that never starts looks
     # exactly like one that starts and writes nothing, and the difference is
@@ -794,15 +813,43 @@ def start_scheduler() -> None:
         return
 
     with _scheduler_lock:
-        if _scheduler_thread is not None and _scheduler_thread.is_alive():
+        if (
+            _scheduler_pid == os.getpid()
+            and _scheduler_thread is not None
+            and _scheduler_thread.is_alive()
+        ):
             return
+
+        _register_fork_handler()
         _scheduler_thread = threading.Thread(
             target=_scheduler_loop,
             name='analytics-pipeline',
             daemon=True,
         )
+        _scheduler_pid = os.getpid()
         _scheduler_thread.start()
-        logger.info('Analytics pipeline thread started')
+        # The pid is in the message because a thread running in the wrong
+        # process is exactly the failure this guards against, and the log is
+        # the only place that is visible.
+        logger.info('Analytics pipeline thread started (pid %d)', _scheduler_pid)
+
+
+def _register_fork_handler() -> None:
+    """
+    Ask Python to restart the pipeline in any process forked from this one.
+
+    Without this a preloaded worker only gets its thread if something calls
+    ``start_scheduler`` again after the fork, and nothing does: ``ready()`` has
+    already run in the master. Registering once is enough, and the handler is
+    a no-op in a child that a management command forked, because
+    ``start_scheduler`` re-checks that before starting anything.
+    """
+    global _fork_handler_registered
+
+    if _fork_handler_registered or not hasattr(os, 'register_at_fork'):
+        return
+    os.register_at_fork(after_in_child=start_scheduler)
+    _fork_handler_registered = True
 
 
 def _is_management_command_that_should_not_schedule() -> bool:
