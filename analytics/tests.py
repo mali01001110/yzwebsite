@@ -13,10 +13,16 @@ from __future__ import annotations
 
 import time
 from datetime import timedelta
+from io import StringIO
+from pathlib import Path
+from tempfile import TemporaryDirectory
 from unittest.mock import patch
 
 from django.contrib import admin
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.db import OperationalError
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
@@ -24,7 +30,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from . import channels, consent, events, pipeline, privacy, reports, security, useragent
+from . import accesslog, channels, consent, events, pipeline, privacy, reports, security, useragent
 from .admin import DailyStatAdmin, PageViewAdmin, VisitorAdmin, VisitorIPAdmin
 from .buffer import KIND_PAGEVIEW, RecordBuffer, buffer, record
 from .client_ip import get_client_ip, is_public_ip
@@ -1102,6 +1108,176 @@ class SchedulerForkTests(TestCase):
 
         self.assertEqual(thread_cls.call_count, 2)
         self.assertEqual(pipeline._scheduler_pid, 1001)
+
+
+# ---------------------------------------------------------------------------
+# Access log reconstruction
+# ---------------------------------------------------------------------------
+
+# Real lines from the deployed service, kept verbatim: the parser exists to
+# read this exact format and a hand-written approximation of it would not
+# prove that it does.
+EDGE_UA = (
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 '
+    '(KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36 Edg/151.0.0.0'
+)
+LOG_HOME = (
+    '10.24.56.9 - - [26/Aug/2026:05:25:41 +0000] "GET / HTTP/1.1" 200 6134 '
+    f'"-" "{EDGE_UA}"'
+)
+LOG_PROJECTS = (
+    '10.31.67.130 - - [26/Aug/2026:05:01:39 +0000] "GET /projects HTTP/1.1" '
+    f'200 6134 "-" "{EDGE_UA}"'
+)
+LOG_ASSET = (
+    '10.28.155.132 - - [26/Aug/2026:05:34:12 +0000] '
+    '"GET /static/analytics/beacon.js HTTP/1.1" 304 0 '
+    f'"https://www.yannzakpa.space/admin/" "{EDGE_UA}"'
+)
+LOG_BEACON_POST = (
+    '10.24.56.9 - - [26/Aug/2026:05:34:14 +0000] '
+    '"POST /api/analytics/events/ HTTP/1.1" 204 0 '
+    f'"https://www.yannzakpa.space/projects" "{EDGE_UA}"'
+)
+LOG_PLATFORM_NOISE = '==> Your service is live 🎉'
+LOG_GUNICORN_NOISE = '[2026-08-29 06:31:27 +0000] [60] [INFO] Starting gunicorn 26.0.0'
+
+
+class AccessLogParsingTests(TestCase):
+    def test_parses_a_real_gunicorn_line(self):
+        entry = accesslog.parse_line(LOG_HOME)
+
+        self.assertIsNotNone(entry)
+        self.assertEqual(entry.method, 'GET')
+        self.assertEqual(entry.path, '/')
+        self.assertEqual(entry.status, 200)
+        self.assertEqual(entry.user_agent, EDGE_UA)
+        self.assertEqual(entry.occurred_at.year, 2026)
+        self.assertEqual(entry.occurred_at.hour, 5)
+        self.assertIsNotNone(entry.occurred_at.tzinfo)
+
+    def test_a_dash_referrer_becomes_empty(self):
+        self.assertEqual(accesslog.parse_line(LOG_HOME).referrer, '')
+
+    def test_query_string_is_split_from_the_path(self):
+        line = LOG_HOME.replace('GET / HTTP', 'GET /?utm_source=x HTTP')
+        entry = accesslog.parse_line(line)
+
+        self.assertEqual(entry.path, '/')
+        self.assertEqual(entry.query_string, 'utm_source=x')
+
+    def test_non_access_lines_are_skipped(self):
+        for line in (LOG_PLATFORM_NOISE, LOG_GUNICORN_NOISE, '', '   '):
+            with self.subTest(line=line):
+                self.assertIsNone(accesslog.parse_line(line))
+
+
+class AccessLogPageviewTests(TestCase):
+    def _entry(self, line):
+        return accesslog.parse_line(line)
+
+    def test_an_html_get_is_a_pageview(self):
+        self.assertTrue(accesslog.is_pageview(self._entry(LOG_HOME)))
+        self.assertTrue(accesslog.is_pageview(self._entry(LOG_PROJECTS)))
+
+    def test_assets_posts_and_non_200s_are_not(self):
+        for line in (LOG_ASSET, LOG_BEACON_POST):
+            with self.subTest(line=line[:40]):
+                self.assertFalse(accesslog.is_pageview(self._entry(line)))
+
+    def test_the_excluded_prefixes_are_honoured(self):
+        admin_line = LOG_HOME.replace(
+            'GET / HTTP', f'GET /{settings.ADMIN_URL_SEGMENT}/ HTTP'
+        )
+        self.assertFalse(accesslog.is_pageview(self._entry(admin_line)))
+
+    def test_extensionless_paths_are_still_pages(self):
+        line = LOG_HOME.replace('GET / HTTP', 'GET /about-me HTTP')
+        self.assertTrue(accesslog.is_pageview(self._entry(line)))
+
+
+class AccessLogImportTests(BufferIsolatedTestCase):
+    """
+    End-to-end: a log file becomes rows that carry their provenance.
+
+    The reconstruction is explicitly weaker than recorded traffic, so what is
+    asserted here is as much what it does *not* claim -- no addresses, no
+    silent blending with real sessions -- as what it writes.
+    """
+
+    def _run(self, lines, **options):
+        with TemporaryDirectory() as directory:
+            log_path = Path(directory) / 'access.log'
+            log_path.write_text(chr(10).join(lines), encoding='utf-8')
+            out = StringIO()
+            call_command('import_access_log', str(log_path), stdout=out, **options)
+        return out.getvalue()
+
+    def test_imports_pageviews_and_marks_their_provenance(self):
+        self._run([LOG_HOME, LOG_PROJECTS, LOG_ASSET, LOG_BEACON_POST,
+                   LOG_PLATFORM_NOISE, LOG_GUNICORN_NOISE])
+
+        self.assertEqual(PageView.objects.count(), 2)
+        self.assertCountEqual(
+            PageView.objects.values_list('path', flat=True), ['/', '/projects']
+        )
+        self.assertTrue(
+            all(session.import_source == accesslog.DEFAULT_IMPORT_SOURCE
+                for session in Session.objects.all())
+        )
+
+    def test_no_ip_data_is_invented(self):
+        self._run([LOG_HOME])
+
+        self.assertEqual(VisitorIP.objects.count(), 0)
+        session = Session.objects.get()
+        self.assertEqual(session.ip_hash, '')
+        self.assertIsNone(session.ip_truncated)
+
+    def test_the_user_agent_is_still_parsed(self):
+        self._run([LOG_HOME])
+
+        session = Session.objects.get()
+        self.assertEqual(session.browser, 'Edge')
+        self.assertFalse(session.is_bot)
+
+    def test_reimporting_the_same_log_does_not_duplicate(self):
+        self._run([LOG_HOME, LOG_PROJECTS])
+        first = PageView.objects.count()
+        self._run([LOG_HOME, LOG_PROJECTS])
+
+        self.assertEqual(PageView.objects.count(), first)
+
+    def test_recorded_sessions_are_never_deleted_by_a_reimport(self):
+        recorded = Visitor.objects.create(
+            visitor_id='recorded', first_seen_at=timezone.now(),
+            last_seen_at=timezone.now(),
+        )
+        Session.objects.create(visitor=recorded, started_at=timezone.now())
+
+        self._run([LOG_HOME])
+        self._run([LOG_HOME])
+
+        self.assertEqual(Session.objects.filter(import_source='').count(), 1)
+
+    def test_reversed_log_order_does_not_merge_distinct_visits(self):
+        """Render exports newest first; sessionization assumes the opposite."""
+        early = LOG_HOME.replace('05:25:41', '01:41:21')
+        late = LOG_HOME.replace('05:25:41', '06:08:31')
+
+        self._run([late, early])
+
+        self.assertEqual(Session.objects.count(), 2)
+
+    def test_dry_run_writes_nothing(self):
+        output = self._run([LOG_HOME, LOG_PROJECTS], dry_run=True)
+
+        self.assertEqual(PageView.objects.count(), 0)
+        self.assertIn('Dry run', output)
+
+    def test_an_empty_import_source_is_refused(self):
+        with self.assertRaises(CommandError):
+            self._run([LOG_HOME], import_source='  ')
 
 
 # ---------------------------------------------------------------------------

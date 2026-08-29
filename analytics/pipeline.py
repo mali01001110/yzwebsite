@@ -441,6 +441,7 @@ def _build_session(visitor: Visitor, item: dict[str, Any]) -> Session:
         os=profile.os,
         os_version=profile.os_version,
         device_type=profile.device_type,
+        import_source=item.get('import_source', ''),
         is_bot=profile.is_bot or geo.is_datacenter,
         bot_reason=profile.bot_reason or ('datacenter asn' if geo.is_datacenter else ''),
         **geo.as_session_fields(),
@@ -866,6 +867,9 @@ def _is_management_command_that_should_not_schedule() -> bool:
         'migrate', 'makemigrations', 'test', 'collectstatic', 'shell',
         'dbshell', 'showmigrations', 'sqlmigrate', 'flush', 'loaddata',
         'dumpdata', 'createsuperuser', 'check',
+        # Drives the buffer and flush itself; a scheduler draining the same
+        # buffer concurrently would split its batches between the two.
+        'import_access_log',
     }
     return sys.argv[1] in blocked
 

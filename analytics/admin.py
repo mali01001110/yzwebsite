@@ -169,8 +169,12 @@ class SessionAdmin(ReadOnlyAdmin):
     """One visit. The pageview timeline is inlined below each row."""
 
     list_display = ('started_at', 'short_visitor', 'channel', 'country', 'device_type',
-                    'browser', 'pageview_count', 'duration_seconds', 'is_bounce', 'is_bot')
-    list_filter = ('is_bot', 'channel', 'device_type', 'is_datacenter', 'country', 'started_at')
+                    'browser', 'pageview_count', 'duration_seconds', 'is_bounce', 'is_bot',
+                    'import_source')
+    # import_source is filterable because a reconstructed session is weaker
+    # evidence than a recorded one, and telling them apart has to be one click.
+    list_filter = ('is_bot', 'import_source', 'channel', 'device_type',
+                   'is_datacenter', 'country', 'started_at')
     search_fields = ('visitor__visitor_id', 'referrer_host', 'utm_campaign', 'ip_hash')
     date_hierarchy = 'started_at'
     ordering = ('-started_at',)

@@ -176,6 +176,12 @@ class Session(models.Model):
     is_bot = models.BooleanField(default=False, db_index=True)
     bot_reason = models.CharField(max_length=60, blank=True)
 
+    # Empty for everything the collector recorded. Set only by
+    # analytics.accesslog, which rebuilds sessions from a gunicorn access log
+    # and cannot know a visitor's address, so its rows carry weaker identity
+    # than a recorded one and must stay separable from them permanently.
+    import_source = models.CharField(max_length=40, blank=True, db_index=True)
+
     pageview_count = models.PositiveIntegerField(default=0)
     duration_seconds = models.PositiveIntegerField(default=0)
     is_bounce = models.BooleanField(default=True)
