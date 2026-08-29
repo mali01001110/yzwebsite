@@ -811,34 +811,53 @@ def _is_management_command_that_should_not_schedule() -> bool:
     return sys.argv[1] in blocked
 
 
+def _initial_next_run() -> dict[str, float]:
+    """
+    Make every periodic job due on the first tick after startup.
+
+    These were previously seeded one full interval ahead, which meant a job
+    only ever ran if the process outlived its own interval. The rollup's
+    interval is an hour, so under the dev server's autoreloader — or any
+    platform that recycles the instance — it never ran at all: raw rows kept
+    accumulating while ``DailyStat`` stayed empty, and the admin dashboard,
+    which reads only rollups, showed nothing. Retention failed the same way
+    against its 24-hour interval, leaving the privacy window unenforced.
+
+    Every job is idempotent and cheap when there is nothing to do, so running
+    each once per boot costs a few queries and removes the dependency on
+    uptime.
+    """
+    now = time.monotonic()
+    return {'sessionize': now, 'rollup': now, 'retention': now}
+
+
+def _run_due_jobs(next_run: dict[str, float], now: float) -> None:
+    """Run each periodic job whose turn has come, and reschedule it."""
+    if now >= next_run['sessionize']:
+        next_run['sessionize'] = now + get_setting('SESSIONIZE_INTERVAL_SECONDS')
+        _run_locked('sessionize', sessionize)
+    if now >= next_run['rollup']:
+        next_run['rollup'] = now + get_setting('ROLLUP_INTERVAL_SECONDS')
+        _run_locked('rollup', rollup_recent)
+    if now >= next_run['retention']:
+        next_run['retention'] = now + get_setting('RETENTION_INTERVAL_SECONDS')
+        _run_locked('retention', enforce_retention)
+        # Only acts once PageView has actually been converted, which is a
+        # deliberate manual step. Runs on the retention tick so a month
+        # boundary can never arrive without a partition ready.
+        _run_locked('partitions', _ensure_partitions)
+
+
 def _scheduler_loop() -> None:
     """Run the periodic jobs forever, at their configured intervals."""
-    next_run = {
-        'sessionize': time.monotonic() + get_setting('SESSIONIZE_INTERVAL_SECONDS'),
-        'rollup': time.monotonic() + get_setting('ROLLUP_INTERVAL_SECONDS'),
-        'retention': time.monotonic() + get_setting('RETENTION_INTERVAL_SECONDS'),
-    }
+    next_run = _initial_next_run()
     interval = get_setting('FLUSH_INTERVAL_SECONDS')
 
     while True:
         try:
             time.sleep(interval)
             _run_safely('flush', flush)
-
-            now = time.monotonic()
-            if now >= next_run['sessionize']:
-                next_run['sessionize'] = now + get_setting('SESSIONIZE_INTERVAL_SECONDS')
-                _run_locked('sessionize', sessionize)
-            if now >= next_run['rollup']:
-                next_run['rollup'] = now + get_setting('ROLLUP_INTERVAL_SECONDS')
-                _run_locked('rollup', rollup_recent)
-            if now >= next_run['retention']:
-                next_run['retention'] = now + get_setting('RETENTION_INTERVAL_SECONDS')
-                _run_locked('retention', enforce_retention)
-                # Only acts once PageView has actually been converted, which
-                # is a deliberate manual step. Runs on the retention tick so a
-                # month boundary can never arrive without a partition ready.
-                _run_locked('partitions', _ensure_partitions)
+            _run_due_jobs(next_run, time.monotonic())
         except Exception:
             # The loop must outlive any single failure, or one bad batch stops
             # collection until the next deploy.

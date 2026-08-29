@@ -11,6 +11,7 @@ behaviour that must not regress.
 """
 from __future__ import annotations
 
+import time
 from datetime import timedelta
 from unittest.mock import patch
 
@@ -26,6 +27,7 @@ from . import channels, consent, events, privacy, reports, security, useragent
 from .admin import DailyStatAdmin, PageViewAdmin, VisitorAdmin, VisitorIPAdmin
 from .buffer import KIND_PAGEVIEW, RecordBuffer, buffer, record
 from .client_ip import get_client_ip, is_public_ip
+from .defaults import get_setting
 from .exports import (
     delete_ip_data,
     delete_visitor_data,
@@ -44,7 +46,15 @@ from .models import (
     Visitor,
     VisitorIP,
 )
-from .pipeline import enforce_retention, flush, rebuild_stats, rollup, sessionize
+from .pipeline import (
+    _initial_next_run,
+    _run_due_jobs,
+    enforce_retention,
+    flush,
+    rebuild_stats,
+    rollup,
+    sessionize,
+)
 
 INGEST_URL = '/api/analytics/events/'
 # Reversed rather than spelled out: DJANGO_ADMIN_URL moves the admin, and a
@@ -938,6 +948,62 @@ class RetentionTests(TestCase):
         remaining = PageView.objects.count()
         enforce_retention()
         self.assertEqual(PageView.objects.count(), remaining)
+
+
+class SchedulerTests(TestCase):
+    """
+    The periodic jobs must not depend on the process outliving their interval.
+
+    Seeding the schedule one interval ahead meant the hourly rollup never ran
+    under the autoreloader or across a platform restart, so the dashboard —
+    which reads DailyStat and never the raw tables — stayed empty while
+    collection itself was working fine.
+    """
+
+    def setUp(self) -> None:
+        self.patches = {
+            name: patch(f'analytics.pipeline.{name}')
+            for name in ('sessionize', 'rollup_recent', 'enforce_retention', '_ensure_partitions')
+        }
+        self.jobs = {name: p.start() for name, p in self.patches.items()}
+        self.addCleanup(lambda: [p.stop() for p in self.patches.values()])
+
+    def test_every_job_runs_on_the_first_tick(self):
+        next_run = _initial_next_run()
+        _run_due_jobs(next_run, time.monotonic())
+
+        for name, job in self.jobs.items():
+            with self.subTest(job=name):
+                job.assert_called_once()
+
+    def test_jobs_do_not_rerun_before_their_interval(self):
+        next_run = _initial_next_run()
+        now = time.monotonic()
+        _run_due_jobs(next_run, now)
+        _run_due_jobs(next_run, now + 1)
+
+        for name, job in self.jobs.items():
+            with self.subTest(job=name):
+                self.assertEqual(job.call_count, 1)
+
+    def test_each_job_reruns_only_once_its_own_interval_elapses(self):
+        next_run = _initial_next_run()
+        now = time.monotonic()
+        _run_due_jobs(next_run, now)
+
+        # Past the hourly rollup but well short of the daily retention sweep.
+        _run_due_jobs(next_run, now + get_setting('ROLLUP_INTERVAL_SECONDS') + 1)
+
+        self.assertEqual(self.jobs['rollup_recent'].call_count, 2)
+        self.assertEqual(self.jobs['sessionize'].call_count, 2)
+        self.assertEqual(self.jobs['enforce_retention'].call_count, 1)
+
+    def test_a_failing_job_does_not_stop_the_others(self):
+        self.jobs['sessionize'].side_effect = RuntimeError('boom')
+        _run_due_jobs(_initial_next_run(), time.monotonic())
+
+        self.jobs['rollup_recent'].assert_called_once()
+        self.jobs['enforce_retention'].assert_called_once()
 
 
 # ---------------------------------------------------------------------------
