@@ -19,6 +19,7 @@ is periodic, so the next tick will pick it up.
 from __future__ import annotations
 
 import logging
+import sys
 import threading
 import time
 from collections import defaultdict
@@ -94,6 +95,8 @@ def flush() -> int:
         logger.exception('Analytics flush failed; %d record(s) lost', len(records))
         return 0
 
+    logger.info('Analytics flush wrote %d row(s) from %d record(s)',
+                written, len(records))
     return written
 
 
@@ -774,9 +777,20 @@ def start_scheduler() -> None:
     """
     global _scheduler_thread
 
-    if not get_setting('ENABLED') or not get_setting('RUN_INLINE_SCHEDULER'):
+    # Logged rather than returned silently: a pipeline that never starts looks
+    # exactly like one that starts and writes nothing, and the difference is
+    # the first thing worth knowing when no data is arriving.
+    if not get_setting('ENABLED'):
+        logger.warning('Analytics pipeline not started: ANALYTICS["ENABLED"] is False')
+        return
+    if not get_setting('RUN_INLINE_SCHEDULER'):
+        logger.warning(
+            'Analytics pipeline not started: ANALYTICS["RUN_INLINE_SCHEDULER"] '
+            'is False, so the jobs must be run as management commands'
+        )
         return
     if _is_management_command_that_should_not_schedule():
+        logger.debug('Analytics pipeline not started: running %s', sys.argv[1])
         return
 
     with _scheduler_lock:
@@ -799,8 +813,6 @@ def _is_management_command_that_should_not_schedule() -> bool:
     during ``migrate`` races the schema change, and during tests it writes into
     whichever transaction the test case is about to roll back.
     """
-    import sys
-
     if len(sys.argv) < 2:
         return False
     blocked = {

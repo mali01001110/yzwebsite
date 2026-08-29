@@ -285,6 +285,50 @@ ANALYTICS = {
 
 
 # ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+# Without an explicit configuration Django leaves the root logger to logging's
+# handler of last resort, which writes WARNING and above and drops everything
+# below. That makes the analytics pipeline invisible in production: it runs its
+# writes on a background thread, so nothing about whether that thread started,
+# or how much it wrote, ever reaches a request or a response. Diagnosing it
+# then depends on the one thing that is not logged.
+#
+# Gunicorn hands stdout and stderr to the platform's log stream, so a plain
+# console handler is all that is needed on Render.
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'standard': {
+            'format': '[{levelname}] {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        # INFO by default so the pipeline reports the thread starting and each
+        # non-empty flush. The volume is one line per five seconds at most, and
+        # only when there is traffic to write.
+        'analytics': {
+            'handlers': ['console'],
+            'level': os.environ.get('DJANGO_ANALYTICS_LOG_LEVEL', 'INFO'),
+            'propagate': False,
+        },
+    },
+}
+
+
+# ---------------------------------------------------------------------------
 # Django REST Framework
 # ---------------------------------------------------------------------------
 REST_FRAMEWORK = {
