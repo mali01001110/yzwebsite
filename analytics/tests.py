@@ -17,6 +17,7 @@ from unittest.mock import patch
 
 from django.contrib import admin
 from django.contrib.auth import get_user_model
+from django.db import OperationalError
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -49,6 +50,7 @@ from .models import (
 from .pipeline import (
     _initial_next_run,
     _run_due_jobs,
+    _scheduler_tick,
     enforce_retention,
     flush,
     rebuild_stats,
@@ -1004,6 +1006,39 @@ class SchedulerTests(TestCase):
 
         self.jobs['rollup_recent'].assert_called_once()
         self.jobs['enforce_retention'].assert_called_once()
+
+
+class SchedulerConnectionTests(TestCase):
+    """
+    The pipeline thread must recycle its own database connection.
+
+    Django recycles connections from its request signals only, and connection
+    objects are thread-local, so nothing recycles this thread's. A connection
+    dropped by an idle timeout or a failover would otherwise be reused forever:
+    every flush raises, the batch is logged and discarded, and collection stays
+    dead until the process restarts while the site itself looks perfectly
+    healthy. SQLite never drops a connection, so this is only ever caught by
+    asserting on the call rather than by exercising a real failure.
+    """
+
+    def test_tick_recycles_the_connection_before_writing(self):
+        calls = []
+        with patch('analytics.pipeline.close_old_connections',
+                   side_effect=lambda: calls.append('close')),              patch('analytics.pipeline.flush',
+                   side_effect=lambda: calls.append('flush')),              patch('analytics.pipeline._run_due_jobs',
+                   side_effect=lambda *args: calls.append('jobs')):
+            _scheduler_tick(_initial_next_run())
+
+        self.assertEqual(calls, ['close', 'flush', 'jobs'])
+
+    def test_a_dead_connection_is_recycled_on_every_later_tick(self):
+        next_run = _initial_next_run()
+        with patch('analytics.pipeline.close_old_connections') as close,              patch('analytics.pipeline.flush',
+                   side_effect=OperationalError('server closed the connection')),              patch('analytics.pipeline._run_due_jobs'):
+            _scheduler_tick(next_run)
+            _scheduler_tick(next_run)
+
+        self.assertEqual(close.call_count, 2)
 
 
 # ---------------------------------------------------------------------------

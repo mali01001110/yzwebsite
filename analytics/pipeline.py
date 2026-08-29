@@ -25,7 +25,7 @@ from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 from typing import Any, Iterable
 
-from django.db import connection, transaction
+from django.db import close_old_connections, connection, transaction
 from django.db.models import Count, F, Max, Min, Q, Sum
 from django.utils import timezone as django_timezone
 
@@ -848,6 +848,34 @@ def _run_due_jobs(next_run: dict[str, float], now: float) -> None:
         _run_locked('partitions', _ensure_partitions)
 
 
+def _scheduler_tick(next_run: dict[str, float]) -> None:
+    """
+    One iteration: recycle the connection, drain the buffer, run due jobs.
+
+    ``close_old_connections`` is the load-bearing call. Django recycles
+    connections from its ``request_started``/``request_finished`` handlers, and
+    connections are thread-local, so nothing ever recycles this thread's — it
+    is not a request thread. Once its connection dies (an idle timeout, a
+    failover, the database restarting) every later query raises on that same
+    dead connection: ``flush`` logs the failure, drops the batch and returns,
+    and collection stays dead until the process restarts. That is invisible in
+    development because SQLite never drops a connection, and invisible to the
+    tests for the same reason.
+
+    A quiet site is the worst case rather than the safest one: ``flush``
+    short-circuits on an empty buffer without issuing a query, so the
+    connection can sit idle for hours and get dropped long before any traffic
+    arrives to write. Recycling here rather than after the work means the
+    connection is checked immediately before it is used.
+
+    The call only closes a connection that is unusable or past ``conn_max_age``,
+    so it is nearly free on a healthy one and does not defeat connection reuse.
+    """
+    close_old_connections()
+    _run_safely('flush', flush)
+    _run_due_jobs(next_run, time.monotonic())
+
+
 def _scheduler_loop() -> None:
     """Run the periodic jobs forever, at their configured intervals."""
     next_run = _initial_next_run()
@@ -856,8 +884,7 @@ def _scheduler_loop() -> None:
     while True:
         try:
             time.sleep(interval)
-            _run_safely('flush', flush)
-            _run_due_jobs(next_run, time.monotonic())
+            _scheduler_tick(next_run)
         except Exception:
             # The loop must outlive any single failure, or one bad batch stops
             # collection until the next deploy.
