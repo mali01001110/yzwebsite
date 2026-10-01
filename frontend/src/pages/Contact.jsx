@@ -24,8 +24,8 @@ const CHANNELS = [
   },
   {
     label: 'WhatsApp',
-    value: '+225 0778704523',
-    href: 'https://wa.me/2250778704523',
+    value: '+225 0709390845',
+    href: 'https://wa.me/2250709390845',
     brand: 'whatsapp',
   },
   {
