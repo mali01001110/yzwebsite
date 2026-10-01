@@ -20,6 +20,7 @@ const FOOTER_LINKS = [
   { href: SOCIAL_URLS.linkedin, label: 'LinkedIn', brand: 'linkedin' },
   { href: SOCIAL_URLS.github, label: 'GitHub', brand: 'github' },
   { href: SOCIAL_URLS.facebook, label: 'Facebook', brand: 'facebook' },
+  { href: SOCIAL_URLS.instagram, label: 'Instagram', brand: 'instagram' },
   { href: SOCIAL_URLS.tiktok, label: 'TikTok', brand: 'tiktok' },
 ];
 

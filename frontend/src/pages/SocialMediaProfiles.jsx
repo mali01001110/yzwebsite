@@ -22,6 +22,12 @@ const PROFILES = [
     brand: 'facebook',
   },
   {
+    name: 'Instagram',
+    url: SOCIAL_URLS.instagram,
+    description: 'Follow my Instagram profile',
+    brand: 'instagram',
+  },
+  {
     name: 'TikTok',
     url: SOCIAL_URLS.tiktok,
     description: 'Check out my TikTok videos',

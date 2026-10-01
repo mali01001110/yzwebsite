@@ -12,6 +12,7 @@ export const SOCIAL_URLS = {
   linkedin: 'https://www.linkedin.com/in/mali01001110/',
   github: 'https://github.com/mali01001110',
   facebook: 'https://www.facebook.com/mali01001110',
+  instagram: 'https://www.instagram.com/mali01001110/',
   // Stripped of `?is_from_webapp=1&sender_device=pc`. Those are TikTok's own
   // share-tracking parameters, recorded when the link was copied out of a
   // desktop browser; they describe that copy, not the profile.
