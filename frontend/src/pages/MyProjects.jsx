@@ -1,4 +1,11 @@
-import { DownloadCloud, NotebookPen, Globe2, ArrowUpRight } from 'lucide-react';
+import {
+  DownloadCloud,
+  NotebookPen,
+  Globe2,
+  Gamepad2,
+  Monitor,
+  ArrowUpRight,
+} from 'lucide-react';
 import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import StaggerGrid from '../components/StaggerGrid';
@@ -20,6 +27,20 @@ const PROJECTS = [
     description: 'A standalone text editor',
     stack: 'Python // Desktop',
     Icon: NotebookPen,
+  },
+  {
+    name: 'Servo Jeu Web',
+    url: 'https://github.com/mali01001110/servo-jeu-web',
+    description: 'A browser-based servo game built with PixiJS',
+    stack: 'JavaScript // PixiJS',
+    Icon: Gamepad2,
+  },
+  {
+    name: 'Portfolio Windows Desktop Y2K',
+    url: 'https://github.com/mali01001110/Portfolio-Windows-Desktop-Y2K',
+    description: 'A portfolio design inspired by retro Windows and Y2K',
+    stack: 'React // TypeScript',
+    Icon: Monitor,
   },
   {
     name: 'My Personal Website',
