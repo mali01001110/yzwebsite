@@ -14,7 +14,7 @@ function CredentialCard({ code, title, description, image, alt, facts, hint, onO
     <article className="credential">
       <header className="credential__head">
         <div className="credential__ident">
-          <span className="credential__code">{code}</span>
+          <span className="credential__code">{t(code)}</span>
           <h3 className="credential__title">{t(title)}</h3>
         </div>
         <HudGauge value={100} label="Verified" />

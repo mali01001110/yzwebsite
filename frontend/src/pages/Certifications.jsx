@@ -5,6 +5,7 @@ import ImageLightbox from '../components/ImageLightbox';
 import StaggerGrid from '../components/StaggerGrid';
 import cert1 from '../assets/cert1.jpg';
 import cert2 from '../assets/cert2.jpg';
+import cert3 from '../assets/cert-placeholder.jpg';
 import { useLanguage } from '../hooks/useLanguage';
 
 const CERTIFICATIONS = [
@@ -28,6 +29,17 @@ const CERTIFICATIONS = [
     facts: [
       { key: 'Issuer', value: 'Harvard Online' },
       { key: 'Issued', value: '2026' },
+    ],
+  },
+  {
+    image: cert3,
+    alt: 'Professional training certificate in cybersecurity',
+    code: 'Professional IT Technician Qualification',
+    title: 'Information Security Certificate',
+    description: 'Professional training certificate in cybersecurity',
+    facts: [
+      { key: 'Issuer', value: 'CNFDI' },
+      { key: 'Issued', value: '2024' },
     ],
   },
 ];
