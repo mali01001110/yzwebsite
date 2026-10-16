@@ -12,6 +12,7 @@ import { NAV_ITEMS, SECTION_IDS } from '../data/navigation';
 import { SOCIAL_URLS } from '../data/social';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { useTheme } from '../hooks/useTheme';
+import { useLanguage } from '../hooks/useLanguage';
 
 // Platform profiles only. Email is deliberately absent: it is a contact
 // channel rather than a profile, and the Contact section already gives it a
@@ -21,6 +22,7 @@ const FOOTER_LINKS = [
   { href: SOCIAL_URLS.github, label: 'GitHub', brand: 'github' },
   { href: SOCIAL_URLS.facebook, label: 'Facebook', brand: 'facebook' },
   { href: SOCIAL_URLS.instagram, label: 'Instagram', brand: 'instagram' },
+  { href: SOCIAL_URLS.youtube, label: 'YouTube', brand: 'youtube' },
   { href: SOCIAL_URLS.tiktok, label: 'TikTok', brand: 'tiktok' },
 ];
 
@@ -45,6 +47,7 @@ function Layout() {
   const [isNavOpen, setIsNavOpen] = useState(false);
   const [activeSection, setActiveSection] = useActiveSection(SECTION_IDS);
   const { isDay, isSwitching, switchingTo, toggle } = useTheme();
+  const { language, toggleLanguage, translate: t } = useLanguage();
 
   useEffect(() => {
     if (!isNavOpen) return undefined;
@@ -63,7 +66,7 @@ function Layout() {
           behind a ten-item menu, so without this a keyboard visitor tabs the
           whole navigation before reaching any content. */}
       <a className="skip-link" href="#main-content">
-        Skip to content
+        {t('Skip to content')}
       </a>
 
       <BackgroundFx />
@@ -81,11 +84,23 @@ function Layout() {
               <img className="brand__mark" src="/favicon.svg" alt="" width="32" height="32" />
               <span className="brand__text">
                 <span className="brand__name">YANN ZAKPA</span>
-                <span className="brand__role">Dev // IT Systems</span>
+                <span className="brand__role">{t('Dev // IT Systems')}</span>
               </span>
             </a>
 
-            <ProtocolSwitch isDay={isDay} isSwitching={isSwitching} onToggle={toggle} />
+            <div className="header__controls">
+              <ProtocolSwitch isDay={isDay} isSwitching={isSwitching} onToggle={toggle} />
+              <button
+                type="button"
+                className="language-switch"
+                onClick={toggleLanguage}
+                aria-label={t(language === 'en' ? 'Switch language to French' : 'Switch language to English')}
+                title={t(language === 'en' ? 'Switch language to French' : 'Switch language to English')}
+              >
+                <span className="language-switch__label" aria-hidden="true">{t('LANG')}</span>
+                <span className="language-switch__value" aria-hidden="true">{language.toUpperCase()}</span>
+              </button>
+            </div>
 
             <button
               type="button"
@@ -93,7 +108,7 @@ function Layout() {
               onClick={() => setIsNavOpen((open) => !open)}
               aria-expanded={isNavOpen}
               aria-controls="primary-navigation"
-              aria-label={isNavOpen ? 'Close navigation' : 'Open navigation'}
+              aria-label={t(isNavOpen ? 'Close navigation' : 'Open navigation')}
             >
               {isNavOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
@@ -101,7 +116,7 @@ function Layout() {
             <nav
               id="primary-navigation"
               className={`nav ${isNavOpen ? 'is-open' : ''}`.trim()}
-              aria-label="Main navigation"
+              aria-label={t('Main navigation')}
             >
               {NAV_ITEMS.map((item) => (
                 <a
@@ -114,7 +129,7 @@ function Layout() {
                     setActiveSection(item.id);
                   }}
                 >
-                  {item.label}
+                  {t(item.label)}
                 </a>
               ))}
             </nav>
@@ -126,7 +141,7 @@ function Layout() {
         </main>
 
         <div className="footer-ticker">
-          <HudTicker items={TICKER_ITEMS} />
+          <HudTicker items={TICKER_ITEMS.map(t)} />
         </div>
 
         <footer className="footer">
@@ -152,12 +167,12 @@ function Layout() {
 
             <div className="footer__end">
               <span className="footer__note">
-                <span className="hud-status-dot" aria-hidden="true" /> System online
+                <span className="hud-status-dot" aria-hidden="true" /> {t('System online')}
               </span>
 
               <a className="back-to-top" href="#home">
                 <ArrowUp size={13} aria-hidden="true" />
-                Top
+                {t('Top')}
               </a>
             </div>
           </div>

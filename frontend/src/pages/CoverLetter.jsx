@@ -2,6 +2,7 @@ import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import LogBox from '../components/LogBox';
 import TickBar from '../components/TickBar';
+import { useLanguage } from '../hooks/useLanguage';
 
 const COVER_LETTER_LINES = [
   'Dear Hiring Manager,',
@@ -16,18 +17,19 @@ const COVER_LETTER_LINES = [
 ];
 
 function CoverLetter() {
+  const { translate: t } = useLanguage();
   return (
     <Section id="cover-letter" title="Letter" subtitle="Transmission // cover letter">
       <HudWindow title="COVER_LETTER.TXT" tag="INBOUND">
         <LogBox
           label="~/yz/cover-letter.txt"
-          lines={COVER_LETTER_LINES}
+          lines={COVER_LETTER_LINES.map(t)}
           numbered
           className="log-box--letter"
         />
 
         <footer className="transmission">
-          <span className="transmission__status">END OF TRANSMISSION...</span>
+          <span className="transmission__status">{t('END OF TRANSMISSION...')}</span>
           <TickBar value={100} label="Packets received" showValue={false} />
         </footer>
       </HudWindow>

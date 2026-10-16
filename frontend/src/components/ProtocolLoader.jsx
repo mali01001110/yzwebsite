@@ -1,3 +1,5 @@
+import { useLanguage } from '../hooks/useLanguage';
+
 /**
  * The reboot sequence shown while the protocol switches.
  *
@@ -11,6 +13,7 @@
  * twice is noise.
  */
 function ProtocolLoader({ isSwitching, target }) {
+  const { translate: t } = useLanguage();
   if (!isSwitching || !target) return null;
 
   return (
@@ -18,7 +21,7 @@ function ProtocolLoader({ isSwitching, target }) {
       <div className="protocol-loader__frame">
         <div className="protocol-loader__head">
           <span className="protocol-loader__code">SYS.RECALIBRATE</span>
-          <span className="protocol-loader__target">{target.toUpperCase()}</span>
+          <span className="protocol-loader__target">{t(target.toUpperCase())}</span>
         </div>
 
         <div className="protocol-loader__track">
@@ -32,7 +35,7 @@ function ProtocolLoader({ isSwitching, target }) {
         </div>
 
         <p className="protocol-loader__log">
-          &gt; REMAPPING COLOR CHANNELS<span className="protocol-loader__caret" />
+          &gt; {t('REMAPPING COLOR CHANNELS')}<span className="protocol-loader__caret" />
         </p>
       </div>
 

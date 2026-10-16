@@ -3,6 +3,7 @@ import HudWindow from '../components/HudWindow';
 import LogBox from '../components/LogBox';
 import InfoPanel from '../components/InfoPanel';
 import TickBar from '../components/TickBar';
+import { useLanguage } from '../hooks/useLanguage';
 
 const ABOUT_LINES = [
   'Trained IT professional and software developer.',
@@ -24,11 +25,12 @@ const PROFILE_ROWS = [
 ];
 
 function AboutMe() {
+  const { translate: t } = useLanguage();
   return (
     <Section id="about-me" title="About" subtitle="Operator profile // background dump">
       <div className="about">
         <HudWindow title="PROFILE.LOG" tag="READ-ONLY">
-          <LogBox label="Dump" lines={ABOUT_LINES} />
+          <LogBox label={t('Dump')} lines={ABOUT_LINES.map(t)} />
         </HudWindow>
 
         <aside className="about__side">

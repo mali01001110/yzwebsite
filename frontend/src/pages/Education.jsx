@@ -5,6 +5,7 @@ import ImageLightbox from '../components/ImageLightbox';
 import StaggerGrid from '../components/StaggerGrid';
 import edu1 from '../assets/education1.jpg';
 import edu2 from '../assets/education2.jpg';
+import { useLanguage } from '../hooks/useLanguage';
 
 const EDUCATION_ENTRIES = [
   {
@@ -33,6 +34,7 @@ const EDUCATION_ENTRIES = [
 
 function Education() {
   const [activeImage, setActiveImage] = useState(null);
+  const { translate: t } = useLanguage();
 
   return (
     <Section id="education" title="Education" subtitle="Academic record // archive access">
@@ -44,9 +46,9 @@ function Education() {
             title={entry.title}
             description={entry.description}
             image={entry.image}
-            alt={entry.alt}
+            alt={t(entry.alt)}
             facts={entry.facts}
-            hint="Open diploma"
+            hint={t('Open diploma')}
             onOpen={() => setActiveImage({ src: entry.image, alt: entry.alt })}
           />
         ))}

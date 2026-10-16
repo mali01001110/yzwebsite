@@ -1,4 +1,5 @@
 import { Moon, Sun } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * Day/night control, styled as a HUD protocol selector rather than a generic
@@ -11,9 +12,10 @@ import { Moon, Sun } from 'lucide-react';
  * is where a screen reader expects to find it.
  */
 function ProtocolSwitch({ isDay, isSwitching, onToggle }) {
+  const { translate: t } = useLanguage();
   const current = isDay ? 'DAY' : 'NIGHT';
-  const next = isDay ? 'night' : 'day';
   const Icon = isDay ? Sun : Moon;
+  const actionLabel = isDay ? 'Switch to night protocol' : 'Switch to day protocol';
 
   return (
     <button
@@ -21,9 +23,9 @@ function ProtocolSwitch({ isDay, isSwitching, onToggle }) {
       className={`protocol-switch ${isSwitching ? 'is-switching' : ''}`.trim()}
       onClick={onToggle}
       disabled={isSwitching}
-      aria-label={`Switch to ${next} protocol`}
+      aria-label={t(actionLabel)}
       aria-live="polite"
-      title={`Protocol: ${current}`}
+      title={t(`Protocol: ${current}`)}
     >
       <span className="protocol-switch__glyph" aria-hidden="true">
         <Icon size={14} />
@@ -31,9 +33,9 @@ function ProtocolSwitch({ isDay, isSwitching, onToggle }) {
 
       <span className="protocol-switch__readout">
         <span className="protocol-switch__label" aria-hidden="true">
-          PROTOCOL
+          {t('PROTOCOL')}
         </span>
-        <span className="protocol-switch__value">{current}</span>
+        <span className="protocol-switch__value">{t(current)}</span>
       </span>
 
       <span className="protocol-switch__scan" aria-hidden="true" />

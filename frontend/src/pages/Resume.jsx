@@ -6,6 +6,7 @@ import DocumentThumb from '../components/DocumentThumb';
 import ImageLightbox from '../components/ImageLightbox';
 import InfoPanel from '../components/InfoPanel';
 import resumeImage from '../assets/resume.jpg';
+import { useLanguage } from '../hooks/useLanguage';
 
 const RESUME_ALT = 'Scanned image of resume showing work experience and skills';
 
@@ -18,17 +19,18 @@ const DOSSIER_ROWS = [
 
 function Resume() {
   const [isOpen, setIsOpen] = useState(false);
+  const { translate: t } = useLanguage();
 
   return (
     <Section id="resume" title="Resume" subtitle="Full dossier // education, certs, experience">
-      <HudWindow title="DOSSIER.SCAN" tag="ACCESS GRANTED">
+      <HudWindow title="DOSSIER.SCAN" tag={t('ACCESS GRANTED')}>
         <div className="dossier">
           <div className="dossier__viewport">
             <DocumentThumb
               src={resumeImage}
-              alt={RESUME_ALT}
+              alt={t(RESUME_ALT)}
               onOpen={() => setIsOpen(true)}
-              hint="Open dossier"
+              hint={t('Open dossier')}
             />
           </div>
 
@@ -36,8 +38,7 @@ function Resume() {
             <InfoPanel title="Record" rows={DOSSIER_ROWS} />
 
             <p className="dossier__note">
-              Open the resume scan to view the complete education, certifications and
-              professional experience details.
+              {t('Open the resume scan to view the complete education, certifications and professional experience details.')}
             </p>
 
             <button
@@ -46,7 +47,7 @@ function Resume() {
               onClick={() => setIsOpen(true)}
             >
               <Download size={18} aria-hidden="true" />
-              &gt; EXECUTE
+              {t('> EXECUTE')}
             </button>
           </div>
         </div>

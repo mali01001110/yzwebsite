@@ -5,6 +5,7 @@ import HudWindow from '../components/HudWindow';
 import InfoPanel from '../components/InfoPanel';
 import BrandLogo from '../components/BrandLogo';
 import TickBar from '../components/TickBar';
+import { useLanguage } from '../hooks/useLanguage';
 
 const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
 
@@ -72,6 +73,7 @@ function extractErrorMessage(payload) {
 }
 
 function Contact() {
+  const { translate: t } = useLanguage();
   const [form, setForm] = useState(EMPTY_FORM);
   const [status, setStatus] = useState('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -133,7 +135,7 @@ function Contact() {
   return (
     <Section id="contact" title="Contact" subtitle="Open channel // transmit data packet">
       <div className="contact">
-        <HudWindow title="CHANNELS.SYS" tag="DIRECT" className="contact__channels-window">
+        <HudWindow title="CHANNELS.SYS" tag={t('DIRECT')} className="contact__channels-window">
           <div className="channel-options">
             {CHANNELS.map(({ label, value, href, brand }) => (
               <a
@@ -145,7 +147,7 @@ function Contact() {
                   : {})}
               >
                 <span className="channel-option__body">
-                  <span className="channel-option__label">&gt; {label}</span>
+                  <span className="channel-option__label">&gt; {t(label)}</span>
                   <span className="channel-option__value">{value}</span>
                 </span>
                 <span className="channel-option__box" aria-hidden="true">
@@ -162,11 +164,11 @@ function Contact() {
           <TickBar value={100} label="Channels open" showValue={false} />
         </HudWindow>
 
-        <HudWindow title="TRANSMIT.EXE" tag="SECURE" className="contact__form-window">
+        <HudWindow title="TRANSMIT.EXE" tag={t('SECURE')} className="contact__form-window">
           <form className="transmit" onSubmit={handleSubmit}>
             <div className="transmit__row">
               <label className="hud-field">
-                <span className="hud-label hud-label--muted">Name</span>
+                <span className="hud-label hud-label--muted">{t('Name')}</span>
                 <input
                   className="hud-field__input"
                   type="text"
@@ -175,12 +177,12 @@ function Contact() {
                   value={form.name}
                   onChange={updateField('name')}
                   disabled={isSending}
-                  placeholder="Your name"
+                  placeholder={t('Your name')}
                 />
               </label>
 
               <label className="hud-field">
-                <span className="hud-label hud-label--muted">Email</span>
+                <span className="hud-label hud-label--muted">{t('Email')}</span>
                 <input
                   className="hud-field__input"
                   type="email"
@@ -189,13 +191,13 @@ function Contact() {
                   value={form.email}
                   onChange={updateField('email')}
                   disabled={isSending}
-                  placeholder="you@domain.com"
+                  placeholder={t('you@domain.com')}
                 />
               </label>
             </div>
 
             <label className="hud-field hud-field--grow">
-              <span className="hud-label hud-label--muted">Message</span>
+              <span className="hud-label hud-label--muted">{t('Message')}</span>
               <textarea
                 className="hud-field__textarea"
                 required
@@ -203,22 +205,22 @@ function Contact() {
                 value={form.message}
                 onChange={updateField('message')}
                 disabled={isSending}
-                placeholder="Type your message…"
+                placeholder={t('Type your message…')}
               />
             </label>
 
-            <p className="transmit__prompt">Initiate transmission?</p>
+            <p className="transmit__prompt">{t('Initiate transmission?')}</p>
 
             <button type="submit" className="execute-button" disabled={isSending}>
               <Send size={18} aria-hidden="true" />
-              {isSending ? '> TRANSMITTING…' : '> EXECUTE'}
+              {isSending ? t('> TRANSMITTING…') : t('> EXECUTE')}
             </button>
 
             <p className={noteClassName} role="status" aria-live="polite">
-              {status === 'success' && 'Transmission received. I will get back to you shortly.'}
-              {status === 'error' && errorMessage}
+              {status === 'success' && t('Transmission received. I will get back to you shortly.')}
+              {status === 'error' && t(errorMessage)}
               {(status === 'idle' || isSending) &&
-                'Your message is delivered straight to my inbox.'}
+                t('Your message is delivered straight to my inbox.')}
             </p>
           </form>
         </HudWindow>

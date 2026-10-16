@@ -3,6 +3,7 @@ import HudWindow from '../components/HudWindow';
 import DataRow from '../components/DataRow';
 import StaggerGrid from '../components/StaggerGrid';
 import { SOCIAL_URLS } from '../data/social';
+import { useLanguage } from '../hooks/useLanguage';
 
 const INTRO = `Find me online! Feel free to connect or follow me on any of the platforms listed below.`;
 
@@ -36,13 +37,14 @@ const PROFILES = [
 ];
 
 function SocialMediaProfiles() {
+  const { translate: t } = useLanguage();
   return (
     <Section id="social" title="Social" subtitle="External channels // open links">
-      <p className="prose">{INTRO}</p>
+      <p className="prose">{t(INTRO)}</p>
 
       <HudWindow
         title="CHANNELS.NET"
-        tag={`${String(PROFILES.length).padStart(2, '0')} LINKS`}
+        tag={`${String(PROFILES.length).padStart(2, '0')} ${t('LINKS')}`}
       >
         <StaggerGrid className="channels" threshold={0.05}>
           {PROFILES.map(({ name, url, description, brand }, index) => (

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout';
 import Home from './pages/Home';
 import ConsentBanner from './components/ConsentBanner';
+import LanguageProvider from './components/LanguageProvider';
 import { useAnalytics } from './hooks/useAnalytics';
 import './App.css';
 
@@ -10,7 +11,7 @@ function App() {
   useAnalytics();
 
   return (
-    <>
+    <LanguageProvider>
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
@@ -20,7 +21,7 @@ function App() {
           which defaults to False for this site. Flip both together to start
           gating beacon data on consent. */}
       <ConsentBanner enabled={false} />
-    </>
+    </LanguageProvider>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useSystemClock } from '../hooks/useSystemClock';
 import { useScrollProgress } from '../hooks/useScrollProgress';
 import { formatClock } from '../utils/time';
+import { useLanguage } from '../hooks/useLanguage';
 
 const BUILD_ID = 'SYS.OVERRIDE_V.02';
 
@@ -10,6 +11,7 @@ const BUILD_ID = 'SYS.OVERRIDE_V.02';
  * bottom edge doubles as the page's scroll indicator.
  */
 function SystemRail() {
+  const { language, translate: t } = useLanguage();
   const now = useSystemClock();
   const scrollProgress = useScrollProgress();
   const isComplete = scrollProgress >= 100;
@@ -22,10 +24,12 @@ function SystemRail() {
       </span>
 
       <span className="system-rail__group system-rail__group--secondary">
-        <span className="system-rail__alert">⚠ DATA BREACH DETECTED</span>
+        <span className="system-rail__alert">{t('⚠ DATA BREACH DETECTED')}</span>
         <span className="system-rail__hide-sm">COCODY // ABIDJAN.CI</span>
         <span className="system-rail__scan">
-          {isComplete ? 'LOAD COMPLETE' : `LOAD ${String(Math.round(scrollProgress)).padStart(3, '0')}%`}
+          {isComplete
+            ? t('LOAD COMPLETE')
+            : `${language === 'fr' ? 'CHARGEMENT' : 'LOAD'} ${String(Math.round(scrollProgress)).padStart(3, '0')}%`}
         </span>
         <span className="system-rail__clock">{formatClock(now)}</span>
       </span>

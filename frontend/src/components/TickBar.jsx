@@ -1,15 +1,18 @@
+import { useLanguage } from '../hooks/useLanguage';
+
 /**
  * Segmented tick meter from the poster's footer bar. `value` fills the ticks
  * left to right.
  */
 function TickBar({ value = 100, label, showValue = true }) {
+  const { translate: t } = useLanguage();
   const clamped = Math.min(Math.max(value, 0), 100);
 
   return (
     <div className="tick-bar">
       {label && (
         <div className="tick-bar__label">
-          <span>{label}</span>
+          <span>{t(label)}</span>
           {showValue && <span>{clamped}%</span>}
         </div>
       )}

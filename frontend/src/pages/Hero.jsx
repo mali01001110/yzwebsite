@@ -5,6 +5,7 @@ import SystemAlert from '../components/SystemAlert';
 import Countdown from '../components/Countdown';
 import HudGauge from '../components/HudGauge';
 import BootLog from '../components/BootLog';
+import { useLanguage } from '../hooks/useLanguage';
 
 const SUMMARY = `Hello, World! I'm Yann Zakpa, and I am passionate about computing with a solid foundation in IT support and software development for web and desktop apps.`;
 
@@ -36,6 +37,7 @@ const RISE = {
 };
 
 function Hero() {
+  const { translate: t } = useLanguage();
   return (
     <section id="home" className="hero">
       <div className="hero__inner">
@@ -46,7 +48,7 @@ function Hero() {
         <motion.div className="hero__window" {...RISE}>
           <div className="hero__window-bar">
             <span className="hero__window-title">&gt;&gt; YANN_ZAKPA.EXE</span>
-            <span className="hero__window-tag">SEC.00 :: HOME</span>
+            <span className="hero__window-tag">SEC.00 :: {t('HOME')}</span>
             <span className="hero__window-glyphs" aria-hidden="true">
               <span>_</span>
               <span>□</span>
@@ -62,7 +64,7 @@ function Hero() {
                 transition={{ ...RISE.transition, delay: 0.08 }}
               >
                 <span className="hud-status-dot" aria-hidden="true" />
-                Open to opportunities // Abidjan, CI
+                {t('Open to opportunities // Abidjan, CI')}
               </motion.span>
 
               <motion.h1
@@ -79,7 +81,7 @@ function Hero() {
                 {...RISE}
                 transition={{ ...RISE.transition, delay: 0.2 }}
               >
-                Full-Stack Developer // IT Technician
+                {t('Full-Stack Developer // IT Technician')}
               </motion.p>
 
               <motion.p
@@ -87,11 +89,11 @@ function Hero() {
                 {...RISE}
                 transition={{ ...RISE.transition, delay: 0.26 }}
               >
-                {SUMMARY}
+                {t(SUMMARY)}
               </motion.p>
 
               <motion.div {...RISE} transition={{ ...RISE.transition, delay: 0.32 }}>
-                <BootLog lines={BOOT_LOG} />
+                <BootLog lines={BOOT_LOG.map(t)} />
               </motion.div>
 
               <motion.div
@@ -101,11 +103,11 @@ function Hero() {
               >
                 <HudButton href="#projects">
                   <Terminal size={15} aria-hidden="true" />
-                  Execute // view projects
+                  {t('Execute // view projects')}
                 </HudButton>
                 <HudButton href="#contact" variant="ghost">
                   <Send size={15} aria-hidden="true" />
-                  Initiate contact
+                  {t('Initiate contact')}
                 </HudButton>
               </motion.div>
 
@@ -117,7 +119,7 @@ function Hero() {
                 {STATS.map((stat) => (
                   <div key={stat.label} className="hero__stat">
                     <div className="hero__stat-value">{stat.value}</div>
-                    <div className="hero__stat-label">{stat.label}</div>
+                    <div className="hero__stat-label">{t(stat.label)}</div>
                   </div>
                 ))}
               </motion.div>
@@ -138,7 +140,7 @@ function Hero() {
               </div>
 
               <div className="hero__module hero__module--fill">
-                <span className="hud-label">Diagnostics</span>
+                <span className="hud-label">{t('Diagnostics')}</span>
                 <div className="hero__gauges">
                   {GAUGES.map((gauge) => (
                     <HudGauge key={gauge.label} value={gauge.value} label={gauge.label} drifts />
@@ -152,8 +154,8 @@ function Hero() {
         </motion.div>
       </div>
 
-      <a href="#about-me" className="hero__scroll" aria-label="Scroll to About">
-        Scroll
+      <a href="#about-me" className="hero__scroll" aria-label={t('Scroll to About')}>
+        {t('Scroll')}
         <ChevronsDown size={16} aria-hidden="true" />
       </a>
     </section>

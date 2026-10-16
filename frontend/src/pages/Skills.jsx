@@ -3,6 +3,7 @@ import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import DataRow from '../components/DataRow';
 import StaggerGrid from '../components/StaggerGrid';
+import { useLanguage } from '../hooks/useLanguage';
 
 const SKILL_GROUPS = [
   {
@@ -70,6 +71,7 @@ const SKILL_GROUPS = [
 ];
 
 function Skills() {
+  const { translate: t } = useLanguage();
   return (
     <Section id="skills" title="Skills" subtitle="Capability matrix // modules loaded">
       <div className="skills">
@@ -77,13 +79,13 @@ function Skills() {
           <HudWindow
             key={category}
             title={file}
-            tag={`${String(items.length).padStart(2, '0')} MODULES`}
+            tag={`${String(items.length).padStart(2, '0')} ${t('MODULES')}`}
           >
             <header className="skills__head">
               <span className="skills__glyph" aria-hidden="true">
                 <Icon size={18} />
               </span>
-              <h3 className="skills__title">{category}</h3>
+              <h3 className="skills__title">{t(category)}</h3>
             </header>
 
             <StaggerGrid className="skills__rows" threshold={0.05}>

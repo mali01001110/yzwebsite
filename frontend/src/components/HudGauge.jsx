@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { prefersReducedMotion } from '../utils/motion';
+import { useLanguage } from '../hooks/useLanguage';
 
 const DIAL_SIZE = 76;
 const STROKE_WIDTH = 3;
@@ -20,6 +21,7 @@ function clampPercentage(value) {
  * inside a small band so the readout never looks frozen.
  */
 function HudGauge({ value, label, suffix = '%', drifts = false }) {
+  const { translate: t } = useLanguage();
   const [renderedValue, setRenderedValue] = useState(0);
 
   useEffect(() => {
@@ -50,7 +52,7 @@ function HudGauge({ value, label, suffix = '%', drifts = false }) {
           height={DIAL_SIZE}
           viewBox={`0 0 ${DIAL_SIZE} ${DIAL_SIZE}`}
           role="img"
-          aria-label={`${label}: ${value}${suffix}`}
+          aria-label={`${t(label)}: ${value}${suffix}`}
         >
           <circle className="hud-gauge__ticks" cx={center} cy={center} r={TICK_RADIUS} />
           <circle className="hud-gauge__track" cx={center} cy={center} r={ARC_RADIUS} />
@@ -68,7 +70,7 @@ function HudGauge({ value, label, suffix = '%', drifts = false }) {
           {suffix}
         </span>
       </div>
-      <span className="hud-gauge__label">{label}</span>
+      <span className="hud-gauge__label">{t(label)}</span>
     </div>
   );
 }

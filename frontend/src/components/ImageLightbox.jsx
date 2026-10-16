@@ -1,12 +1,14 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * Full-view overlay for document scans. Rendered into <body> so it escapes the
  * sticky header's stacking context.
  */
 function ImageLightbox({ src, alt, onClose }) {
+  const { translate: t } = useLanguage();
   useEffect(() => {
     const closeOnEscape = (event) => {
       if (event.key === 'Escape') onClose();
@@ -28,19 +30,19 @@ function ImageLightbox({ src, alt, onClose }) {
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label={alt}
+      aria-label={t(alt)}
     >
       <div className="lightbox__frame" onClick={(event) => event.stopPropagation()}>
         <button
           type="button"
           className="lightbox__close"
           onClick={onClose}
-          aria-label="Close full view"
+          aria-label={t('Close full view')}
         >
           <X size={18} />
         </button>
-        <img src={src} alt={alt} className="lightbox__image" />
-        <p className="lightbox__caption">{alt}</p>
+        <img src={src} alt={t(alt)} className="lightbox__image" />
+        <p className="lightbox__caption">{t(alt)}</p>
       </div>
     </div>
   );

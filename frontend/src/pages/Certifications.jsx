@@ -5,6 +5,7 @@ import ImageLightbox from '../components/ImageLightbox';
 import StaggerGrid from '../components/StaggerGrid';
 import cert1 from '../assets/cert1.jpg';
 import cert2 from '../assets/cert2.jpg';
+import { useLanguage } from '../hooks/useLanguage';
 
 const CERTIFICATIONS = [
   {
@@ -33,6 +34,7 @@ const CERTIFICATIONS = [
 
 function Certifications() {
   const [activeImage, setActiveImage] = useState(null);
+  const { translate: t } = useLanguage();
 
   return (
     <Section
@@ -48,9 +50,9 @@ function Certifications() {
             title={cert.title}
             description={cert.description}
             image={cert.image}
-            alt={cert.alt}
+            alt={t(cert.alt)}
             facts={cert.facts}
-            hint="Open certificate"
+            hint={t('Open certificate')}
             onOpen={() => setActiveImage({ src: cert.image, alt: cert.alt })}
           />
         ))}

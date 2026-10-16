@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLanguage } from '../hooks/useLanguage';
 
 const COOKIE_NAME = 'analytics.consent';
 const MAX_AGE_SECONDS = 60 * 60 * 24 * 180;
@@ -76,6 +77,7 @@ function hasBrowserOptOut() {
  * Reject is exactly as prominent and exactly as many clicks as accept.
  */
 function ConsentBanner({ enabled = true, onDecision }) {
+  const { translate: t } = useLanguage();
   // Read once on mount via a lazy initialiser rather than in an effect: the
   // cookie and the browser signals cannot change between renders, so an effect
   // would only add a second render pass.
@@ -97,18 +99,16 @@ function ConsentBanner({ enabled = true, onDecision }) {
   if (!isVisible) return null;
 
   return (
-    <div style={STYLES.wrapper} role="region" aria-label="Analytics consent">
+    <div style={STYLES.wrapper} role="region" aria-label={t('Analytics consent')}>
       <p style={STYLES.text}>
-        This site keeps its own anonymous visit statistics. No third-party
-        trackers, no advertising, and no data leaves this server. Nothing that
-        identifies you personally is stored.
+        {t('This site keeps its own anonymous visit statistics. No third-party trackers, no advertising, and no data leaves this server. Nothing that identifies you personally is stored.')}
       </p>
       <div style={STYLES.actions}>
         <button type="button" style={STYLES.button} onClick={decide(false)}>
-          Reject
+          {t('Reject')}
         </button>
         <button type="button" style={STYLES.button} onClick={decide(true)}>
-          Accept
+          {t('Accept')}
         </button>
       </div>
     </div>

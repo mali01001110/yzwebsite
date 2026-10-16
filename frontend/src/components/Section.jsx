@@ -1,6 +1,7 @@
 import Reveal from './Reveal';
 import ScrambleText from './ScrambleText';
 import { SECTION_IDS } from '../data/navigation';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * Standard section shell: scroll anchor, HUD heading block and a scroll-reveal
@@ -8,6 +9,9 @@ import { SECTION_IDS } from '../data/navigation';
  * cannot drift out of sync with the menu.
  */
 function Section({ id, title, subtitle, className = '', children }) {
+  const { translate: t } = useLanguage();
+  const translatedTitle = t(title);
+  const translatedSubtitle = t(subtitle);
   const position = SECTION_IDS.indexOf(id);
   const index = String(position >= 0 ? position : 0).padStart(2, '0');
   // The hero occupies slot 00 and is not a Section, so the run of numbered
@@ -21,12 +25,12 @@ function Section({ id, title, subtitle, className = '', children }) {
           {index}
         </span>
         <span className="section__index">
-          SEC.{index} :: {title}
+          SEC.{index} :: {translatedTitle}
         </span>
-        <ScrambleText as="h2" className="section__title" text={title} />
+        <ScrambleText as="h2" className="section__title" text={translatedTitle} />
         <div className="section__rule" />
         <div className="section__meta">
-          {subtitle && <p className="section__subtitle">{subtitle}</p>}
+          {translatedSubtitle && <p className="section__subtitle">{translatedSubtitle}</p>}
           <span className="section__progress" aria-hidden="true">
             {index} / {total}
           </span>

@@ -1,5 +1,6 @@
 import { useSystemClock } from '../hooks/useSystemClock';
 import { padTimePart } from '../utils/time';
+import { useLanguage } from '../hooks/useLanguage';
 
 const MS_PER_SECOND = 1000;
 const SECONDS_PER_HOUR = 3600;
@@ -9,6 +10,7 @@ const SECONDS_PER_HOUR = 3600;
  * always genuinely ticking instead of frozen at an invented deadline.
  */
 function Countdown({ label = 'Next sync cycle' }) {
+  const { translate: t } = useLanguage();
   const now = useSystemClock();
 
   const nextHour = new Date(now);
@@ -27,7 +29,7 @@ function Countdown({ label = 'Next sync cycle' }) {
 
   return (
     <div className="hud-countdown">
-      <span className="hud-countdown__label">{label}</span>
+      <span className="hud-countdown__label">{t(label)}</span>
       <div className="hud-countdown__value" role="timer" aria-live="off">
         {padTimePart(hours)}:{padTimePart(minutes)}:{padTimePart(seconds)}
       </div>

@@ -1,4 +1,5 @@
 import BrandIcon from './BrandIcon';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * The "LIMITS FOUND" row from the reference: index, label, optional meta, a
@@ -10,6 +11,7 @@ import BrandIcon from './BrandIcon';
  * platform's logo, and everything else gets the house icon set.
  */
 function DataRow({ index, label, meta, actionLabel, glyph = '✓', href, Icon, brand }) {
+  const { translate: t } = useLanguage();
   const body = (
     <>
       {index && (
@@ -25,11 +27,11 @@ function DataRow({ index, label, meta, actionLabel, glyph = '✓', href, Icon, b
       )}
 
       <span className="data-row__main">
-        <span className="data-row__label">{label}</span>
-        {meta && <span className="data-row__meta">{meta}</span>}
+        <span className="data-row__label">{t(label)}</span>
+        {meta && <span className="data-row__meta">{t(meta)}</span>}
       </span>
 
-      {actionLabel && <span className="data-row__action">{actionLabel}</span>}
+      {actionLabel && <span className="data-row__action">{t(actionLabel)}</span>}
 
       <span className="data-row__glyph" aria-hidden="true">
         {glyph}

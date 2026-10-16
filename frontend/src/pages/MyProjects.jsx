@@ -10,6 +10,7 @@ import Section from '../components/Section';
 import HudWindow from '../components/HudWindow';
 import StaggerGrid from '../components/StaggerGrid';
 import TickBar from '../components/TickBar';
+import { useLanguage } from '../hooks/useLanguage';
 
 const INTRO = `Here are some of the projects I've been working on. Check out the repositories below on GitHub to explore the code.`;
 
@@ -52,13 +53,14 @@ const PROJECTS = [
 ];
 
 function MyProjects() {
+  const { translate: t } = useLanguage();
   return (
     <Section id="projects" title="Projects" subtitle="System deployments // source available">
-      <p className="prose">{INTRO}</p>
+      <p className="prose">{t(INTRO)}</p>
 
       <HudWindow
         title="DEPLOYMENTS.EXE"
-        tag={`${String(PROJECTS.length).padStart(2, '0')} FOUND`}
+        tag={`${String(PROJECTS.length).padStart(2, '0')} ${t('FOUND')}`}
       >
         <StaggerGrid className="deploys">
           {PROJECTS.map(({ name, url, description, stack, Icon }, index) => (
@@ -72,7 +74,7 @@ function MyProjects() {
                   DEPLOY_{String(index + 1).padStart(3, '0')} // {stack}
                 </span>
                 <h3 className="deploy__name">&gt; {name}</h3>
-                <p className="deploy__description">{description}</p>
+                <p className="deploy__description">{t(description)}</p>
                 <TickBar value={95} label="Build" />
               </div>
 
@@ -83,7 +85,7 @@ function MyProjects() {
                 rel="noopener noreferrer"
               >
                 <ArrowUpRight size={22} aria-hidden="true" />
-                <span>OPEN</span>
+                <span>{t('OPEN')}</span>
               </a>
             </article>
           ))}

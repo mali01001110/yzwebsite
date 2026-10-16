@@ -1,10 +1,12 @@
 import { TriangleAlert } from 'lucide-react';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * Critical-alert box modelled on the reference "SYSTEM FAILURE" dialog: hazard
  * title bar, blinking warning glyph and an uppercase log body.
  */
 function SystemAlert({ code, title, children }) {
+  const { translate: t } = useLanguage();
   return (
     <div className="hud-alert" role="note">
       <div className="hud-alert__bar">
@@ -19,8 +21,8 @@ function SystemAlert({ code, title, children }) {
       <div className="hud-alert__body">
         <TriangleAlert size={30} className="hud-alert__icon" aria-hidden="true" />
         <div>
-          <p className="hud-alert__title">{title}</p>
-          <p className="hud-alert__text">{children}</p>
+          <p className="hud-alert__title">{t(title)}</p>
+          <p className="hud-alert__text">{t(children)}</p>
         </div>
       </div>
 

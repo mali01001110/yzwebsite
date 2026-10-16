@@ -1,6 +1,7 @@
 import HudGauge from './HudGauge';
 import DocumentThumb from './DocumentThumb';
 import TickBar from './TickBar';
+import { useLanguage } from '../hooks/useLanguage';
 
 /**
  * Verification card used by both Education and Certifications: code + title,
@@ -8,25 +9,26 @@ import TickBar from './TickBar';
  * Shared so the two sections cannot drift apart visually.
  */
 function CredentialCard({ code, title, description, image, alt, facts, hint, onOpen }) {
+  const { translate: t } = useLanguage();
   return (
     <article className="credential">
       <header className="credential__head">
         <div className="credential__ident">
           <span className="credential__code">{code}</span>
-          <h3 className="credential__title">{title}</h3>
+          <h3 className="credential__title">{t(title)}</h3>
         </div>
         <HudGauge value={100} label="Verified" />
       </header>
 
       <DocumentThumb src={image} alt={alt} onOpen={onOpen} hint={hint} />
 
-      {description && <p className="credential__description">{description}</p>}
+      {description && <p className="credential__description">{t(description)}</p>}
 
       <dl className="credential__facts">
         {facts.map(({ key, value }) => (
           <div key={key} className="credential__fact">
-            <dt>{key}</dt>
-            <dd>{value}</dd>
+            <dt>{t(key)}</dt>
+            <dd>{t(value)}</dd>
           </div>
         ))}
       </dl>
