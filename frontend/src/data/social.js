@@ -14,9 +14,6 @@ export const SOCIAL_URLS = {
   facebook: 'https://www.facebook.com/mali01001110',
   instagram: 'https://www.instagram.com/mali01001110/',
   youtube: 'https://www.youtube.com/@intelleet',
-  // Stripped of `?is_from_webapp=1&sender_device=pc`. Those are TikTok's own
-  // share-tracking parameters, recorded when the link was copied out of a
-  // desktop browser; they describe that copy, not the profile.
-  tiktok: 'https://www.tiktok.com/@sometaware',
+  tiktok: 'https://www.tiktok.com/@intelleet',
   email: 'mailto:yannzakpa@gmail.com',
 };
