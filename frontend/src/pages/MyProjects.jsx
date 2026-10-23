@@ -44,6 +44,13 @@ const PROJECTS = [
     Icon: Monitor,
   },
   {
+    name: 'OVG Library',
+    url: 'https://github.com/mali01001110/ovglibrary',
+    description: 'A monochrome video game library browser powered by RAWG',
+    stack: 'Next.js // TypeScript',
+    Icon: Gamepad2,
+  },
+  {
     name: 'My Personal Website',
     url: 'https://github.com/mali01001110/yzwebsite',
     description: 'Professional portfolio website',
