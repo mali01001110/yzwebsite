@@ -6,12 +6,11 @@ import InfoPanel from '../components/InfoPanel';
 import BrandLogo from '../components/BrandLogo';
 import TickBar from '../components/TickBar';
 import { useLanguage } from '../hooks/useLanguage';
+import { apiUrl } from '../utils/apiUrl';
 
 const EMAIL_ADDRESS = 'yannzakpa@gmail.com';
 
-// Django serves this bundle, so the API is same-origin in production; the Vite
-// dev server proxies the same path to Django during development.
-const CONTACT_ENDPOINT = '/api/contact/';
+const CONTACT_ENDPOINT = apiUrl('/api/contact/');
 
 // Each channel is identified by the provider that actually carries it, in
 // that provider's own logo: Orange for the +225 07 voice line, WhatsApp for

@@ -20,7 +20,10 @@
 (function (window, document) {
   'use strict';
 
-  var ENDPOINT = '/api/analytics/events/';
+  var API_ORIGIN = document.currentScript
+    ? new URL(document.currentScript.src, window.location.href).origin
+    : window.location.origin;
+  var ENDPOINT = API_ORIGIN + '/api/analytics/events/';
   var FLUSH_INTERVAL_MS = 10000;
   var MAX_BATCH = 50;
   var INTERACTION_TIMEOUT_MS = 30000;

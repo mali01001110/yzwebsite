@@ -270,7 +270,7 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5173",
     "https://yannzakpa.space",       # Production site
     "https://www.yannzakpa.space",
-]
+] + get_env_list('DJANGO_CORS_ALLOWED_ORIGINS')
 
 
 # ---------------------------------------------------------------------------

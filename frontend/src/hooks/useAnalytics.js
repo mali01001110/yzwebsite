@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { apiUrl } from '../utils/apiUrl';
 
 /**
  * Served by Django from the analytics app's static directory. Loaded at
@@ -7,7 +8,7 @@ import { useLocation } from 'react-router-dom';
  * build — the compiled bundle in `dist` is committed, and a tracking change
  * should not require rebuilding and recommitting it.
  */
-const BEACON_SRC = '/static/analytics/beacon.js';
+const BEACON_SRC = apiUrl('/static/analytics/beacon.js');
 
 /**
  * Calls made before the beacon script finishes loading are held here and
