@@ -32,7 +32,7 @@ const PROJECTS = [
   {
     name: 'Servo Jeu Web',
     url: 'https://github.com/mali01001110/servo-jeu-web',
-    description: 'A browser-based servo game built with PixiJS',
+    description: 'A whack-a-mole game built with PixiJS',
     stack: 'JavaScript // PixiJS',
     Icon: Gamepad2,
   },

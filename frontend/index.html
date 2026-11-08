@@ -105,18 +105,13 @@
       }
     </script>
     <script>
-      // Applies the saved protocol before first paint. Deliberately inline and
-      // blocking: deferring this to the React bundle means the page renders
-      // once in the default (night) palette and then repaints, which is a
-      // white-to-black flash for every day-mode visitor on every load.
+      // Applies the saved protocol, or night mode by default, before first
+      // paint. Deliberately inline and blocking to avoid a theme flash while
+      // the React bundle loads.
       (function () {
         try {
           var saved = localStorage.getItem('yz.theme');
-          var theme =
-            saved ||
-            (window.matchMedia('(prefers-color-scheme: light)').matches
-              ? 'day'
-              : 'night');
+          var theme = saved || 'night';
           document.documentElement.setAttribute('data-theme', theme);
           document.documentElement.style.colorScheme =
             theme === 'day' ? 'light' : 'dark';

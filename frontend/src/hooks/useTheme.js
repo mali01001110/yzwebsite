@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 const STORAGE_KEY = 'yz.theme';
 export const NIGHT = 'night';
@@ -56,30 +56,6 @@ export function useTheme() {
   // the sequence. Deriving the target from `theme` would make the readout
   // change halfway through the animation.
   const [switchingTo, setSwitchingTo] = useState(null);
-
-  // Follow the OS preference until the visitor states one of their own. Once
-  // they have chosen, their choice wins and the listener stops mattering.
-  useEffect(() => {
-    let stored;
-    try {
-      stored = window.localStorage.getItem(STORAGE_KEY);
-    } catch {
-      // Storage unavailable. Treated as "no stated preference", so the OS
-      // setting keeps driving the theme for this session.
-      stored = null;
-    }
-    if (stored) return undefined;
-
-    const query = window.matchMedia('(prefers-color-scheme: light)');
-    const follow = (event) => {
-      const next = event.matches ? DAY : NIGHT;
-      applyTheme(next);
-      setTheme(next);
-    };
-
-    query.addEventListener('change', follow);
-    return () => query.removeEventListener('change', follow);
-  }, []);
 
   const toggle = useCallback(() => {
     setSwitchingTo((pending) => {

@@ -12,8 +12,8 @@ export const SOCIAL_URLS = {
   linkedin: 'https://www.linkedin.com/in/mali01001110/',
   github: 'https://github.com/mali01001110',
   facebook: 'https://www.facebook.com/mali01001110',
-  instagram: 'https://www.instagram.com/mali01001110/',
-  youtube: 'https://www.youtube.com/@intelleet',
-  tiktok: 'https://www.tiktok.com/@intelleet',
+  instagram: 'https://www.instagram.com/devvtv.cs/',
+  youtube: 'https://www.youtube.com/@devvtv_dot_cs',
+  tiktok: 'https://www.tiktok.com/@devvtv.cs',
   email: 'mailto:yannzakpa@gmail.com',
 };
