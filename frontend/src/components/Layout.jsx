@@ -147,7 +147,7 @@ function Layout() {
         <footer className="footer">
           <div className="footer__inner">
             <span className="footer__note">
-              © {new Date().getFullYear()} — Built By @devvtv.cs
+              © {new Date().getFullYear()} — Built By devvtv.cs
             </span>
 
             <div className="footer__socials">
