@@ -6,7 +6,7 @@ databases:
   - name: yzwebsite-db
     databaseName: yzwebsite
     user: yzwebsite
-    plan: basic-256mb
+    plan: free
     # Must equal the web service's region. Render's private hostname
     # (dpg-...-a) resolves only within a single region, so a mismatch fails
     # `migrate` with an unresolvable host rather than a connection error.
@@ -20,13 +20,11 @@ services:
   - type: web
     name: yzwebsite
     runtime: python
-    plan: starter
+    plan: free
     buildCommand: "./build.sh"
-    # Runs after the build and before the new instance starts, unlike the build
-    # step it can reach the database. A failed migration then fails the deploy
-    # rather than the build, leaving the last good build intact.
-    preDeployCommand: "python manage.py migrate"
-    startCommand: "gunicorn yzwebsiteproject.wsgi:application"
+    # Free web services do not support pre-deploy commands or Shell access.
+    # Initialize the database and configured admin when the instance starts.
+    startCommand: "python manage.py migrate && python manage.py bootstrap_admin && gunicorn yzwebsiteproject.wsgi:application"
     envVars:
       - key: DJANGO_DEBUG
         value: "false"
@@ -39,12 +37,14 @@ services:
       # at '/admin/'.
       - key: DJANGO_ADMIN_URL
         sync: false
+      - key: DJANGO_ADMIN_USERNAME
+        sync: false
+      - key: DJANGO_ADMIN_PASSWORD
+        sync: false
       - key: DJANGO_ALLOWED_HOSTS
         value: "yannzakpa.space,www.yannzakpa.space"
       - key: DATABASE_URL
-        fromDatabase:
-          name: yzwebsite-db
-          property: connectionString
+        sync: false
       # Cloudflare proxies the domain in front of Render's own load balancer,
       # so two hops of X-Forwarded-For are written by trusted infrastructure.
       # Lowering this records the proxy's address instead of the visitor's;

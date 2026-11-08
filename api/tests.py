@@ -1,7 +1,10 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.core.management import call_command, CommandError
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.test import APIClient
+from unittest.mock import patch
 
 from .admin import ContactMessageAdmin
 from .models import ContactMessage
@@ -121,6 +124,40 @@ class ContactMessageOrderingTests(TestCase):
         newer = ContactMessage.objects.create(**{**VALID_PAYLOAD, 'name': 'Grace'})
 
         self.assertEqual(list(ContactMessage.objects.all()), [newer, older])
+
+
+class BootstrapAdminCommandTests(TestCase):
+    @patch.dict('os.environ', {
+        'DJANGO_ADMIN_USERNAME': 'siteowner',
+        'DJANGO_ADMIN_PASSWORD': 'a-long-test-password',
+    })
+    def test_creates_admin_user(self):
+        call_command('bootstrap_admin')
+
+        user = get_user_model().objects.get(username='siteowner')
+        self.assertTrue(user.is_superuser)
+        self.assertTrue(user.is_staff)
+        self.assertTrue(user.check_password('a-long-test-password'))
+
+    @patch.dict('os.environ', {
+        'DJANGO_ADMIN_USERNAME': 'siteowner',
+        'DJANGO_ADMIN_PASSWORD': 'a-new-test-password',
+    })
+    def test_synchronizes_existing_admin_password(self):
+        user = get_user_model().objects.create_superuser(
+            username='siteowner',
+            password='old-test-password',
+        )
+
+        call_command('bootstrap_admin')
+
+        user.refresh_from_db()
+        self.assertTrue(user.check_password('a-new-test-password'))
+
+    @patch.dict('os.environ', {}, clear=True)
+    def test_requires_credentials(self):
+        with self.assertRaises(CommandError):
+            call_command('bootstrap_admin')
 
 
 class ContactMessageAdminTests(TestCase):
